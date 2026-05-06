@@ -15,13 +15,13 @@ export default function Drawer() {
     );
 }
 
-function SideBar({ drawerId }) {
+function SideBar(props) {
     return (
         <aside className='drawer-side flex flex-col items-stretch min-h-full w-fit px-2 py-4 bg-base-100 is-drawer-close:overflow-visible is-drawer-open:w-64'>
             <div className='flex items-center'>
                 <ThemeSwap />
                 <h1 className='grow text-xl text-center is-drawer-close:hidden'>Cyclope</h1>
-                <label htmlFor={drawerId} aria-label='open sidebar' className='btn btn-ghost'>
+                <label htmlFor={props.drawerId} aria-label='open sidebar' className='btn btn-ghost'>
                     <ChevronLeftIcon className='size-5 is-drawer-close:hidden' />
                     <ChevronRightIcon className='size-5 is-drawer-open:hidden' />
                 </label>
@@ -56,10 +56,10 @@ function ThemeSwap() {
     );
 }
 
-function NavItem({ title, Icon, to }) {
+function NavItem(props) {
     return (
         <NavLink
-            to={to}
+            to={props.to}
             className={({ isActive }) => {
                 const base = 'is-drawer-close:tooltip is-drawer-close:tooltip-right btn flex justify-start';
                 return [
@@ -67,10 +67,10 @@ function NavItem({ title, Icon, to }) {
                     isActive ? 'btn-soft btn-primary' : 'btn-ghost',
                 ].join(' ');
             }}
-            data-tip={title}
+            data-tip={props.title}
         >
-            {Icon({ className: 'size-5' })}
-            <span className='is-drawer-close:hidden'>{title}</span>
+            {props.Icon({ className: 'size-5' })}
+            <span className='is-drawer-close:hidden'>{props.title}</span>
         </NavLink>
     );
 } 
