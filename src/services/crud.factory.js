@@ -1,33 +1,27 @@
 import { httpRequest } from './httpClient';
 
-export function createCrudService(endPoint) {
-    return {
-        getAll() {
-            return httpRequest(endPoint);
-        },
+export const createCrudService = (endPoint) => {
 
-        getById(id) {
-            return httpRequest(`${endPoint}/${id}`);
-        },
+    const getAll = () => httpRequest(endPoint);
 
-        create(payload) {
-            return httpRequest(endPoint, {
-                method: 'POST',
-                body: JSON.stringify(payload),
-            });
-        },
+    const getById = (id) => httpRequest(`${endPoint}/${id}`);
 
-        update(id, payload) {
-            return httpRequest(`${endPoint}/${id}`, {
-                method: 'PUT',
-                body: JSON.stringify(payload),
-            });
-        },
+    const create = (payload) =>
+        httpRequest(endPoint, {
+            method: 'POST',
+            body: JSON.stringify(payload),
+        });
 
-        remove(id) {
-            return httpRequest(`${endPoint}/${id}`, {
-                method: 'DELETE',
-            });
-        },
-    };
-}
+    const update = ({ id, data }) =>
+        httpRequest(`${endPoint}/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(data),
+        });
+
+    const remove = (id) =>
+        httpRequest(`${endPoint}/${id}`, {
+            method: 'DELETE',
+        });
+
+    return { getAll, getById, create, update, remove };
+};
