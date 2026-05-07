@@ -1,7 +1,7 @@
 import { createBrowserRouter, Navigate } from 'react-router';
-import Drawer from './views/Drawer';
 import MissionCreate from './views/MissionCreate';
-import MissionsScreen from './views/missions/MissionsScreen';
+import MissionsScreen from './views/missions';
+import Navbar from './views/navbar';
 import Settings from './views/Settings';
 
 export const PATH_MISSION_CREATE = '/new';
@@ -10,7 +10,7 @@ export const PATH_SETTINGS = '/settings';
 
 export const BROWSER_ROUTER = createBrowserRouter([
     {
-        Component: Drawer,
+        Component: Navbar,
         children: [
             {
                 path: PATH_MISSION_CREATE,
