@@ -1,9 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createCrudService } from '../services/crud.factory';
 
-export const createCrudQuery = (resource) => {
-    const service = createCrudService(resource);
-
+export const createCrudQueries = (resource, service) => {
     const useGetAll = () => useQuery({
         queryKey: [resource],
         queryFn: service.getAll,

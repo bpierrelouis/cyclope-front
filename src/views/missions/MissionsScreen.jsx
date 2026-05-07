@@ -9,8 +9,8 @@ export default function MissionsScreen() {
     const { data: missions } = missionsQueries.useGetAll();
 
     return (
-        <main className='m-10 flex flex-col gap-6'>
-            <h2 className='text-xl font-medium'>Missions</h2>
+        <main className='flex flex-col gap-6 m-10'>
+            <h2 className='font-medium text-xl'>Missions</h2>
             <StatusTabs statusState={[status, setStatus]} />
             <Missions missions={missions || []} status={status} />
         </main>

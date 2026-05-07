@@ -1,3 +1,9 @@
-import { createCrudQuery } from './crud.factory';
+import { mediasResourceName, mediasService } from '../services';
+import { createCrudQueries } from './crud.factory';
 
-export const mediasQueries = createCrudQuery('medias');
+const resource = mediasResourceName;
+const service = mediasService;
+
+const queries = createCrudQueries(resource, service);
+
+export const mediasQueries = queries;

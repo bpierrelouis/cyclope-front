@@ -1,42 +1,34 @@
 import { ChevronLeftIcon, ChevronRightIcon, PlusIcon, RectangleStackIcon, SettingsIcon } from '../../assets/icons';
-import { PATH_MISSION_CREATE, PATH_MISSIONS, PATH_SETTINGS } from '../../router';
+import { ROUTES } from '../../router';
+import Medias from './Medias';
 import NavItem from './NavItem';
 import ThemeSwap from './ThemeSwap';
 
 export default function SideBar(props) {
     return (
-        <aside className='drawer-side flex flex-col items-stretch min-h-full w-fit px-2 py-4 bg-base-100 is-drawer-close:overflow-visible is-drawer-open:w-64'>
+        <aside className='flex flex-col items-stretch bg-base-100 px-2 py-4 w-fit is-drawer-open:w-64 min-h-full is-drawer-close:overflow-visible drawer-side'>
             <div className='flex items-center'>
                 <ThemeSwap />
-                <h1 className='grow text-xl text-center is-drawer-close:hidden'>Cyclope</h1>
+                <h1 className='is-drawer-close:hidden text-xl text-center grow'>Cyclope</h1>
                 <label htmlFor={props.drawerId} aria-label='open sidebar' className='btn btn-ghost'>
-                    <ChevronLeftIcon className='size-5 is-drawer-close:hidden' />
-                    <ChevronRightIcon className='size-5 is-drawer-open:hidden' />
+                    <ChevronLeftIcon className='is-drawer-close:hidden size-5' />
+                    <ChevronRightIcon className='is-drawer-open:hidden size-5' />
                 </label>
             </div>
             <div className='divider'></div>
             <NavItem
                 title='Nouveau'
                 Icon={PlusIcon}
-                to={PATH_MISSION_CREATE} />
+                to={ROUTES.new} />
             <NavItem
                 title='Missions'
                 Icon={RectangleStackIcon}
-                to={PATH_MISSIONS} />
+                to={ROUTES.missions} />
             <NavItem
                 title='Paramètres'
                 Icon={SettingsIcon}
-                to={PATH_SETTINGS} />
-            {/* <div className='divider'></div>
-            <span className='text-sm opacity-50 is-drawer-close:hidden'>{mockMission.name}</span>
-            {mockMission.medias.map((m) => (
-                <NavItem
-                    key={m.id}
-                    title={m.name}
-                    Icon={m.isVideo ? PlayCircleIcon : PhotoIcon}
-                    to={`${PATH_MISSION_LIST}/${mockMission.id}/medias/${m.id}`}
-                />
-            ))} */}
+                to={ROUTES.settings} />
+            <Medias />
         </aside>
     );
 }
