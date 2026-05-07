@@ -1,6 +1,6 @@
 import { NavLink, Outlet } from 'react-router';
 import { ChevronLeftIcon, ChevronRightIcon, MoonIcon, PlusIcon, RectangleStackIcon, SettingsIcon, SunIcon } from '../assets/icons';
-import { PATH_MISSION_CREATE, PATH_MISSION_LIST, PATH_SETTINGS } from '../router';
+import { PATH_MISSION_CREATE, PATH_MISSIONS, PATH_SETTINGS } from '../router';
 
 export default function Drawer() {
     const drawerId = 'my-drawer';
@@ -35,7 +35,7 @@ function SideBar(props) {
             <NavItem
                 title='Missions'
                 Icon={RectangleStackIcon}
-                to={PATH_MISSION_LIST}
+                to={PATH_MISSIONS}
             />
             <NavItem
                 title='Paramètres'

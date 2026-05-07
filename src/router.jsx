@@ -1,11 +1,11 @@
 import { createBrowserRouter, Navigate } from 'react-router';
 import Drawer from './views/Drawer';
 import MissionCreate from './views/MissionCreate';
-import MissionList from './views/MissionList';
+import MissionsScreen from './views/missions/MissionsScreen';
 import Settings from './views/Settings';
 
 export const PATH_MISSION_CREATE = '/new';
-export const PATH_MISSION_LIST = '/missions';
+export const PATH_MISSIONS = '/missions';
 export const PATH_SETTINGS = '/settings';
 
 export const BROWSER_ROUTER = createBrowserRouter([
@@ -17,8 +17,8 @@ export const BROWSER_ROUTER = createBrowserRouter([
                 Component: MissionCreate,
             },
             {
-                path: PATH_MISSION_LIST,
-                Component: MissionList,
+                path: PATH_MISSIONS,
+                Component: MissionsScreen,
             },
             {
                 path: PATH_SETTINGS,
@@ -26,7 +26,7 @@ export const BROWSER_ROUTER = createBrowserRouter([
             },
             {
                 path: '*',
-                element: (<Navigate to={PATH_MISSION_LIST} replace />),
+                element: (<Navigate to={PATH_MISSIONS} replace />),
             },
         ],
     },

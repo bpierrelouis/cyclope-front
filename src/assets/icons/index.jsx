@@ -1,5 +1,6 @@
 export { default as ChevronLeftIcon } from './chevron-left.svg?react';
 export { default as ChevronRightIcon } from './chevron-right.svg?react';
+export { default as FolderIcon } from './folder.svg?react';
 export { default as MoonIcon } from './moon.svg?react';
 export { default as PlusIcon } from './plus.svg?react';
 export { default as RectangleStackIcon } from './rectangle-stack.svg?react';
