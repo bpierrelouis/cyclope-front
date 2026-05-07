@@ -4,7 +4,7 @@ import SideBar from './SideBar';
 export default function Drawer() {
     const drawerId = 'my-drawer';
     return (
-        <div className='drawer lg:drawer-open'>
+        <div className='drawer drawer-open'>
             <input
                 id={drawerId}
                 type='checkbox'
