@@ -8,7 +8,7 @@ export default function NavItem(props) {
                 const base = 'is-drawer-close:tooltip is-drawer-close:tooltip-right btn flex justify-start btn-ghost';
                 return [
                     base,
-                    isActive ? 'not-hover:btn-soft not-hover:btn-primary' : '',
+                    props.isActive ?? isActive ? 'not-hover:btn-soft not-hover:btn-primary' : '',
                 ].join(' ').trim();
             }}
             data-tip={props.title}
