@@ -1,4 +1,4 @@
-import { PauseIcon, PlayIcon } from '../../assets/icons';
+import { Pause, Play, SkipBack, SkipForward } from 'lucide-react';
 import { formatTime } from '../../utils/labels';
 
 export default function VideoControls({
@@ -9,12 +9,18 @@ export default function VideoControls({
     onSeek,
 }) {
     return (
-        <div className='flex items-center gap-4 mx-4 my-1'>
+        <div className='flex items-center gap-1 mx-4 my-1'>
+            <button className='btn-shadow btn btn-circle'>
+                <SkipBack />
+            </button>
             <button
-                className='btn btn-circle btn-primary btn-soft'
+                className='btn-shadow btn btn-circle'
                 onClick={onPlayPause}
             >
-                {(isPlaying ? PauseIcon : PlayIcon)({ className: 'size-5' })}
+                {isPlaying ? <Pause /> : <Play />}
+            </button>
+            <button className='btn-shadow btn btn-circle'>
+                <SkipForward />
             </button>
 
             <input

@@ -1,4 +1,4 @@
-import { PhotoIcon, PlayCircleIcon } from '../../assets/icons';
+import { Film, Image } from 'lucide-react';
 import { useGlobalSelection } from '../../hooks/selection';
 import NavItem from './NavItem';
 
@@ -15,7 +15,7 @@ export default function Medias() {
                 to={`?missionId=${mission.id}&mediaId=${m.id}`}
                 key={m.id}
                 title={m.name}
-                Icon={m.isVideo ? PlayCircleIcon : PhotoIcon}
+                Icon={m.isVideo ? Film : Image}
                 isActive={m.id === media?.id}
             />
         ))}

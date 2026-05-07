@@ -1,11 +1,14 @@
-import { MoonIcon, SunIcon } from '../../assets/icons';
+import { SunMoon } from 'lucide-react';
 
 export default function ThemeSwap() {
     return (
-        <label className='swap swap-rotate btn btn-ghost is-drawer-close:hidden'>
-            <input type='checkbox' className='theme-controller' value='dark' />
-            <SunIcon className='swap-off size-5' />
-            <MoonIcon className='swap-on size-5' />
+        <label className='is-drawer-close:hidden btn btn-ghost'>
+            <input
+                type='checkbox'
+                className='hidden theme-controller'
+                value='dark'
+            />
+            <SunMoon />
         </label>
     );
 }

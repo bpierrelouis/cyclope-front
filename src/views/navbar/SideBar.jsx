@@ -1,4 +1,4 @@
-import { ChevronLeftIcon, ChevronRightIcon, PlusIcon, RectangleStackIcon, SettingsIcon } from '../../assets/icons';
+import { Cog, Folders, PanelLeftClose, PanelLeftOpen, Plus } from 'lucide-react';
 import { ROUTES } from '../../router';
 import Medias from './Medias';
 import NavItem from './NavItem';
@@ -8,25 +8,25 @@ export default function SideBar(props) {
     return (
         <aside className='flex flex-col items-stretch bg-base-100 px-2 py-4 w-fit is-drawer-open:w-64 min-h-full is-drawer-close:overflow-visible drawer-side'>
             <div className='flex items-center'>
-                <ThemeSwap />
-                <h1 className='is-drawer-close:hidden text-xl text-center grow'>Cyclope</h1>
                 <label htmlFor={props.drawerId} aria-label='open sidebar' className='btn btn-ghost'>
-                    <ChevronLeftIcon className='is-drawer-close:hidden size-5' />
-                    <ChevronRightIcon className='is-drawer-open:hidden size-5' />
+                    <PanelLeftClose className='is-drawer-close:hidden' />
+                    <PanelLeftOpen className='is-drawer-open:hidden' />
                 </label>
+                <h1 className='is-drawer-close:hidden text-xl text-center grow'>Cyclope</h1>
+                <ThemeSwap />
             </div>
             <div className='divider'></div>
             <NavItem
                 title='Nouveau'
-                Icon={PlusIcon}
+                Icon={Plus}
                 to={ROUTES.new} />
             <NavItem
                 title='Missions'
-                Icon={RectangleStackIcon}
+                Icon={Folders}
                 to={ROUTES.missions} />
             <NavItem
                 title='Paramètres'
-                Icon={SettingsIcon}
+                Icon={Cog}
                 to={ROUTES.settings} />
             <Medias />
         </aside>
