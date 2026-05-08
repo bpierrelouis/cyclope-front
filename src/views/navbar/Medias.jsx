@@ -1,4 +1,4 @@
-import { Film, Image } from 'lucide-react';
+import { FilmIcon, ImageIcon } from 'lucide-react';
 import { useGlobalSelection } from '../../hooks/selection';
 import NavItem from './NavItem';
 
@@ -15,7 +15,7 @@ export default function Medias() {
                 to={`?missionId=${mission.id}&mediaId=${m.id}`}
                 key={m.id}
                 title={m.name}
-                Icon={m.isVideo ? Film : Image}
+                Icon={m.isVideo ? FilmIcon : ImageIcon}
                 isActive={m.id === media?.id}
             />
         ))}

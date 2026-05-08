@@ -1,8 +1,8 @@
-import { Folder } from 'lucide-react';
+import { FolderIcon } from 'lucide-react';
 import { Link } from 'react-router';
+import { ROUTES } from '../../constants';
 import { STATUS_LABELS } from '../../constants/labels';
 import { missionsQueries } from '../../hooks';
-import { ROUTES } from '../../router';
 import { getMissionDescription } from '../../utils/labels';
 import { preventDefault } from '../../utils/others';
 
@@ -29,7 +29,7 @@ export default function Mission(props) {
             className={`list-row items-center cursor-pointer group hover:bg-base-200 ${transitionClasses}`}
         >
             <div className={`bg-base-300 rounded px-4 py-2  group-hover:bg-primary group-hover:text-primary-content ${transitionClasses}`}>
-                <Folder className={`group-hover:scale-110 ${transitionClasses}`} />
+                <FolderIcon className={`group-hover:scale-110 ${transitionClasses}`} />
             </div>
 
             <div>

@@ -1,4 +1,4 @@
-import { SunMoon } from 'lucide-react';
+import { SunMoonIcon } from 'lucide-react';
 
 export default function ThemeSwap() {
     return (
@@ -8,7 +8,7 @@ export default function ThemeSwap() {
                 className='hidden theme-controller'
                 value='dark'
             />
-            <SunMoon />
+            <SunMoonIcon />
         </label>
     );
 }

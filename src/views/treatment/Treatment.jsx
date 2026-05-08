@@ -1,7 +1,7 @@
 import { FilmIcon, ImageIcon, MapIcon, SquareArrowOutUpRightIcon, TableIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { ROUTES } from '../../constants';
 import { useGlobalSelection } from '../../hooks';
-import { ROUTES } from '../../router';
 import { playerService } from '../../services/player.service';
 import Controls from './Controls';
 import Media from './Media';

@@ -1,19 +1,10 @@
 import { createBrowserRouter, Navigate } from 'react-router';
+import { ROUTES } from './constants';
 import MissionCreate from './views/MissionCreate';
 import MissionsScreen from './views/missions';
 import Navbar from './views/navbar';
 import Settings from './views/Settings';
 import Treatment, { Media, Plan, Table } from './views/treatment';
-
-export const ROUTES = {
-    settings: '/settings',
-    new: '/new',
-    missions: '/missions',
-    treatment: '/treatment',
-    media: '/media',
-    table: '/table',
-    plan: '/plan',
-};
 
 export const BROWSER_ROUTER = createBrowserRouter([
     {

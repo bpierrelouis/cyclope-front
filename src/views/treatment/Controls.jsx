@@ -1,4 +1,4 @@
-import { Pause, Play, SkipBack, SkipForward } from 'lucide-react';
+import { PauseIcon, PlayIcon, SkipBackIcon, SkipForwardIcon } from 'lucide-react';
 import { playerService } from '../../services/player.service';
 import { usePlayerStore } from '../../stores/playerStore';
 import { formatTime } from '../../utils/labels';
@@ -29,16 +29,16 @@ export default function Controls() {
     return (
         <div className='flex items-center gap-1 mx-4 my-1'>
             <button className='btn-shadow btn btn-circle'>
-                <SkipBack />
+                <SkipBackIcon />
             </button>
             <button
                 className='btn-shadow btn btn-circle'
                 onClick={togglePlaying}
             >
-                {playing ? <Pause /> : <Play />}
+                {playing ? <PauseIcon /> : <PlayIcon />}
             </button>
             <button className='btn-shadow btn btn-circle'>
-                <SkipForward />
+                <SkipForwardIcon />
             </button>
 
             <input
