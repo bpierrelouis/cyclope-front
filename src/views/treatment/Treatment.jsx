@@ -1,78 +1,72 @@
-import { useRef, useState } from 'react';
+import { FilmIcon, ImageIcon, MapIcon, SquareArrowOutUpRightIcon, TableIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useGlobalSelection } from '../../hooks';
-import VideoControls from './VideoControls';
+import { ROUTES } from '../../router';
+import { playerService } from '../../services/player.service';
+import Controls from './Controls';
+import Media from './Media';
+import Plan from './Plan';
+import Table from './Table';
 
 export default function Treatment() {
     const { media } = useGlobalSelection();
+    const [selected, setSelected] = useState(ROUTES.media);
 
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [progress, setProgress] = useState(0);
-    const [duration, setDuration] = useState(0);
+    useEffect(() => {
+        playerService.setLocalState({
+            isMaster: true,
+        });
+    }, []);
 
-    const videoRef = useRef(null);
+    useEffect(() => {
+        playerService.sync({
+            media,
+        });
+    }, [media]);
 
-    const handleSeek = (value) => {
-        const video = videoRef.current;
-        video.currentTime = value;
-        setProgress(value);
-    };
-
-    const togglePlay = () => {
-        const video = videoRef.current;
-
-        if (video.paused) {
-            video.play();
-            setIsPlaying(true);
-        } else {
-            video.pause();
-            setIsPlaying(false);
-        }
-    };
-
-    const handleTimeUpdate = () => {
-        const video = videoRef.current;
-
-        setProgress(video.currentTime);
-        setDuration(video.duration);
+    const handleExtract = () => {
+        window.open(
+            selected,
+            undefined,
+            'width=900,height=700',
+        );
     };
 
     if (!media) return (null);
 
     return (
         <div className='flex flex-col size-full'>
-            <MediaPlayer
-                media={media}
-                onTimeUpdate={handleTimeUpdate}
-                videoRef={videoRef}
-            />
+            <Media hidden={selected !== ROUTES.media} />
+            {selected === ROUTES.plan && <Plan />}
+            {selected === ROUTES.table && <Table />}
+            <div className='top-2 right-2 absolute'>
+                <Button onClick={() => setSelected(ROUTES.plan)}>
+                    <MapIcon />
+                </Button>
+                <Button onClick={() => setSelected(ROUTES.table)}>
+                    <TableIcon />
+                </Button>
+                <Button onClick={() => setSelected(ROUTES.media)}>
+                    {media.isVideo ? <FilmIcon /> : <ImageIcon />}
+                </Button>
+                <Button onClick={handleExtract}>
+                    <SquareArrowOutUpRightIcon />
+                </Button>
+            </div>
             {media.isVideo && (
-                <VideoControls
-                    isPlaying={isPlaying}
-                    progress={progress}
-                    duration={duration}
-                    onPlayPause={togglePlay}
-                    onSeek={handleSeek}
-                />
+                <Controls />
             )}
         </div>
     );
 }
 
-function MediaPlayer(props) {
-    const { media, videoRef, onTimeUpdate } = props;
-
-    return media.isVideo ? (
-        <video
-            ref={videoRef}
-            className='flex-1 min-h-0 object-contain'
-            onTimeUpdate={onTimeUpdate}
-            src={media.url}
-        />
-    ) : (
-        <img
-            className='w-full h-full object-contain'
-            src={media.url}
-            alt={media.name}
-        />
+function Button(props) {
+    return (
+        <button
+            className='btn btn-ghost btn-square'
+            onClick={props.onClick}
+        >
+            {props.children}
+        </button>
     );
 }

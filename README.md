@@ -16,12 +16,12 @@ Projet React + TailwindCSS + DaisyUI
 ```
 src
 ├── assets/          # Ressources nécessaires
-│   └── icons/
 ├── components/      # Composants réutilisables (UI)
 ├── constants/       # Constantes globales
 ├── contexts/        # Contextes
 ├── hooks/           # Hooks custom
 ├── services/        # Appels API / logique externe
+├── stores/          # zustand
 ├── utils/           # Fonctions utilitaires
 ├── views/           # Composants d'écran et vues
 ├── App.jsx          # Point d'entrée
