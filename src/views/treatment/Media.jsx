@@ -12,11 +12,8 @@ export default function Media(props) {
         isMaster,
     } = usePlayerStore();
 
-    if (!isMaster) console.log(media);
-
     useEffect(() => {
         if (isMaster) return;
-        console.log('requesting');
         playerService.requestState();
     }, [isMaster]);
 
