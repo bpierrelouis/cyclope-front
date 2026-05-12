@@ -1,5 +1,6 @@
 import { FolderIcon } from 'lucide-react';
 import { Link } from 'react-router';
+import { EditableText } from '../../components';
 import { ROUTES } from '../../constants';
 import { STATUS_LABELS } from '../../constants/labels';
 import { missionsQueries } from '../../hooks';
@@ -9,8 +10,9 @@ import { preventDefault } from '../../utils/others';
 export default function Mission(props) {
     const mission = props.mission;
 
-    const mutation = missionsQueries.useDelete();
-    const onDelete = () => mutation.mutate(mission.id);
+    const updateMutation = missionsQueries.useUpdate();
+    const deleteMutation = missionsQueries.useDelete();
+    const onDelete = () => deleteMutation.mutate(mission.id);
 
     const description = getMissionDescription(mission);
     const badgeColor = {
@@ -19,6 +21,13 @@ export default function Mission(props) {
         error: 'badge-error',
     }[mission.status];
     const transitionClasses = 'transition-all duration-200';
+
+    const handleChangeName = (name) => {
+        updateMutation.mutate({
+            id: mission.id,
+            data: { name },
+        });
+    };
 
     return (
         <Link
@@ -34,9 +43,10 @@ export default function Mission(props) {
 
             <div>
                 <div className='flex items-center gap-2'>
-                    <span className={`font-medium group-hover:text-primary ${transitionClasses}`}>
-                        {mission.name}
-                    </span>
+                    <EditableText
+                        value={mission.name}
+                        setValue={handleChangeName}
+                    />
 
                     <span className={`badge badge-sm badge-soft ${badgeColor} group-hover:scale-105 ${transitionClasses}`}>
                         {STATUS_LABELS[mission.status]}
