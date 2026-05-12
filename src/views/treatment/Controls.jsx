@@ -1,10 +1,10 @@
 import { PauseIcon, PlayIcon, SkipBackIcon, SkipForwardIcon } from 'lucide-react';
 import { SquareButton } from '../../components';
-import { playerService } from '../../services/player.service';
-import { usePlayerStore } from '../../stores/playerStore';
-import { formatTime } from '../../utils/labels';
+import { playerService } from '../../services';
+import { usePlayerStore } from '../../stores';
+import { formatTime } from '../../utils';
 
-export default function Controls() {
+export function Controls() {
     const {
         playing,
         currentTime,

@@ -1,8 +1,8 @@
 import { FilmIcon, ImageIcon } from 'lucide-react';
-import { useGlobalSelection } from '../../hooks/selection';
-import NavItem from './NavItem';
+import { useGlobalSelection } from '../../hooks';
+import { NavItem } from './NavItem';
 
-export default function Medias() {
+export function MediaList() {
     const { mission, medias, media } = useGlobalSelection();
 
     if (!mission || !medias) return null;

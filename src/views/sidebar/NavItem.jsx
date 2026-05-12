@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router';
 
-export default function NavItem(props) {
+export function NavItem(props) {
     return (
         <NavLink
             to={props.to}

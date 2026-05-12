@@ -1,13 +1,11 @@
 import { FolderIcon } from 'lucide-react';
 import { Link } from 'react-router';
 import { EditableText } from '../../components';
-import { ROUTES } from '../../constants';
-import { STATUS_LABELS } from '../../constants/labels';
+import { ROUTES, STATUS_LABELS } from '../../constants';
 import { missionsQueries } from '../../hooks';
-import { getMissionDescription } from '../../utils/labels';
-import { preventDefault } from '../../utils/others';
+import { getMissionDescription, preventDefault } from '../../utils';
 
-export default function Mission(props) {
+export function MissionListRow(props) {
     const mission = props.mission;
 
     const updateMutation = missionsQueries.useUpdate();

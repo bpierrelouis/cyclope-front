@@ -1,10 +1,10 @@
 import { CogIcon, FoldersIcon, PanelLeftCloseIcon, PanelLeftOpenIcon, PlusIcon } from 'lucide-react';
 import { ROUTES } from '../../constants';
-import Medias from './Medias';
-import NavItem from './NavItem';
-import ThemeSwap from './ThemeSwap';
+import { MediaList } from './MediaList';
+import { NavItem } from './NavItem';
+import { ThemeSwap } from './ThemeSwap';
 
-export default function SideBar(props) {
+export function SideBar(props) {
     return (
         <aside className='flex flex-col items-stretch bg-base-100 px-2 py-4 w-fit is-drawer-open:w-64 min-h-full is-drawer-close:overflow-visible drawer-side'>
             <div className='flex items-center'>
@@ -23,12 +23,12 @@ export default function SideBar(props) {
             <NavItem
                 title='Missions'
                 Icon={FoldersIcon}
-                to={ROUTES.missions} />
+                to={ROUTES.missionList} />
             <NavItem
                 title='Paramètres'
                 Icon={CogIcon}
                 to={ROUTES.settings} />
-            <Medias />
+            <MediaList />
         </aside>
     );
 }

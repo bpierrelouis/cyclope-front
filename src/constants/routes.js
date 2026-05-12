@@ -1,7 +1,7 @@
 export const ROUTES = {
     settings: '/settings',
     new: '/new',
-    missions: '/missions',
+    missionList: '/missions',
     treatment: '/treatment',
     media: '/media',
     table: '/table',

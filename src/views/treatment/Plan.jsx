@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
-import { usePlayerStore } from '../../stores/playerStore';
-import { sendOpenStateToMaster } from '../../utils/others';
+import { usePlayerStore } from '../../stores';
+import { sendOpenStateToMaster } from '../../utils';
 
-export default function Plan() {
+export function Plan() {
     const {
         isMaster,
     } = usePlayerStore();

@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react';
-import { playerService } from '../../services/player.service';
-import { usePlayerStore } from '../../stores/playerStore';
-import { sendOpenStateToMaster } from '../../utils/others';
+import { playerService } from '../../services';
+import { usePlayerStore } from '../../stores';
+import { sendOpenStateToMaster } from '../../utils';
 
-export default function Media(props) {
+export function Media(props) {
     const videoRef = useRef();
 
     const {

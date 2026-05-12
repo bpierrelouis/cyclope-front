@@ -1,4 +1,4 @@
-import { playerService } from '../services/player.service';
+import { playerService } from '../services';
 
 export const preventDefault = (fn) => (event) => {
     event.preventDefault();

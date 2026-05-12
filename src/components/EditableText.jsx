@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { preventDefault } from '../utils/others';
+import { preventDefault } from '../utils';
 
 export function EditableText(props) {
     const [editing, setEditing] = useState(false);

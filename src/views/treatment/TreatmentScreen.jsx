@@ -3,14 +3,14 @@ import { useEffect, useState } from 'react';
 import { SquareButton } from '../../components';
 import { ROUTES } from '../../constants';
 import { useGlobalSelection } from '../../hooks';
-import { playerService } from '../../services/player.service';
-import { usePlayerStore } from '../../stores/playerStore';
-import Controls from './Controls';
-import Media from './Media';
-import Plan from './Plan';
-import Table from './Table';
+import { playerService } from '../../services';
+import { usePlayerStore } from '../../stores';
+import { Controls } from './Controls';
+import { Media } from './Media';
+import { Plan } from './Plan';
+import { Table } from './Table';
 
-export default function Treatment() {
+export function TreatmentScreen() {
     const { media } = useGlobalSelection();
     const [selected, setSelected] = useState(ROUTES.media);
     const { isMediaOpen, isTableOpen, isPlanOpen } = usePlayerStore();

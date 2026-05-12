@@ -1,4 +1,4 @@
-import { usePlayerStore } from '../stores/playerStore';
+import { usePlayerStore } from '../stores';
 
 const MESSAGE_TYPES = {
     REQUEST_STATE: 'REQUEST_STATE',
