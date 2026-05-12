@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { playerService } from '../../services/player.service';
 import { usePlayerStore } from '../../stores/playerStore';
+import { sendOpenStateToMaster } from '../../utils/others';
 
 export default function Media(props) {
     const videoRef = useRef();
@@ -14,7 +15,7 @@ export default function Media(props) {
 
     useEffect(() => {
         if (isMaster) return;
-        playerService.requestState();
+        return sendOpenStateToMaster('isMediaOpen');
     }, [isMaster]);
 
     useEffect(() => {

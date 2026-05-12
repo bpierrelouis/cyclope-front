@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { ROUTES } from '../../constants';
 import { useGlobalSelection } from '../../hooks';
 import { playerService } from '../../services/player.service';
+import { usePlayerStore } from '../../stores/playerStore';
 import Controls from './Controls';
 import Media from './Media';
 import Plan from './Plan';
@@ -11,6 +12,7 @@ import Table from './Table';
 export default function Treatment() {
     const { media } = useGlobalSelection();
     const [selected, setSelected] = useState(ROUTES.media);
+    const { isMediaOpen, isTableOpen, isPlanOpen } = usePlayerStore();
 
     useEffect(() => {
         playerService.setLocalState({
@@ -25,35 +27,63 @@ export default function Treatment() {
         });
     }, [media]);
 
+    const disabledComponents = {
+        [ROUTES.media]: isMediaOpen || selected === ROUTES.media,
+        [ROUTES.table]: isTableOpen || selected === ROUTES.table,
+        [ROUTES.plan]: isPlanOpen || selected === ROUTES.plan,
+    };
+
+    /**
+     * Méthode permettant d'extraire la vue courante dans une nouvelle fenêtre.
+     * Change la vue courante vers une non visible.
+     */
     const handleExtract = () => {
         window.open(
             selected,
             undefined,
             'width=900,height=700',
         );
+
+        const entries = Object.entries(disabledComponents);
+        const entry = entries.find(([route, disabled]) => route !== selected && !disabled);
+        const next = entry[0];
+        setSelected(next);
     };
 
     if (!media) return (null);
 
     return (
         <div className='flex flex-col max-h-screen size-full'>
+            <div className='flex justify-between items-center mx-2'>
+                <div className='italic'>
+                    {media.name}
+                </div>
+                <div>
+                    {[
+                        ['Carte', ROUTES.plan, <MapIcon />],
+                        ['Tableau', ROUTES.table, <TableIcon />],
+                        [media.isVideo ? 'Vidéo' : 'Image', ROUTES.media, media.isVideo ? <FilmIcon /> : <ImageIcon />],
+                    ].map(([title, route, children]) => (
+                        <Button
+                            key={route}
+                            onClick={() => setSelected(route)}
+                            hidden={disabledComponents[route]}
+                            title={title}
+                        >
+                            {children}
+                        </Button>
+                    ))}
+                    <Button
+                        onClick={handleExtract}
+                        title='Extraire'
+                    >
+                        <SquareArrowOutUpRightIcon />
+                    </Button>
+                </div>
+            </div>
             <Media hidden={selected !== ROUTES.media} />
             {selected === ROUTES.plan && <Plan />}
             {selected === ROUTES.table && <Table />}
-            <div className='top-2 right-2 absolute'>
-                <Button onClick={() => setSelected(ROUTES.plan)}>
-                    <MapIcon />
-                </Button>
-                <Button onClick={() => setSelected(ROUTES.table)}>
-                    <TableIcon />
-                </Button>
-                <Button onClick={() => setSelected(ROUTES.media)}>
-                    {media.isVideo ? <FilmIcon /> : <ImageIcon />}
-                </Button>
-                <Button onClick={handleExtract}>
-                    <SquareArrowOutUpRightIcon />
-                </Button>
-            </div>
             {media.isVideo && (
                 <Controls />
             )}
@@ -62,10 +92,12 @@ export default function Treatment() {
 }
 
 function Button(props) {
+    if (props.hidden) return (null);
     return (
         <button
-            className='btn btn-ghost btn-square'
+            className='tooltip-bottom btn btn-ghost btn-square tooltip'
             onClick={props.onClick}
+            data-tip={props.title}
         >
             {props.children}
         </button>

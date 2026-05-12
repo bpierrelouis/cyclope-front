@@ -7,6 +7,10 @@ export const usePlayerStore = create((set) => ({
     media: null,
     isMaster: false,
 
+    isMediaOpen: false,
+    isPlanOpen: false,
+    isTableOpen: false,
+
     setStatePartial: (data) =>
         set((state) => ({
             ...state,
