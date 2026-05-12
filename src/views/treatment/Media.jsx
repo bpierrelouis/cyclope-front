@@ -57,7 +57,6 @@ export default function Media(props) {
             onTimeUpdate={handleTimeUpdate}
             src={media.url}
             muted
-            autoPlay
             loop
         />
     ) : (

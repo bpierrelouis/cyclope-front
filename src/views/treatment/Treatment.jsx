@@ -21,6 +21,7 @@ export default function Treatment() {
     useEffect(() => {
         playerService.sync({
             media,
+            playing: false,
         });
     }, [media]);
 
