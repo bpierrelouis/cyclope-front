@@ -35,7 +35,7 @@ export default function Treatment() {
     if (!media) return (null);
 
     return (
-        <div className='flex flex-col size-full'>
+        <div className='flex flex-col max-h-screen size-full'>
             <Media hidden={selected !== ROUTES.media} />
             {selected === ROUTES.plan && <Plan />}
             {selected === ROUTES.table && <Table />}
