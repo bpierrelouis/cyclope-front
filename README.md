@@ -1,93 +1,186 @@
-# CYCLOPE_FRONT
+# Cyclope frontend
+Projet React + TailwindCSS + DaisyUI
 
+---
 
+## 🧱 Stack technique
 
-## Getting started
+* React (fonctionnel uniquement)
+* TailwindCSS
+* DaisyUI
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+---
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+## 📁 Structure du projet (à respecter strictement)
 
 ```
-cd existing_repo
-git remote add origin https://svr-gitlab.shiva-np.air.defense.gouv.fr/cylope/cyclope_front.git
-git branch -M main
-git push -uf origin main
+src
+├── assets/          # Ressources nécessaires
+├── components/      # Composants réutilisables (UI)
+├── constants/       # Constantes globales
+├── contexts/        # Contextes
+├── hooks/           # Hooks custom
+├── services/        # Appels API / logique externe
+├── stores/          # zustand
+├── utils/           # Fonctions utilitaires
+├── views/           # Composants d'écran et vues
+├── App.jsx          # Point d'entrée
+├── router.js        # Router
+└── style.css        # Seul fichier CSS
 ```
 
-## Integrate with your tools
+### Règles :
 
-- [ ] [Set up project integrations](https://svr-gitlab.shiva-np.air.defense.gouv.fr/cylope/cyclope_front/-/settings/integrations)
+* **Pas de logique métier dans les composants UI**
+* **Pas de composants “fourre-tout”**
+* Toujours organiser par responsabilité
 
-## Collaborate with your team
+---
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+## 🧩 Composants React
 
-## Test and Deploy
+### Convention obligatoire :
 
-Use the built-in continuous integration in GitLab.
+```js
+export default function MonComposant(props) {
+  return (
+        <div>...</div>
+    );
+}
+```
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+### Règles :
 
-***
+* Un composant = une responsabilité
+* Pas de logique complexe inline → extraire dans hooks ou utils
+* Noms explicites
 
-# Editing this README
+---
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+## 🎨 Styling (Tailwind + DaisyUI)
 
-## Suggestions for a good README
+### Obligations :
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+* Prioriser les classes sémantiques **DaisyUI**
+* Sinon, utiliser les classes utilitaires **Tailwind**
 
-## Name
-Choose a self-explaining name for your project.
+### Interdits :
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+* ❌ Couleurs hardcodées (`text-red-500`, etc.) sauf exception justifiée
+* ❌ CSS custom inutile
+* ❌ Inline styles
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+---
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+## 🧠 Architecture & principes
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+### SOLID (obligatoire)
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+* **Responsabilité unique (Single responsibility principle)** → Une classe, une fonction ou une méthode doit avoir une et une seule unique raison d'être. Cela favorise la modularité et facilite la maintenance en évitant les classes surchargées de responsabilités.
+* **Ouvert/fermé (Open/closed principle)** → Une entité applicative (classe, fonction, module ...) doit être fermée à la modification directe mais ouverte à l'extension. L'objectif est de permettre l'ajout de nouvelles fonctionnalités sans altérer le code existant.
+* **Substitution de Liskov (Liskov substitution principle)** → Une instance de type T doit pouvoir être remplacée par une instance de type G, tel que G sous-type de T, sans que cela ne modifie la cohérence du programme. Cela garantit que les sous-classes peuvent être utilisées de manière interchangeable avec leurs classes de base.
+* **Ségrégation des interfaces (Interface segregation principle)** → Préférer plusieurs interfaces spécifiques pour chaque client plutôt qu'une seule interface générale. Cela évite aux classes de dépendre de méthodes dont elles n'ont pas besoin, réduisant ainsi les couplages inutiles.
+* **Inversion des dépendances (Dependency inversion principle)** → Il faut dépendre des abstractions, pas des implémentations. Cela favorise la modularité, la flexibilité et la réutilisabilité en réduisant les dépendances directes entre les modules.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+---
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+## 🔁 Gestion des états
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+* Favoriser :
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+  * `useState`, `useReducer`
+  * hooks custom
+* Centraliser si nécessaire (Context / Zustand / autre)
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+---
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+## 🌐 API & Services
 
-## License
-For open source projects, say how it is licensed.
+* Tous les appels API doivent être dans `services/`
+* Aucun `fetch` ou `axios` dans les composants
+* Gestion des erreurs centralisée
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+---
+
+## 🧹 Qualité du code
+
+### ESLint (strict)
+
+* ❌ Interdiction de push si erreurs ESLint
+* ✔ Code doit être clean avant commit
+
+### Bonnes pratiques :
+
+* Pas de `console.log`
+* Pas de code mort
+* Imports propres (pas inutiles et surtout triés)
+* Nommage explicite
+
+---
+
+## 🔀 Git & commits
+
+### Règles :
+
+* Commits clairs et atomiques
+* Convention recommandée :
+
+  * `feat:` → nouvelle fonctionnalité
+  * `fix:` → correction de bug
+  * `refactor:` → modification interne sans changement fonctionnel
+  * `style:` → formatage (indentation, espaces...)
+  * `chore:` → tout ce qui est hors code applicatif
+
+### Interdits :
+
+* ❌ Push direct sur `main`
+* ❌ Code non testé
+* ❌ Code cassé
+
+---
+
+## ⚙️ Performance
+
+* Mémoisation (`useMemo`, `useCallback`) si nécessaire
+* Eviter les re-renders inutiles
+
+---
+
+## 📏 Règles générales
+
+* Code lisible > code clever
+* Cohérence > préférence personnelle
+* Simplicité > complexité
+* Factoriser sans sur-abstraire
+* Code en anglais
+
+---
+
+## ❌ Anti-patterns à éviter
+
+* Composants de 300+ lignes
+* Props drilling excessif
+* Duplication de code
+* Logique métier dans le JSX
+* CSS custom non justifié
+
+---
+
+## ✅ Definition of Done
+
+Un code est considéré comme terminé si :
+
+* ✔ ESLint passe sans erreur
+* ✔ Respect de la structure
+* ✔ Composants découplés
+* ✔ UI conforme DaisyUI
+* ✔ Pas de code inutile
+* ✔ Compréhensible sans explication orale
+
+---
+
+## Auteurs & Propriété
+
+- Département Ingéniérie Logicielle
+- Escadron des Systèmes d'Information Opérationnels et Cyberdéfense 62.430
+- Armée de l'Air et de l'Espace
