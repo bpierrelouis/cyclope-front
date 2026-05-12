@@ -13,16 +13,25 @@ const getHandlers = (resource, data) => [
 
     // GET BY ID
     http.get(`/api/${resource}/:id`, ({ params }) => {
-        const mission = data.find(item => item.id === params.id);
+        const target = data.find(item => item.id === params.id);
 
-        if (!mission) {
+        if (!target) {
             return HttpResponse.json(
                 { message: `${resource} not found` },
                 { status: 404 },
             );
         }
 
-        return HttpResponse.json(mission);
+        return HttpResponse.json(target);
+    }),
+
+    // UPDATE
+    http.patch(`/api/${resource}/:id`, async ({ params, request }) => {
+        const changes = await request.clone().json();
+        const index = data.findIndex(({ id }) => id === params.id);
+        const updated = { ...data[index], ...changes };
+        data[index] = updated;
+        return HttpResponse.json(updated);
     }),
 
     // DELETE

@@ -73,3 +73,7 @@
     --depth: 0;
     --noise: 0;
 }
+
+.tooltip {
+    @apply z-50;
+}

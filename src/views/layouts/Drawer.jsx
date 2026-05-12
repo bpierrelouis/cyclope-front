@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router';
-import SideBar from './SideBar';
+import { SideBar } from '../sidebar';
 
-export default function Drawer() {
+export function Drawer() {
     const drawerId = 'my-drawer';
     return (
         <div className='drawer drawer-open'>

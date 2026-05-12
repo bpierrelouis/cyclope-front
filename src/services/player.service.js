@@ -1,4 +1,4 @@
-import { usePlayerStore } from '../stores/playerStore';
+import { usePlayerStore } from '../stores';
 
 const MESSAGE_TYPES = {
     REQUEST_STATE: 'REQUEST_STATE',
@@ -19,7 +19,7 @@ class PlayerService {
             switch (message.type) {
 
                 case MESSAGE_TYPES.REQUEST_STATE:
-                    this.handleRequestState();
+                    this.handleRequestState(message.payload);
                     break;
 
                 case MESSAGE_TYPES.STATE_UPDATE:
@@ -29,9 +29,11 @@ class PlayerService {
         };
     }
 
-    handleRequestState() {
+    handleRequestState(payload) {
         const state = usePlayerStore.getState();
         if (!state.isMaster) return;
+
+        this.setLocalState(payload);
 
         this.stateUpdate({
             playing: state.playing,
@@ -41,9 +43,10 @@ class PlayerService {
         });
     }
 
-    requestState() {
+    requestState(payload) {
         playerChannel.postMessage({
             type: MESSAGE_TYPES.REQUEST_STATE,
+            payload,
         });
     }
 

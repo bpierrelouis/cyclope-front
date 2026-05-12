@@ -1,9 +1,10 @@
 import { PauseIcon, PlayIcon, SkipBackIcon, SkipForwardIcon } from 'lucide-react';
-import { playerService } from '../../services/player.service';
-import { usePlayerStore } from '../../stores/playerStore';
-import { formatTime } from '../../utils/labels';
+import { SquareButton } from '../../components';
+import { playerService } from '../../services';
+import { usePlayerStore } from '../../stores';
+import { formatTime } from '../../utils';
 
-export default function Controls() {
+export function Controls() {
     const {
         playing,
         currentTime,
@@ -28,18 +29,18 @@ export default function Controls() {
 
     return (
         <div className='flex items-center gap-1 mx-4 my-1'>
-            <button className='btn-shadow btn btn-circle'>
+            <Button label='Frame précédente'>
                 <SkipBackIcon />
-            </button>
-            <button
-                className='btn-shadow btn btn-circle'
+            </Button>
+            <Button
+                label={playing ? 'Pause' : 'Lecture'}
                 onClick={togglePlaying}
             >
                 {playing ? <PauseIcon /> : <PlayIcon />}
-            </button>
-            <button className='btn-shadow btn btn-circle'>
+            </Button>
+            <Button label='Frame suivante'>
                 <SkipForwardIcon />
-            </button>
+            </Button>
 
             <input
                 type='range'
@@ -54,5 +55,14 @@ export default function Controls() {
                 {formatTime(currentTime)} / {formatTime(duration)}
             </span>
         </div>
+    );
+}
+
+function Button(props) {
+    return (
+        <SquareButton
+            {...props}
+            className='tooltip-top'
+        />
     );
 }

@@ -1,11 +1,10 @@
-import { STATUS_LABELS } from '../../constants/labels';
-import { STATUS } from '../../constants/others';
+import { STATUS, STATUS_LABELS } from '../../constants';
 
-export default function StatusTabs(props) {
+export function StatusTabs(props) {
     const [status, setStatus] = props.statusState;
 
     return (
-        <div role='tablist' className='tabs tabs-border'>
+        <div role='tablist' className='tabs-border tabs'>
             {STATUS.map((s) => (
                 <button
                     key={s}

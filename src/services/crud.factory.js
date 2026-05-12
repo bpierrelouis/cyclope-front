@@ -14,7 +14,7 @@ export const createCrudService = (endPoint) => {
 
     const update = ({ id, data }) =>
         httpRequest(`${endPoint}/${id}`, {
-            method: 'PUT',
+            method: 'PATCH',
             body: JSON.stringify(data),
         });
 

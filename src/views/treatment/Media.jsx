@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react';
-import { playerService } from '../../services/player.service';
-import { usePlayerStore } from '../../stores/playerStore';
+import { playerService } from '../../services';
+import { usePlayerStore } from '../../stores';
+import { sendOpenStateToMaster } from '../../utils';
 
-export default function Media(props) {
+export function Media(props) {
     const videoRef = useRef();
 
     const {
@@ -12,12 +13,9 @@ export default function Media(props) {
         isMaster,
     } = usePlayerStore();
 
-    if (!isMaster) console.log(media);
-
     useEffect(() => {
         if (isMaster) return;
-        console.log('requesting');
-        playerService.requestState();
+        return sendOpenStateToMaster('isMediaOpen');
     }, [isMaster]);
 
     useEffect(() => {
@@ -60,7 +58,6 @@ export default function Media(props) {
             onTimeUpdate={handleTimeUpdate}
             src={media.url}
             muted
-            autoPlay
             loop
         />
     ) : (

@@ -1,6 +1,6 @@
 import { SunMoonIcon } from 'lucide-react';
 
-export default function ThemeSwap() {
+export function ThemeSwap() {
     return (
         <label className='is-drawer-close:hidden btn btn-ghost'>
             <input

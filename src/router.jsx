@@ -1,30 +1,26 @@
 import { createBrowserRouter, Navigate } from 'react-router';
 import { ROUTES } from './constants';
-import MissionCreate from './views/MissionCreate';
-import MissionsScreen from './views/missions';
-import Navbar from './views/navbar';
-import Settings from './views/Settings';
-import Treatment, { Media, Plan, Table } from './views/treatment';
+import { Drawer, Media, MissionListScreen, NewScreen, Plan, SettingsScreen, Table, TreatmentScreen } from './views';
 
 export const BROWSER_ROUTER = createBrowserRouter([
     {
-        Component: Navbar,
+        Component: Drawer,
         children: [
             {
                 path: ROUTES.settings,
-                Component: Settings,
+                Component: SettingsScreen,
             },
             {
                 path: ROUTES.new,
-                Component: MissionCreate,
+                Component: NewScreen,
             },
             {
-                path: ROUTES.missions,
-                Component: MissionsScreen,
+                path: ROUTES.missionList,
+                Component: MissionListScreen,
             },
             {
                 path: ROUTES.treatment,
-                Component: Treatment,
+                Component: TreatmentScreen,
             },
         ],
     },
@@ -42,6 +38,6 @@ export const BROWSER_ROUTER = createBrowserRouter([
     },
     {
         path: '*',
-        element: (<Navigate to={ROUTES.missions} replace />),
+        element: (<Navigate to={ROUTES.missionList} replace />),
     },
 ]);

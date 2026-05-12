@@ -41,8 +41,8 @@ src
 
 ### Convention obligatoire :
 
-```js
-export default function MonComposant(props) {
+```jsx
+export function MonComposant(props) {
   return (
         <div>...</div>
     );
