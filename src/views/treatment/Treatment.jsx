@@ -1,5 +1,6 @@
 import { FilmIcon, ImageIcon, MapIcon, SquareArrowOutUpRightIcon, TableIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { SquareButton } from '../../components';
 import { ROUTES } from '../../constants';
 import { useGlobalSelection } from '../../hooks';
 import { playerService } from '../../services/player.service';
@@ -63,19 +64,19 @@ export default function Treatment() {
                         ['Carte', ROUTES.plan, <MapIcon />],
                         ['Tableau', ROUTES.table, <TableIcon />],
                         [media.isVideo ? 'Vidéo' : 'Image', ROUTES.media, media.isVideo ? <FilmIcon /> : <ImageIcon />],
-                    ].map(([title, route, children]) => (
+                    ].map(([label, route, children]) => (
                         <Button
                             key={route}
                             onClick={() => setSelected(route)}
                             hidden={disabledComponents[route]}
-                            title={title}
+                            label={label}
                         >
                             {children}
                         </Button>
                     ))}
                     <Button
                         onClick={handleExtract}
-                        title='Extraire'
+                        label='Extraire'
                     >
                         <SquareArrowOutUpRightIcon />
                     </Button>
@@ -94,12 +95,9 @@ export default function Treatment() {
 function Button(props) {
     if (props.hidden) return (null);
     return (
-        <button
-            className='tooltip-bottom btn btn-ghost btn-square tooltip'
-            onClick={props.onClick}
-            data-tip={props.title}
-        >
-            {props.children}
-        </button>
+        <SquareButton
+            {...props}
+            className='tooltip-bottom'
+        />
     );
 }
