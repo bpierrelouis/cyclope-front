@@ -1,4 +1,4 @@
-import { FilmIcon, ImageIcon, MapIcon, SquareArrowOutUpRightIcon, TableIcon } from 'lucide-react';
+import { ExternalLinkIcon, FilmIcon, ImageIcon, MapIcon, TableIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { SquareButton } from '../../components';
 import { ROUTES } from '../../constants';
@@ -78,7 +78,7 @@ export default function Treatment() {
                         onClick={handleExtract}
                         label='Extraire'
                     >
-                        <SquareArrowOutUpRightIcon />
+                        <ExternalLinkIcon />
                     </Button>
                 </div>
             </div>
