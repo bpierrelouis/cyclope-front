@@ -4,11 +4,18 @@ import { mockMedias, mockMissions } from './data';
 let missions = [...mockMissions];
 let medias = [...mockMedias];
 
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
 const getHandlers = (resource, data) => [
 
     // GET ALL
-    http.get('/api/' + resource, () => {
-        return HttpResponse.json(data);
+    http.get(`/api/${resource}`, async ({ request }) => {
+        const url = new URL(request.url);
+        const searchParams = url.searchParams;
+        const params = Object.fromEntries(searchParams.entries());
+        const entries = Object.entries(params);
+        const items = data.filter((item) => entries.every(([k, v]) => item[k] == v));
+        return HttpResponse.json(items);
     }),
 
     // GET BY ID
@@ -54,12 +61,6 @@ const getHandlers = (resource, data) => [
 ];
 
 export const handlers = [
-
     ...getHandlers('missions', missions),
     ...getHandlers('medias', medias),
-
-    // GET MEDIAS BY MISSION ID
-    http.get('/api/missions/:id/medias', () => {
-        return HttpResponse.json(medias);
-    }),
 ];

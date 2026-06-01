@@ -1,9 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export const createCrudQueries = (resource, service) => {
-    const useGetAll = () => useQuery({
-        queryKey: [resource],
-        queryFn: service.getAll,
+    const useGetAll = (urlSearchParams) => useQuery({
+        queryKey: urlSearchParams ? [resource, urlSearchParams.toString()] : [resource],
+        queryFn: () => service.getAll(urlSearchParams),
     });
 
     const useGetById = (id) => useQuery({

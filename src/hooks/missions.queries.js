@@ -7,13 +7,15 @@ const service = missionsService;
 
 const queries = createCrudQueries(resource, service);
 
-const useGetAllMediasByMissionId = (id) => useQuery({
-    queryKey: [resource, id, 'medias'],
-    queryFn: () => service.getAllMediasByMissionId(id),
-    enabled: !!id,
+const getURLSearchParamsForStatus = (status) =>
+    status === 'all' ? null : new URLSearchParams({ status });
+
+const useGetAllByStatus = (status) => useQuery({
+    queryKey: [resource, status],
+    queryFn: () => service.getAll(getURLSearchParamsForStatus(status)),
 });
 
 export const missionsQueries = {
     ...queries,
-    useGetAllMediasByMissionId,
+    useGetAllByStatus,
 };

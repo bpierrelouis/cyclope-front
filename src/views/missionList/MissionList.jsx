@@ -1,12 +1,15 @@
-import { MissionListRow } from './MissionListRow';
+import { missionsQueries } from '../../hooks';
+import { MissionListItem } from './MissionListItem';
 
 export function MissionList(props) {
-    const selectedMissions = props.status === 'all' ? props.missions : props.missions.filter((m) => m.status === props.status);
+    const { status } = props;
+
+    const { data: missions } = missionsQueries.useGetAllByStatus(status);
 
     return (
-        <div className='bg-base-100 shadow-md rounded-box list'>
-            {selectedMissions.map((m) => (
-                <MissionListRow key={m.id} mission={m} />
+        <div className='flex flex-col gap-1 tab-content'>
+            {missions?.map((m) => (
+                <MissionListItem key={m.id} mission={m} />
             ))}
         </div>
     );
