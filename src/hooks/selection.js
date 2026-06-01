@@ -24,7 +24,7 @@ const useMediaSelection = () =>
 export const useGlobalSelection = () => {
     const [missionResult] = useMissionSelection();
     const [mediaResult, setMediaId] = useMediaSelection();
-    const mediasResult = missionsQueries.useGetAllMediasByMissionId(missionResult.data?.id);
+    const mediasResult = mediasQueries.useGetAllByMissionId(missionResult.data?.id);
 
     const { data: mission } = missionResult;
     const { data: media } = mediaResult;

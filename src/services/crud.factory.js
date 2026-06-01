@@ -2,9 +2,11 @@ import { httpRequest } from './httpClient';
 
 export const createCrudService = (endPoint) => {
 
-    const getAll = () => httpRequest(endPoint);
+    const getAll = (urlSearchParams) =>
+        httpRequest(`${endPoint}?${urlSearchParams || new URLSearchParams()}`);
 
-    const getById = (id) => httpRequest(`${endPoint}/${id}`);
+    const getById = (id) =>
+        httpRequest(`${endPoint}/${id}`);
 
     const create = (payload) =>
         httpRequest(endPoint, {

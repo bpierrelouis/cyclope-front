@@ -1,4 +1,5 @@
-import { STATUS, STATUS_LABELS } from '../../constants';
+import { STATUS } from '../../constants';
+import { StatusTab } from './StatusTab';
 
 export function StatusTabs(props) {
     const [status, setStatus] = props.statusState;
@@ -6,14 +7,12 @@ export function StatusTabs(props) {
     return (
         <div role='tablist' className='tabs-border tabs'>
             {STATUS.map((s) => (
-                <button
+                <StatusTab
                     key={s}
-                    role='tab'
-                    onClick={() => setStatus(s)}
-                    className={`tab ${s === status ? 'tab-active text-primary border-primary' : ''}`}
-                >
-                    {STATUS_LABELS[s]}
-                </button>
+                    status={s}
+                    setter={setStatus}
+                    isSelected={s === status}
+                />
             ))}
         </div>
     );
