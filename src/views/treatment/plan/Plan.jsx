@@ -2,7 +2,7 @@ import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { Protocol } from 'pmtiles';
 import { useEffect, useMemo, useRef } from 'react';
-import {Layer, Map, NavigationControl, Source} from 'react-map-gl/maplibre';
+import { Layer, Map, NavigationControl, Source } from 'react-map-gl/maplibre';
 import { INIT_ZOOM, MAX_ZOOM, MIN_ZOOM } from '../../../constants';
 import { filesQueries, resultsQueries } from '../../../hooks';
 import { usePlayerStore } from '../../../stores';
@@ -59,7 +59,7 @@ export function Plan() {
             mapStyle={mapStyle}
             style={{ width: '100%', height: '100%', flex: 1, minHeight: 0 }}
         >
-            <NavigationControl position="top-right" />
+            <NavigationControl position='top-right' />
             {points?.length >= 2 && (
                 <Source id='route-line' type='geojson' data={routeGeoJson}>
                     <Layer
