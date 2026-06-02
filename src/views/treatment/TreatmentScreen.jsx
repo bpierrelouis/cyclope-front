@@ -7,7 +7,7 @@ import { playerService } from '../../services';
 import { usePlayerStore } from '../../stores';
 import { Controls } from './Controls';
 import { Media } from './Media';
-import { Plan } from './Plan';
+import { Plan } from './plan';
 import { Table } from './Table';
 
 export function TreatmentScreen() {
