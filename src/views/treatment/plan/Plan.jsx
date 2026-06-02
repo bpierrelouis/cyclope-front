@@ -3,7 +3,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { Protocol } from 'pmtiles';
 import { useEffect, useMemo, useRef } from 'react';
 import { Layer, Map, NavigationControl, Source } from 'react-map-gl/maplibre';
-import { INIT_ZOOM, MAX_ZOOM, MIN_ZOOM } from '../../../constants';
+import { MAX_ZOOM, MIN_ZOOM } from '../../../constants';
 import { filesQueries, resultsQueries } from '../../../hooks';
 import { usePlayerStore } from '../../../stores';
 import { buildMapStyle, sendOpenStateToMaster } from '../../../utils';
@@ -44,16 +44,21 @@ export function Plan() {
         },
     }), [points]);
 
-    const initialViewState = useMemo(() => ({
-        longitude: points?.[0]?.longitude ?? 0,
-        latitude: points?.[0]?.latitude ?? 0,
-        zoom: INIT_ZOOM.zoom,
-    }), [points]);
+    useEffect(() => {
+        if (!points?.length || !mapRef.current) return;
+
+        const longitudes = points.map(p => p.longitude);
+        const latitudes = points.map(p => p.latitude);
+
+        mapRef.current.fitBounds(
+            [[Math.min(...longitudes), Math.min(...latitudes)], [Math.max(...longitudes), Math.max(...latitudes)]],
+            { padding: 50, duration: 0 }
+        );
+    }, [points]);
 
     return (
         <Map
             ref={mapRef}
-            initialViewState={initialViewState}
             minZoom={MIN_ZOOM}
             maxZoom={MAX_ZOOM}
             mapStyle={mapStyle}

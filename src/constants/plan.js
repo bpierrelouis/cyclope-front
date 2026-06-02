@@ -7,4 +7,3 @@ export const MAP_THEME = namedFlavor('light');
 
 export const MIN_ZOOM = 0;
 export const MAX_ZOOM = 20;
-export const INIT_ZOOM = 15;
