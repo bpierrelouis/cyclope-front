@@ -1,8 +1,9 @@
 import { http, HttpResponse } from 'msw';
-import { mockMedias, mockMissions } from './data';
+import { mockMedias, mockMissions, mockResults } from './data';
 
 let missions = [...mockMissions];
 let medias = [...mockMedias];
+let results = [...mockResults];
 
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
@@ -63,4 +64,5 @@ const getHandlers = (resource, data) => [
 export const handlers = [
     ...getHandlers('missions', missions),
     ...getHandlers('medias', medias),
+    ...getHandlers('results', results),
 ];

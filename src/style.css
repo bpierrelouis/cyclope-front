@@ -77,3 +77,28 @@
 .tooltip {
     @apply z-50;
 }
+
+.marker-pin {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    border: 2px solid white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.marker-start {
+    background: var(--color-success);
+}
+
+.marker-step {
+    background: var(--color-info);
+}
+
+.marker-end {
+    background: var(--color-error);
+}

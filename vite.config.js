@@ -10,4 +10,18 @@ export default defineConfig({
         tailwindcss(),
         svgr(),
     ],
+    server: {
+        proxy: {
+            '/api': {
+                target: 'http://localhost:8000/',
+                changeOrigin: true,
+                secure: false,
+                configure: (proxy) => {
+                    proxy.on('proxyRes', (proxyRes) => {
+                        proxyRes.headers['Access-Control-Allow-Origin'] = '*';
+                    });
+                }
+            }
+        }
+    }
 });

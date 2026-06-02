@@ -38,3 +38,36 @@ export const mockMedias = [
         missionId: 1,
     },
 ];
+
+export const mockResults = [
+    {
+        treatment_id: 1,
+        id: 1,
+        index: 1,
+        response_json: {
+            coordinates: [
+                { longitude: 2.3522, latitude: 48.8566 },
+            ],
+        },
+    },
+    {
+        treatment_id: 1,
+        id: 2,
+        index: 2,
+        response_json: {
+            coordinates: [
+                { longitude: 2.3600, latitude: 48.8600 },
+            ],
+        },
+    },
+    {
+        treatment_id: 1,
+        id: 3,
+        index: 3,
+        response_json: {
+            coordinates: [
+                { longitude: 2.3700, latitude: 48.8700 },
+            ],
+        },
+    },
+];
