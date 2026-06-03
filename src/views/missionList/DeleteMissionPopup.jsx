@@ -1,51 +1,58 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
+import { mediasQueries, missionsQueries } from '../../hooks';
 import { preventDefault } from '../../utils';
 
-export function DeleteMissionPopup({ open, onClose, onConfirm, missionName, mediaCount }) {
+export function DeleteMissionPopup(props) {
+    const { mission, openState } = props;
+    const [isModalOpen, setIsModalOpen] = openState;
+
     const dialogRef = useRef(null);
+    const { data: medias } = mediasQueries.useGetAllByMissionId(mission.id);
+    const deleteMutation = missionsQueries.useDelete();
+
+    const mediaCount = medias?.length ?? 0;
 
     useEffect(() => {
         const dialog = dialogRef.current;
         if (!dialog) return;
-        if (open) dialog.showModal();
+        if (isModalOpen) dialogRef.current.showModal();
         else dialog.close();
-    }, [open]);
+    }, [isModalOpen]);
+
+    const content = useMemo(() => {
+        let text = 'Cette action entrainera la suppression ';
+        if (mediaCount > 1) {
+            text += `des ${mediaCount} médias associés.`;
+        } else if (mediaCount === 1) {
+            text += 'd\'un média associé.';
+        } else {
+            text += 'd\'aucun média associé.';
+        }
+        return text;
+    }, [mediaCount]);
+
+    const handleClose = () => setIsModalOpen(false);
+    const handleDelete = () => deleteMutation.mutate(mission.id);
 
     return (
         <dialog
             ref={dialogRef}
             className='modal'
-            onClose={onClose}
-            onClick={preventDefault(() => {
-            })}
         >
             <div className='modal-box'>
-                <h3 className='font-bold text-lg'>Supprimer la mission</h3>
-
+                <h3 className='font-bold text-lg'>{mission.name}</h3>
                 <div className='py-4'>
-                    <p>
-                        Voulez-vous vraiment supprimer la mission{' '}
-                        <span className='font-semibold'>{missionName}</span> ?
-                    </p>
-                    <p className='opacity-70 text-sm'>
-                        {mediaCount} média{mediaCount > 1 ? 's' : ''} associé
-                        {mediaCount > 1 ? 's' : ''}.
-                    </p>
+                    <p>Voulez-vous vraiment supprimer cette mission ?<br />{content}</p>
                 </div>
-
                 <div className='modal-action'>
-                    <button className='btn btn-soft' onClick={preventDefault(onClose)}>
+                    <button className='btn btn-soft' onClick={preventDefault(handleClose)}>
                         Annuler
                     </button>
-                    <button className='btn btn-error' onClick={preventDefault(onConfirm)}>
+                    <button className='btn btn-error' onClick={preventDefault(handleDelete)}>
                         Supprimer
                     </button>
                 </div>
             </div>
-
-            <form method='dialog' className='modal-backdrop'>
-                <button onClick={preventDefault(onClose)}>close</button>
-            </form>
         </dialog>
     );
 }
