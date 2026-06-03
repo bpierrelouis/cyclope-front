@@ -1,10 +1,18 @@
+import { createCrudService } from './crud.factory';
 import { httpRequest } from './httpClient';
 
 export const filesResourceName = 'files';
 
-const get = (url) =>
+const service = createCrudService(filesResourceName);
+
+const getContent = (url) =>
     httpRequest(`${filesResourceName}/download?url=${encodeURIComponent(url)}`);
 
+const getTree = () =>
+    httpRequest(`${filesResourceName}/tree`);
+
 export const filesService = {
-    get,
+    ...service,
+    getContent,
+    getTree,
 };

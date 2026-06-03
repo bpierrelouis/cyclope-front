@@ -1,18 +1,28 @@
 import { useQuery } from '@tanstack/react-query';
 import { filesResourceName, filesService } from '../services';
+import { createCrudQueries } from './crud.factory';
 
 const resource = filesResourceName;
 const service = filesService;
 
-const useGet = (url) => useQuery({
+const queries = createCrudQueries(resource, service);
+
+const useGetContent = (url) => useQuery({
     queryKey: [resource, url],
-    queryFn: () => service.get(url),
+    queryFn: () => service.getContent(url),
     enabled: !!url,
 });
 
-const useCarto = () => useGet('carto/world_10.pmtiles');
+const useCarto = () => useGetContent('carto/world_10.pmtiles');
+
+const useGetTree = () => useQuery({
+    queryKey: [resource],
+    queryFn: () => service.getTree(),
+});
 
 export const filesQueries = {
-    useGet,
+    ...queries,
+    useGetContent,
     useCarto,
+    useGetTree,
 };

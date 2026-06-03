@@ -1,7 +1,16 @@
 import { createCrudService } from './crud.factory';
+import { httpRequest } from './httpClient';
 
 export const missionsResourceName = 'missions';
 
 const service = createCrudService(missionsResourceName);
 
-export const missionsService = service;
+const create = (payload) => httpRequest('new', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+});
+
+export const missionsService = {
+    ...service,
+    create,
+};
