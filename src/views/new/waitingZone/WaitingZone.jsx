@@ -22,9 +22,11 @@ export function WaitingZone(props) {
                 />
                 <div className='my-1 divider' />
                 <FileList files={files} />
-                <p className='opacity-60 mt-2 border-base-200 text-xs text-right'>
-                    Total : {fileCount} fichier{fileCount > 1 ? 's' : ''} - {formatFileSize(totalSize)}
-                </p>
+                {fileCount > 0 && (
+                    <p className='opacity-60 mt-2 border-base-200 text-xs text-right'>
+                        Total : {fileCount} fichier{fileCount > 1 ? 's' : ''} - {formatFileSize(totalSize)}
+                    </p>
+                )}
             </div>
         </div>
     );
