@@ -1,5 +1,5 @@
 import { http, HttpResponse } from 'msw';
-import { mockMedias, mockMissions, mockResults } from './data';
+import { mockMedias, mockMissions, mockResults, mocksFilesTree } from './data';
 
 let missions = [...mockMissions];
 let medias = [...mockMedias];
@@ -15,6 +15,7 @@ const getHandlers = (resource, data) => [
         const searchParams = url.searchParams;
         const params = Object.fromEntries(searchParams.entries());
         const entries = Object.entries(params);
+        if (!entries.length) return HttpResponse.json(data);
         const items = data.filter((item) => entries.every(([k, v]) => item[k] == v));
         return HttpResponse.json(items);
     }),
@@ -65,4 +66,5 @@ export const handlers = [
     ...getHandlers('missions', missions),
     ...getHandlers('medias', medias),
     ...getHandlers('results', results),
+    ...getHandlers('files/tree', mocksFilesTree),
 ];

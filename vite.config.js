@@ -20,8 +20,8 @@ export default defineConfig({
                     proxy.on('proxyRes', (proxyRes) => {
                         proxyRes.headers['Access-Control-Allow-Origin'] = '*';
                     });
-                }
-            }
-        }
-    }
+                },
+            },
+        },
+    },
 });

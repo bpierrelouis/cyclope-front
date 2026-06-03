@@ -56,7 +56,7 @@ export const mockResults = [
         index: 2,
         response_json: {
             coordinates: [
-                { longitude: 2.3600, latitude: 48.8600 },
+                { longitude: 2.36, latitude: 48.86 },
             ],
         },
     },
@@ -66,8 +66,52 @@ export const mockResults = [
         index: 3,
         response_json: {
             coordinates: [
-                { longitude: 2.3700, latitude: 48.8700 },
+                { longitude: 2.37, latitude: 48.87 },
             ],
         },
+    },
+];
+
+export const mocksFilesTree = [
+    {
+        id: 1,
+        name: 'fichier1.jpg',
+        url: 'https://picsum.photos/300/200',
+        size: 6000,
+        extension: 'jpg',
+    },
+    {
+        id: 2,
+        name: 'fichier2.jpg',
+        url: 'https://picsum.photos/300/200',
+        size: 6000,
+        extension: 'jpg',
+    },
+    {
+        id: 3,
+        name: 'fichier3.jpg',
+        url: 'https://picsum.photos/300/200',
+        size: 6000,
+        extension: 'jpg',
+    },
+    {
+        name: 'sous-dossier1',
+        children: [
+            {
+                id: 4,
+                name: 'fichier4.jpg',
+                url: 'https://picsum.photos/300/200',
+                size: 6000,
+                extension: 'jpg',
+            },
+            {
+                id: 5,
+                name: 'mov_bbb.mp4',
+                url: 'https://www.w3schools.com/html/mov_bbb.mp4',
+                size: 8000,
+                extension: 'mp4',
+                duration: 50,
+            },
+        ],
     },
 ];
