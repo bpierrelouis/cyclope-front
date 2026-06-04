@@ -69,6 +69,7 @@ const getHandlers = (resource, data) => [
 export const handlers = [
     ...getHandlers('missions', missions),
     ...getHandlers('medias', medias),
+    ...getHandlers('treatments', treatments),
     ...getHandlers('results', results),
     ...getHandlers('files/tree', mocksFilesTree),
 

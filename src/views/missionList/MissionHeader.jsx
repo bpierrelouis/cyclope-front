@@ -36,7 +36,7 @@ export function MissionHeader(props) {
                 className='group flex items-center gap-2 hover:bg-base-200 px-3 py-2 cursor-pointer'
                 to={{
                     pathname: ROUTES.treatment,
-                    search: `?missionId=${mission.id}`,
+                    search: `?mission=${mission.id}`,
                 }}
             >
                 <button

@@ -10,7 +10,7 @@ export function MissionMediaListItem(props) {
         <Link
             to={{
                 pathname: ROUTES.treatment,
-                search: `?mediaId=${media.id}`,
+                search: `?media=${media.id}`,
             }}
             className='flex items-center gap-2 hover:bg-base-200 px-8'
         >
