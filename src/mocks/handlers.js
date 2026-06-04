@@ -1,11 +1,10 @@
 import { http, HttpResponse } from 'msw';
-import { mockMedias, mockMissions, mockResults, mocksFilesTree } from './data';
+import { mockMedias, mockMissions, mockResults, mocksFilesTree, mockTreatments } from './data';
 
 let missions = [...mockMissions];
 let medias = [...mockMedias];
+let treatments = [...mockTreatments];
 let results = [...mockResults];
-
-const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
 const getHandlers = (resource, data) => [
 
@@ -16,13 +15,18 @@ const getHandlers = (resource, data) => [
         const params = Object.fromEntries(searchParams.entries());
         const entries = Object.entries(params);
         if (!entries.length) return HttpResponse.json(data);
-        const items = data.filter((item) => entries.every(([k, v]) => item[k] == v));
+        const items = data.filter((item) => entries.every(([k, v]) => {
+            if (Array.isArray(item[k])) {
+                return Boolean(item[k].find((iv) => iv == v));
+            }
+            return item[k] == v;
+        }));
         return HttpResponse.json(items);
     }),
 
     // GET BY ID
     http.get(`/api/${resource}/:id`, ({ params }) => {
-        const target = data.find(item => item.id === params.id);
+        const target = data.find(item => item.id == params.id);
 
         if (!target) {
             return HttpResponse.json(
@@ -37,7 +41,7 @@ const getHandlers = (resource, data) => [
     // UPDATE
     http.patch(`/api/${resource}/:id`, async ({ params, request }) => {
         const changes = await request.clone().json();
-        const index = data.findIndex(({ id }) => id === params.id);
+        const index = data.findIndex(({ id }) => id == params.id);
         const updated = { ...data[index], ...changes };
         data[index] = updated;
         return HttpResponse.json(updated);
@@ -45,7 +49,7 @@ const getHandlers = (resource, data) => [
 
     // DELETE
     http.delete(`/api/${resource}/:id`, ({ params }) => {
-        const index = data.findIndex(item => item.id === params.id);
+        const index = data.findIndex(item => item.id == params.id);
 
         if (index === -1) {
             return HttpResponse.json(
@@ -67,4 +71,8 @@ export const handlers = [
     ...getHandlers('medias', medias),
     ...getHandlers('results', results),
     ...getHandlers('files/tree', mocksFilesTree),
+
+    http.get('/api/medias/:id/last_treatment', () => {
+        return HttpResponse.json(treatments[0]);
+    }),
 ];

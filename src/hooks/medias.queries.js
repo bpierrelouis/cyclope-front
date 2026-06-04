@@ -9,7 +9,7 @@ const queries = createCrudQueries(resource, service);
 
 const useGetAllByMissionId = (missionId) => useQuery({
     queryKey: [resource, 'mission', missionId],
-    queryFn: () => service.getAll(new URLSearchParams({ missionId })),
+    queryFn: () => service.getAll(new URLSearchParams({ mission_id: missionId })),
     enabled: !!missionId,
 });
 

@@ -1,16 +1,15 @@
-import { useQuery } from '@tanstack/react-query';
 import { resultsResourceName, resultsService } from '../services';
-import { sortAndMapPoints } from '../utils';
+import { createCrudQueries } from './crud.factory';
 
 const resource = resultsResourceName;
 const service = resultsService;
 
-const useGetAllPointsByTreatmentId = (treatmentId) => useQuery({
-    queryKey: [resource, treatmentId],
-    queryFn: () => service.getAll(new URLSearchParams({ treatment_id: treatmentId }))
-        .then(sortAndMapPoints),
-});
+const queries = createCrudQueries(resource, service);
+
+const useGetAllByTreatmentId = (treatmentId) =>
+    queries.useGetAll(new URLSearchParams({ treatment_id: treatmentId }));
 
 export const resultsQueries = {
-    useGetAllPointsByTreatmentId,
+    ...queries,
+    useGetAllByTreatmentId,
 };

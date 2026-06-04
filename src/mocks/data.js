@@ -2,40 +2,60 @@ export const mockMissions = [
     {
         id: '1',
         name: 'Survol zone A — 15/04/2026',
-        status: 'finished',
-        creationDate: '2026-04-15T10:00:00Z',
+        creation_date: '2026-04-15T10:00:00Z',
+        medias_status: ['DONE', 'PROGRESS', 'ERROR'],
     },
     {
         id: '2',
         name: 'Parc Nord B',
-        status: 'progress',
-        creationDate: '2026-04-15T10:00:00Z',
+        creation_date: '2026-04-15T10:00:00Z',
+        medias_status: ['PROGRESS', 'PENDING'],
     },
     {
         id: '3',
         name: 'Hangar H',
-        status: 'error',
-        creationDate: '2026-04-15T10:00:00Z',
+        creation_date: '2026-04-15T10:00:00Z',
+        medias_status: ['ERROR'],
     },
 ];
 
 export const mockMedias = [
     {
-        id: '1',
-        name: 'IMG_0234.jpg',
-        isVideo: false,
-        url: 'https://picsum.photos/300/200',
-        status: 'finished',
-        missionId: 1,
+        id: 1,
+        display_name: 'IMG_0234.jpg',
+        mission_id: 1,
+        file_id: 1,
+        parent_file: {
+            name: 'IMG_0234',
+            url: 'https://picsum.photos/300/200',
+            size: 5201,
+            extension: 'jpg',
+        },
+        last_treatment_status: 'finished',
     },
     {
-        id: '2',
-        name: 'drone_survey_A.mp4',
-        isVideo: true,
-        url: 'https://www.w3schools.com/html/mov_bbb.mp4',
-        status: 'progress',
-        percentage: 40,
-        missionId: 1,
+        id: 2,
+        display_name: 'drone_survey_A.mp4',
+        mission_id: 1,
+        file_id: 2,
+        parent_file: {
+            name: 'mov_bbb',
+            url: 'https://www.w3schools.com/html/mov_bbb.mp4',
+            size: 60521,
+            extension: 'mp4',
+            duration: 50,
+        },
+        last_treatment_status: 'progress',
+    },
+];
+
+export const mockTreatments = [
+    {
+        id: 1,
+        creation_date: '2026-04-15T10:00:00Z',
+        media_id: 1,
+        status: 'DONE',
+        config: {},
     },
 ];
 
@@ -44,9 +64,34 @@ export const mockResults = [
         treatment_id: 1,
         id: 1,
         index: 1,
+        url: 'https://picsum.photos/300/200',
         response_json: {
+            frame_number: 60,
+            timestamp: '00:01:00.000',
             coordinates: [
-                { longitude: 2.3522, latitude: 48.8566 },
+                {
+                    longitude: 2,
+                    latitude: 48,
+                    unit: 'deg',
+                },
+            ],
+            altitude: {
+                value: 300.5,
+                unit: 'm',
+            },
+            speed: {
+                value: 53.2,
+                unit: 'km/h',
+            },
+            objects: [
+                {
+                    type: 'helicoptere',
+                    confidence: 0.2,
+                },
+                {
+                    type: 'skis',
+                    confidence: 0.4,
+                },
             ],
         },
     },
@@ -54,9 +99,34 @@ export const mockResults = [
         treatment_id: 1,
         id: 2,
         index: 2,
+        url: 'https://picsum.photos/300/200',
         response_json: {
+            frame_number: 120,
+            timestamp: '00:02:00.000',
             coordinates: [
-                { longitude: 2.36, latitude: 48.86 },
+                {
+                    longitude: 3,
+                    latitude: 49,
+                    unit: 'deg',
+                },
+            ],
+            altitude: {
+                value: 310.2,
+                unit: 'm',
+            },
+            speed: {
+                value: 52.1,
+                unit: 'km/h',
+            },
+            objects: [
+                {
+                    type: 'avion',
+                    confidence: 0.55,
+                },
+                {
+                    type: 'skis',
+                    confidence: 0.1,
+                },
             ],
         },
     },
@@ -64,10 +134,26 @@ export const mockResults = [
         treatment_id: 1,
         id: 3,
         index: 3,
+        url: 'https://picsum.photos/300/200',
         response_json: {
+            frame_number: 180,
+            timestamp: '00:03:00.000',
             coordinates: [
-                { longitude: 2.37, latitude: 48.87 },
+                {
+                    longitude: 3.5,
+                    latitude: 50,
+                    unit: 'deg',
+                },
             ],
+            altitude: {
+                value: 311.5,
+                unit: 'm',
+            },
+            speed: {
+                value: 51.2,
+                unit: 'km/h',
+            },
+            objects: [],
         },
     },
 ];

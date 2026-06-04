@@ -2,11 +2,12 @@ import { FolderIcon, FolderOpenIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { EditableText } from '../../components';
-import { BADGE_COLOR_BY_STATUS, ROUTES, STATUS_LABELS } from '../../constants';
+import { ROUTES } from '../../constants';
 import { missionsQueries } from '../../hooks';
 import { useMissionCollapseStore } from '../../stores';
 import { getMissionDescription, preventDefault } from '../../utils';
 import { DeleteMissionPopup } from './DeleteMissionPopup';
+import { StatusBadge } from './StatusBadge';
 
 export function MissionHeader(props) {
     const { mission } = props;
@@ -28,8 +29,6 @@ export function MissionHeader(props) {
 
     const handleOpen = () => toggle(mission.id);
     const handleDelete = () => setIsModalOpen(true);
-
-    const badgeColor = BADGE_COLOR_BY_STATUS[mission.status];
 
     return (
         <>
@@ -53,12 +52,12 @@ export function MissionHeader(props) {
                             value={mission.name}
                             setValue={handleChangeName}
                         />
-
-                        {opened !== mission.id && (
-                            <span className={`badge badge-sm badge-soft ${badgeColor}`}>
-                                {STATUS_LABELS[mission.status]}
-                            </span>
-                        )}
+                        {opened !== mission.id && (<>
+                            {mission.containsDone && <StatusBadge color='badge-success' label='Terminée(s)' />}
+                            {mission.containsProgress && <StatusBadge color='badge-info' label='En cours' />}
+                            {mission.containsPending && <StatusBadge color='badge-info' label='En attente' />}
+                            {mission.containsError && <StatusBadge color='badge-error' label='En erreur' />}
+                        </>)}
                     </div>
 
                     <div className='opacity-50 group-hover:opacity-80 text-sm text-left'>
