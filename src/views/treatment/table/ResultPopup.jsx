@@ -13,8 +13,8 @@ export function ResultPopup(props) {
                 <div className='flex flex-col gap-2 w-56 overflow-y-auto'>
                     {[
                         { label: 'Frame', value: result.index },
-                        { label: 'Latitude', value: result.latitude },
-                        { label: 'Longitude', value: result.longitude },
+                        { label: 'Latitude', value: result.coordinates.latitude },
+                        { label: 'Longitude', value: result.coordinates.longitude },
                         { label: 'Altitude', value: `${result.altitude.value} ${result.altitude.unit}` },
                         { label: 'Vitesse', value: `${result.speed.value} ${result.speed.unit}` },
                     ].map(({ label, value }) => (
