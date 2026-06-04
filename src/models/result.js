@@ -11,8 +11,24 @@ export class Result {
         return this.meta.id;
     }
 
+    get url() {
+        return this.meta.url;
+    }
+
+    get index() {
+        return this.meta.id;
+    }
+
     get data() {
         return this.meta.responseJson;
+    }
+
+    get altitude() {
+        return this.data.altitude;
+    }
+
+    get speed() {
+        return this.data.speed;
     }
 
     get allCoordinates() {
