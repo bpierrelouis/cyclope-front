@@ -1,12 +1,7 @@
 import { useDefaultConfigStore } from '../../stores';
-import { formatForExtractionFrame } from '../../utils/index.js';
 import { Field } from '../new/waitingZone/config/Field';
-import { RangeSettings } from './RangeSettings.jsx';
-import {useLocalStorage} from './useLocalStorage.js';
 
 export function SettingsScreen() {
-    const [frameInterval, setFrameInterval] = useLocalStorage('frameInterval', 1 / 30);
-
     const {
         processingInterval,
         objectDetectionEnabled,
@@ -16,18 +11,7 @@ export function SettingsScreen() {
     } = useDefaultConfigStore();
 
     return (
-        <div className='flex flex-col gap-6 p-4'>
-            <RangeSettings
-                title="Taux d'extraction des frames"
-                min={1 / 30}
-                max={600}
-                scale='log'
-                value={frameInterval}
-                onChange={setFrameInterval}
-                format={formatForExtractionFrame}
-                ticks={['30 fps', '1 fps', '1/min', '1/10min']}
-            />
-
+        <div className='flex items-center justify-center size-full'>
             <div className='card bg-base-200 shadow-md max-w-md card-body gap-4'>
                 <h2 className='card-title text-base'>Configuration par défaut des missions</h2>
 
@@ -66,7 +50,7 @@ export function SettingsScreen() {
 
                 <Field label='Niveau de traitement'>
                     <select
-                        className='w-32 select-sm select'
+                        className='w-32 select-sm select cursor-pointer'
                         value={processingLevel}
                         onChange={(e) => setDefault({ processingLevel: e.target.value })}
                     >

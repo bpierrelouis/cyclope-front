@@ -10,7 +10,7 @@ export const useDefaultConfigStore = create(
             processingLevel: 'medium',
 
             setDefault: (partial) =>
-                set((state) => ({ ...state, ...partial })),
+                set(partial),
         }),
         { name: 'default-config' },
     ),
