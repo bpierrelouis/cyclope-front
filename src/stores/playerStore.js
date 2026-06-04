@@ -4,7 +4,11 @@ export const usePlayerStore = create((set) => ({
     playing: false,
     currentTime: 0,
     duration: 0,
+
     media: null,
+    treatment: null,
+    results: [],
+
     isMaster: false,
 
     isMediaOpen: false,

@@ -5,15 +5,13 @@ import {
     useReactTable,
 } from '@tanstack/react-table';
 import { useEffect, useMemo, useState } from 'react';
-import { resultsQueries } from '../../../hooks';
 import { usePlayerStore } from '../../../stores';
 import { sendOpenStateToMaster } from '../../../utils';
 import { FrameCell } from './FrameCell';
 import { ResultPopup } from './ResultPopup';
 
 export function Table() {
-    const { isMaster } = usePlayerStore();
-    const { data: results } = resultsQueries.useGetAllByTreatmentId(1);
+    const { isMaster, results } = usePlayerStore();
     const [selected, setSelected] = useState(null);
 
     const columns = useMemo(() => [

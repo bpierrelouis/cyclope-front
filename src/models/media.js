@@ -31,7 +31,11 @@ export class Media {
         return this.infos.url;
     }
 
+    get duration() {
+        return this.infos.duration;
+    }
+
     get isVideo() {
-        return Boolean(this.infos.duration);
+        return Boolean(this.duration);
     }
 }

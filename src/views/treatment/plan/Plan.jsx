@@ -4,18 +4,14 @@ import { Protocol } from 'pmtiles';
 import { useEffect, useMemo, useRef } from 'react';
 import { Layer, Map, NavigationControl, Source } from 'react-map-gl/maplibre';
 import { MAX_ZOOM, MIN_ZOOM } from '../../../constants';
-import { filesQueries, resultsQueries } from '../../../hooks';
+import { filesQueries } from '../../../hooks';
 import { usePlayerStore } from '../../../stores';
 import { buildMapStyle, sendOpenStateToMaster, sortAndMapPoints } from '../../../utils';
 import { Point } from './Point';
 
 export function Plan() {
-    const {
-        isMaster,
-    } = usePlayerStore();
-
+    const { isMaster, results } = usePlayerStore();
     const { data: carto } = filesQueries.useCarto();
-    const { data: results } = resultsQueries.useGetAllByTreatmentId(1);
     const mapRef = useRef(null);
 
     useEffect(() => {

@@ -1,3 +1,4 @@
+import { Media, Result, Treatment } from '../models';
 import { usePlayerStore } from '../stores';
 
 const MESSAGE_TYPES = {
@@ -39,7 +40,10 @@ class PlayerService {
             playing: state.playing,
             currentTime: state.currentTime,
             duration: state.duration,
+
             media: state.media,
+            treatment: state.treatment,
+            results: state.results,
         });
     }
 
@@ -63,9 +67,27 @@ class PlayerService {
     }
 
     setLocalState(payload) {
+        const state = this.mapObjects(payload);
+
         usePlayerStore
             .getState()
-            .setStatePartial(payload);
+            .setStatePartial(state);
+    }
+
+    mapObjects(payload) {
+        const state = { ...payload };
+
+        if (state.media) {
+            state.media = Media.mapper(state.media.meta);
+        }
+        if (state.treatment) {
+            state.treatment = Treatment.mapper(state.treatment.meta);
+        }
+        if (state.results) {
+            state.results = state.results.map((r) => Result.mapper(r.meta));
+        }
+
+        return state;
     }
 }
 

@@ -11,7 +11,7 @@ import { Plan } from './plan';
 import { Table } from './table';
 
 export function TreatmentScreen() {
-    const { media } = useSelectionContext();
+    const { media, treatment, results } = useSelectionContext();
     const [selected, setSelected] = useState(ROUTES.media);
     const { isMediaOpen, isTableOpen, isPlanOpen } = usePlayerStore();
 
@@ -27,6 +27,14 @@ export function TreatmentScreen() {
             playing: false,
         });
     }, [media]);
+
+    useEffect(() => {
+        playerService.sync({ treatment });
+    }, [treatment]);
+
+    useEffect(() => {
+        playerService.sync({ results });
+    }, [results]);
 
     const disabledComponents = {
         [ROUTES.media]: isMediaOpen || selected === ROUTES.media,

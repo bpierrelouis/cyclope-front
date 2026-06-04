@@ -53,6 +53,13 @@ export const mockTreatments = [
     {
         id: 1,
         creation_date: '2026-04-15T10:00:00Z',
+        media_id: 2,
+        status: 'DONE',
+        config: {},
+    },
+    {
+        id: 2,
+        creation_date: '2026-04-15T10:00:00Z',
         media_id: 1,
         status: 'DONE',
         config: {},
@@ -154,6 +161,41 @@ export const mockResults = [
                 unit: 'km/h',
             },
             objects: [],
+        },
+    },
+    {
+        treatment_id: 2,
+        id: 4,
+        index: 1,
+        url: 'https://picsum.photos/300/200',
+        response_json: {
+            frame_number: 0,
+            timestamp: '00:00:00.000',
+            coordinates: [
+                {
+                    longitude: 2,
+                    latitude: 48,
+                    unit: 'deg',
+                },
+            ],
+            altitude: {
+                value: 300.5,
+                unit: 'm',
+            },
+            speed: {
+                value: 53.2,
+                unit: 'km/h',
+            },
+            objects: [
+                {
+                    type: 'helicoptere',
+                    confidence: 0.2,
+                },
+                {
+                    type: 'skis',
+                    confidence: 0.4,
+                },
+            ],
         },
     },
 ];
