@@ -1,4 +1,4 @@
-import { Marker } from 'react-map-gl';
+import { Marker } from 'react-map-gl/maplibre';
 import { getMarkerClass, getPointLabel } from '../../../utils';
 
 export function Point(props) {
