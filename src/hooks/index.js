@@ -4,3 +4,4 @@ export * from './missions.queries';
 export * from './results.queries';
 export * from './selection';
 export * from './treatments.queries';
+export * from './useFilteredList';
