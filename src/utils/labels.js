@@ -12,3 +12,6 @@ export const formatTime = (time) => {
         .toString()
         .padStart(2, '0')}`;
 };
+
+export const includesIgnoreCase = (str, search) =>
+    str.toLowerCase().includes(search.toLowerCase());
