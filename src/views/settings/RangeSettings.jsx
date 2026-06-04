@@ -10,6 +10,8 @@ export function RangeSettings({ title, min, max, value, onChange, format, ticks 
             ? min * Math.pow(max / min, pos)
             : min + pos * (max - min);
 
+    console.log(scale);
+
     return (
         <div className='card bg-base-200 shadow-md max-w-md card-body gap-4'>
             <div className='flex items-center justify-between'>

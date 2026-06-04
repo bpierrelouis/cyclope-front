@@ -1,9 +1,10 @@
-import { useState } from 'react';
 import { RangeSettings } from './RangeSettings.jsx';
 import { formatForExtractionFrame } from '../../utils/index.js';
+import {useLocalStorage} from './useLocalStorage.js';
 
 export function SettingsScreen() {
-    const [frameInterval, setFrameInterval] = useState(1 / 30);
+    const [frameInterval, setFrameInterval] = useLocalStorage('frameInterval', 1 / 30);
+    console.log(frameInterval);
 
     return (
         <div className='flex flex-col gap-4 p-4'>
