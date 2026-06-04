@@ -11,6 +11,10 @@ export class Result {
         return this.meta.id;
     }
 
+    get url() {
+        return this.meta.url;
+    }
+
     get index() {
         return this.meta.id;
     }
