@@ -1,9 +1,9 @@
 import { FilmIcon, ImageIcon } from 'lucide-react';
-import { useGlobalSelection } from '../../hooks';
+import { useSelectionContext } from '../../contexts';
 import { NavItem } from './NavItem';
 
 export function MediaList() {
-    const { mission, medias, media } = useGlobalSelection();
+    const { mission, medias, media } = useSelectionContext();
 
     if (!mission || !medias) return null;
 
@@ -12,7 +12,7 @@ export function MediaList() {
         <span className='is-drawer-close:hidden opacity-50 text-sm'>{mission.name}</span>
         {medias.map((m) => (
             <NavItem
-                to={`?missionId=${mission.id}&mediaId=${m.id}`}
+                to={`?media=${m.id}`}
                 key={m.id}
                 title={m.name}
                 Icon={m.isVideo ? FilmIcon : ImageIcon}

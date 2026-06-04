@@ -15,6 +15,10 @@ export class Media {
         return this.meta.displayName;
     }
 
+    get missionId() {
+        return this.meta.missionId;
+    }
+
     get status() {
         return this.meta.lastTreatmentStatus;
     }

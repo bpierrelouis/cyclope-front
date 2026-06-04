@@ -2,7 +2,7 @@ import { ExternalLinkIcon, FilmIcon, ImageIcon, MapIcon, TableIcon } from 'lucid
 import { useEffect, useState } from 'react';
 import { SquareButton } from '../../components';
 import { ROUTES } from '../../constants';
-import { useGlobalSelection } from '../../hooks';
+import { useSelectionContext } from '../../contexts';
 import { playerService } from '../../services';
 import { usePlayerStore } from '../../stores';
 import { Controls } from './Controls';
@@ -11,7 +11,7 @@ import { Plan } from './plan';
 import { Table } from './table';
 
 export function TreatmentScreen() {
-    const { media } = useGlobalSelection();
+    const { media } = useSelectionContext();
     const [selected, setSelected] = useState(ROUTES.media);
     const { isMediaOpen, isTableOpen, isPlanOpen } = usePlayerStore();
 
