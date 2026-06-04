@@ -8,7 +8,7 @@ const service = missionsService;
 const queries = createCrudQueries(resource, service);
 
 const getURLSearchParamsForStatus = (status) =>
-    status === 'all' ? null : new URLSearchParams({ status });
+    status === 'ALL' ? null : new URLSearchParams({ medias_status: status });
 
 const useGetAllByStatus = (status) => useQuery({
     queryKey: [resource, status],

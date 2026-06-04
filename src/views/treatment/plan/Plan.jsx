@@ -6,7 +6,7 @@ import { Layer, Map, NavigationControl, Source } from 'react-map-gl/maplibre';
 import { MAX_ZOOM, MIN_ZOOM } from '../../../constants';
 import { filesQueries, resultsQueries } from '../../../hooks';
 import { usePlayerStore } from '../../../stores';
-import { buildMapStyle, sendOpenStateToMaster } from '../../../utils';
+import { buildMapStyle, sendOpenStateToMaster, sortAndMapPoints } from '../../../utils';
 import { Point } from './Point';
 
 export function Plan() {
@@ -15,7 +15,7 @@ export function Plan() {
     } = usePlayerStore();
 
     const { data: carto } = filesQueries.useCarto();
-    const { data: points } = resultsQueries.useGetAllPointsByTreatmentId(1);
+    const { data: results } = resultsQueries.useGetAllByTreatmentId(1);
     const mapRef = useRef(null);
 
     useEffect(() => {
@@ -31,28 +31,32 @@ export function Plan() {
         };
     }, []);
 
+    const points = useMemo(() => {
+        return sortAndMapPoints(results ?? []);
+    }, [results]);
+
     const mapStyle = useMemo(() => {
-        return buildMapStyle(carto?.download_url);
-    }, [carto?.download_url]);
+        return buildMapStyle(carto?.downloadUrl);
+    }, [carto?.downloadUrl]);
 
     const routeGeoJson = useMemo(() => ({
         type: 'Feature',
         properties: {},
         geometry: {
             type: 'LineString',
-            coordinates: (points ?? []).map((p) => [p.longitude, p.latitude]),
+            coordinates: points.map((p) => [p.longitude, p.latitude]),
         },
     }), [points]);
 
     useEffect(() => {
-        if (!points?.length || !mapRef.current) return;
+        if (!points.length || !mapRef.current) return;
 
         const longitudes = points.map(p => p.longitude);
         const latitudes = points.map(p => p.latitude);
 
         mapRef.current.fitBounds(
             [[Math.min(...longitudes), Math.min(...latitudes)], [Math.max(...longitudes), Math.max(...latitudes)]],
-            { padding: 50, duration: 0 }
+            { padding: 50, duration: 0 },
         );
     }, [points]);
 
@@ -65,7 +69,7 @@ export function Plan() {
             style={{ width: '100%', height: '100%', flex: 1, minHeight: 0 }}
         >
             <NavigationControl position='top-right' />
-            {points?.length >= 2 && (
+            {points.length > 1 && (
                 <Source id='route-line' type='geojson' data={routeGeoJson}>
                     <Layer
                         id='route-line-layer'
@@ -83,7 +87,7 @@ export function Plan() {
                 </Source>
             )}
 
-            {points?.map((point) => (
+            {points.map((point) => (
                 <Point
                     key={point.id}
                     point={point}

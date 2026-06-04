@@ -53,17 +53,13 @@ const sortByKeyPath = (arr, path, dir = 'asc') => {
     });
 };
 
-const pointMapper = (result, index, array) => {
-    const { longitude, latitude } = result.response_json.coordinates[0];
-    return {
-        id: result.id,
-        index,
-        isStart: index === 0,
-        isEnd: index === array.length - 1,
-        longitude,
-        latitude,
-    };
-};
+const pointMapper = (result, index, array) => ({
+    id: result.id,
+    index,
+    isStart: index === 0,
+    isEnd: index === array.length - 1,
+    ...result.coordinates,
+});
 
 export const sortAndMapPoints = (results) =>
     sortByKeyPath(results, 'index').map(pointMapper);

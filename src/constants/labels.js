@@ -1,6 +1,7 @@
 export const STATUS_LABELS = {
-    all: 'Toutes',
-    finished: 'Terminées',
-    progress: 'En cours',
-    error: 'En erreur',
+    ALL: 'Toutes',
+    DONE: 'Terminées',
+    PROGRESS: 'En cours',
+    PENDING: 'En attente',
+    ERROR: 'En erreur',
 };
