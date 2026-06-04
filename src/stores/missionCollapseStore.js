@@ -5,7 +5,6 @@ export const useMissionCollapseStore = create((set) => ({
 
     toggle: (id) =>
         set((state) => ({
-            ...state,
             opened: id === state.opened ? null : id,
         })),
 }));

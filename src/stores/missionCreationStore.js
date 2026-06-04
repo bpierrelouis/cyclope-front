@@ -10,26 +10,23 @@ const toggle = (selection, id) => {
     return next;
 };
 
-export const useMissionCreationStore = create((set) => ({
+export const useMissionCreationStore = create((set, get) => ({
     fileIds: new Set(),
     configs: {},
 
     toggle: (id) =>
         set((state) => ({
-            ...state,
             fileIds: toggle(state.fileIds, id),
         })),
 
     clear: () =>
-        set((state) => ({
-            ...state,
+        set({
             fileIds: new Set(),
             configs: {},
-        })),
+        }),
 
     updateConfig: (id, config) =>
         set((state) => ({
-            ...state,
             configs: {
                 ...state.configs,
                 [id]: config,
@@ -37,14 +34,8 @@ export const useMissionCreationStore = create((set) => ({
         })),
 
     updatePartialConfig: (id, partialConfig) =>
-        set((state) => ({
-            ...state,
-            configs: {
-                ...state.configs,
-                [id]: {
-                    ...state.configs[id],
-                    ...partialConfig,
-                },
-            },
-        })),
+        get().updateConfig(id, {
+            ...get().configs[id],
+            ...partialConfig,
+        }),
 }));
