@@ -16,18 +16,15 @@ export function SideBar(props) {
                 <ThemeSwap />
             </div>
             <div className='divider'></div>
-            <NavItem
-                title='Nouveau'
-                Icon={PlusIcon}
-                to={ROUTES.new} />
-            <NavItem
-                title='Missions'
-                Icon={FoldersIcon}
-                to={ROUTES.missionList} />
-            <NavItem
-                title='Paramètres'
-                Icon={CogIcon}
-                to={ROUTES.settings} />
+            <NavItem title='Nouveau' to={ROUTES.new}>
+                <PlusIcon />
+            </NavItem>
+            <NavItem title='Missions' to={ROUTES.missionList}>
+                <FoldersIcon />
+            </NavItem>
+            <NavItem title='Paramètres' to={ROUTES.settings}>
+                <CogIcon />
+            </NavItem>
             <MediaList />
         </aside>
     );

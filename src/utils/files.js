@@ -10,3 +10,23 @@ export const flatTree = (tree) => tree.reduce((acc, node) => {
     }
     return [...acc, node];
 }, []);
+
+export const isVideoExtension = (extension) => {
+    const videoExtensions = new Set([
+        'mp4',
+        'mkv',
+        'avi',
+        'mov',
+        'wmv',
+        'flv',
+        'webm',
+        'm4v',
+        'mpeg',
+        'mpg',
+        '3gp',
+        'ogv',
+        'ts',
+    ]);
+
+    return videoExtensions.has(extension.toLowerCase());
+};

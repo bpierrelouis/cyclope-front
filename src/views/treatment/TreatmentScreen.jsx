@@ -1,6 +1,6 @@
-import { ExternalLinkIcon, FilmIcon, ImageIcon, MapIcon, TableIcon } from 'lucide-react';
+import { ExternalLinkIcon, MapIcon, TableIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { SquareButton } from '../../components';
+import { MediaIcon, SquareButton } from '../../components';
 import { ROUTES } from '../../constants';
 import { useSelectionContext } from '../../contexts';
 import { playerService } from '../../services';
@@ -71,7 +71,7 @@ export function TreatmentScreen() {
                     {[
                         ['Carte', ROUTES.plan, <MapIcon />],
                         ['Tableau', ROUTES.table, <TableIcon />],
-                        [media.isVideo ? 'Vidéo' : 'Image', ROUTES.media, media.isVideo ? <FilmIcon /> : <ImageIcon />],
+                        [media.isVideo ? 'Vidéo' : 'Image', ROUTES.media, <MediaIcon isVideo={media.isVideo} />],
                     ].map(([label, route, children]) => (
                         <Button
                             key={route}

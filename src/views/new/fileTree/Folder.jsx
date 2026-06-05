@@ -1,3 +1,4 @@
+import { FolderIcon } from 'lucide-react';
 import { FileTreeNode } from './FileTreeNode';
 
 export function Folder(props) {
@@ -7,7 +8,10 @@ export function Folder(props) {
     return (
         <li>
             <details>
-                <summary>{name}</summary>
+                <summary>
+                    <FolderIcon className='size-4' />
+                    {name}
+                </summary>
                 <ul>
                     {children.map((node) => (
                         <FileTreeNode key={node.id} node={node} />

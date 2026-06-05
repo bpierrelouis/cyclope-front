@@ -1,6 +1,7 @@
 export * from './ConfidenceBadge';
 export * from './EditableText';
 export * from './Field';
+export * from './MediaIcon';
 export * from './ProcessConfidenceField';
 export * from './ProcessLevelField';
 export * from './ProcessObjectDetectionField';

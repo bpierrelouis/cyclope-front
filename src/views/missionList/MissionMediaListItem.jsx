@@ -1,5 +1,5 @@
-import { FilmIcon, ImageIcon } from 'lucide-react';
 import { Link } from 'react-router';
+import { MediaIcon } from '../../components';
 import { ROUTES } from '../../constants';
 import { StatusIcon } from './StatusIcon';
 
@@ -15,7 +15,7 @@ export function MissionMediaListItem(props) {
             className='flex items-center gap-2 hover:bg-base-200 px-8'
         >
             <span className='opacity-50'>
-                {media.isVideo ? <FilmIcon /> : <ImageIcon />}
+                <MediaIcon isVideo={media.isVideo} />
             </span>
             <StatusIcon status={media.status} />
             {media.name}

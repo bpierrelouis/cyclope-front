@@ -13,7 +13,7 @@ export function NavItem(props) {
             }}
             data-tip={props.title}
         >
-            <props.Icon />
+            {props.children}
             <span className='is-drawer-close:hidden'>{props.title}</span>
         </NavLink>
     );

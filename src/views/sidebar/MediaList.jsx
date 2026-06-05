@@ -1,4 +1,4 @@
-import { FilmIcon, ImageIcon } from 'lucide-react';
+import { MediaIcon } from '../../components/MediaIcon';
 import { useSelectionContext } from '../../contexts';
 import { NavItem } from './NavItem';
 
@@ -15,9 +15,10 @@ export function MediaList() {
                 to={`?media=${m.id}`}
                 key={m.id}
                 title={m.name}
-                Icon={m.isVideo ? FilmIcon : ImageIcon}
                 isActive={m.id === media?.id}
-            />
+            >
+                <MediaIcon isVideo={m.isVideo} />
+            </NavItem>
         ))}
     </>);
 }
