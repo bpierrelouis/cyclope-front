@@ -1,35 +1,52 @@
 import { useEffect, useMemo } from 'react';
-import { useMissionCreationStore } from '../../../../stores';
-import { ConfidenceThresholdChange } from './ConfidenceThresholdChange';
-import { ObjectDetectionField } from './ObjectDetectionField';
-import { ProcessingIntervalField } from './ProcessingIntervalField';
-import { ProcessingLevelField } from './ProcessingLevelField';
+import { ProcessConfidenceField, ProcessLevelField, ProcessObjectDetectionField, ProcessStepField } from '../../../../components';
+import { useDefaultConfigStore, useMissionCreationStore } from '../../../../stores';
 
 export function FileConfig(props) {
     const { file } = props;
 
-    const { configs, updateConfig } = useMissionCreationStore();
+    const { configs, updateConfig, updatePartialConfig } = useMissionCreationStore();
+    const defaultConfig = useDefaultConfigStore();
 
     const config = useMemo(() => configs[file.id], [configs, file.id]);
 
     useEffect(() => {
         if (config) return;
+
+        const processingInterval = Math.min(defaultConfig.processingInterval, file.duration ?? Infinity);
+
         updateConfig(file.id, {
-            processingInterval: 3,
-            objectDetectionEnabled: false,
-            confidenceThreshold: 50,
-            processingLevel: 'medium',
+            ...defaultConfig,
+            processingInterval,
         });
-    }, [config, file.id, updateConfig]);
+    }, [config, defaultConfig, file.duration, file.id, updateConfig]);
+
+    const setPartialConfig = (data) => updatePartialConfig(file.id, data);
 
     if (!config) return;
 
     return (
         <div className='flex flex-col gap-2 bg-base-300 p-4 rounded-box'>
-            {!!file.duration && (<ProcessingIntervalField file={file} config={config} />)}
-            <ObjectDetectionField file={file} config={config} />
-            {config.objectDetectionEnabled && (<ConfidenceThresholdChange file={file} config={config} />)}
-            <ProcessingLevelField file={file} config={config} />
+            {!!file.duration && (<ProcessStepField
+                config={config}
+                setPartialConfig={setPartialConfig}
+                max={file.duration}
+            />)}
+
+            <ProcessObjectDetectionField
+                config={config}
+                setPartialConfig={setPartialConfig}
+            />
+
+            {config.objectDetectionEnabled && (<ProcessConfidenceField
+                config={config}
+                setPartialConfig={setPartialConfig}
+            />)}
+
+            <ProcessLevelField
+                config={config}
+                setPartialConfig={setPartialConfig}
+            />
         </div>
     );
 }
