@@ -12,7 +12,7 @@ export const buildMapStyle = (url) => ({
             minzoom: MIN_ZOOM,
         },
     },
-    layers: layers('protomaps', MAP_THEME),
+    layers: layers('protomaps', MAP_THEME, { lang: 'fr' }),
 });
 
 export const getPointLabel = (point) => {

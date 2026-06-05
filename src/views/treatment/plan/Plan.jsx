@@ -35,21 +35,24 @@ export function Plan() {
         return buildMapStyle(carto?.downloadUrl);
     }, [carto?.downloadUrl]);
 
-    useEffect(() => {
-        if (!points.length || !mapRef.current) return;
-
-        const longitudes = points.map(p => p.longitude);
-        const latitudes = points.map(p => p.latitude);
-
-        mapRef.current.fitBounds(
-            [[Math.min(longitudes), Math.min(latitudes)], [Math.max(longitudes), Math.max(latitudes)]],
+    const handleMapLoad = () => {
+        if (!points?.length) return;
+        const validPoints = points.filter(p => {
+            return !Number.isNaN(p.longitude) && !Number.isNaN(p.latitude);
+        });
+        if (!validPoints.length) return;
+        const longitudes = validPoints.map(p => p.longitude);
+        const latitudes = validPoints.map(p => p.latitude);
+        mapRef.current?.fitBounds(
+            [[Math.min(...longitudes), Math.min(...latitudes)], [Math.max(...longitudes), Math.max(...latitudes)]],
             { padding: 50, duration: 0 },
         );
-    }, [points]);
+    };
 
     return (
         <Map
             ref={mapRef}
+            onLoad={handleMapLoad}
             minZoom={MIN_ZOOM}
             maxZoom={MAX_ZOOM}
             mapStyle={mapStyle}
