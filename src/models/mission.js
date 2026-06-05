@@ -30,7 +30,7 @@ export class Mission {
         return this.statuses.includes('ERROR');
     }
     get containsProgress() {
-        return this.statuses.includes('PROGRESS');
+        return this.statuses.includes('RUNNING');
     }
     get containsPending() {
         return this.statuses.includes('PENDING');

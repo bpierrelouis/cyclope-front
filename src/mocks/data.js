@@ -3,13 +3,13 @@ export const mockMissions = [
         id: '1',
         name: 'Survol zone A — 15/04/2026',
         creation_date: '2026-04-15T10:00:00Z',
-        medias_status: ['DONE', 'PROGRESS', 'ERROR'],
+        medias_status: ['DONE', 'RUNNING', 'ERROR'],
     },
     {
         id: '2',
         name: 'Parc Nord B',
         creation_date: '2026-04-15T10:00:00Z',
-        medias_status: ['PROGRESS', 'PENDING'],
+        medias_status: ['RUNNING', 'PENDING'],
     },
     {
         id: '3',

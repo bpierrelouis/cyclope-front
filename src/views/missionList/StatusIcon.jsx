@@ -7,7 +7,7 @@ export function StatusIcon(props) {
         <div className='size-6'>
             {status === 'DONE' && <CircleCheckIcon className='size-full text-success' />}
             {status === 'ERROR' && <CircleXIcon className='size-full text-error' />}
-            {['PROGRESS', 'PENDING'].includes(status) && (
+            {['RUNNING', 'PENDING'].includes(status) && (
                 <span className='loading loading-spinner'></span>
             )}
         </div>
