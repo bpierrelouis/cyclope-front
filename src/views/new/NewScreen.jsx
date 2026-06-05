@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { ROUTES } from '../../constants';
 import { filesQueries, missionsQueries } from '../../hooks';
-import { useMissionCreationStore } from '../../stores';
+import { useDefaultConfigStore, useMissionCreationStore } from '../../stores';
 import { flatTree } from '../../utils';
 import { FileTree } from './fileTree';
 import { WaitingZone } from './waitingZone';
@@ -14,6 +14,7 @@ export function NewScreen() {
     const { mutateAsync: createMission } = missionsQueries.useCreate();
 
     const { fileIds, configs } = useMissionCreationStore();
+    const { getDefault } = useDefaultConfigStore();
 
     const [missionName, setMissionName] = useState('');
 
@@ -30,7 +31,7 @@ export function NewScreen() {
             medias: files.map((file) => ({
                 fileId: file.id,
                 displayName: file.name,
-                config: configs[file.id],
+                config: configs[file.id] || getDefault(file),
             })),
         });
         navigate(ROUTES.missionList);

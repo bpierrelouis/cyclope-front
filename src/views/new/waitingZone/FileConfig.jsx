@@ -6,20 +6,14 @@ export function FileConfig(props) {
     const { file } = props;
 
     const { configs, updateConfig, updatePartialConfig } = useMissionCreationStore();
-    const defaultConfig = useDefaultConfigStore();
+    const { getDefault } = useDefaultConfigStore();
 
     const config = useMemo(() => configs[file.id], [configs, file.id]);
 
     useEffect(() => {
         if (config) return;
-
-        const processingInterval = Math.min(defaultConfig.processingInterval, file.duration ?? Infinity);
-
-        updateConfig(file.id, {
-            ...defaultConfig,
-            processingInterval,
-        });
-    }, [config, defaultConfig, file.duration, file.id, updateConfig]);
+        updateConfig(file.id, getDefault(file));
+    }, [config, updateConfig, file, getDefault]);
 
     const setPartialConfig = (data) => updatePartialConfig(file.id, data);
 
