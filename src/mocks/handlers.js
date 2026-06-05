@@ -76,4 +76,11 @@ export const handlers = [
     http.get('/api/medias/:id/last_treatment', () => {
         return HttpResponse.json(treatments[0]);
     }),
+
+    http.get('/api/files/download', () => {
+        return HttpResponse.json({
+            url: 'https://picsum.photos/300/200',
+            download_url: 'https://picsum.photos/300/200',
+        });
+    }),
 ];

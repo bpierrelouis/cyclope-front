@@ -4,10 +4,10 @@ import { persist } from 'zustand/middleware';
 export const useDefaultConfigStore = create(
     persist(
         (set) => ({
-            processingInterval: 3,
+            frameStep: 3,
             objectDetectionEnabled: false,
             confidenceThreshold: 50,
-            processingLevel: 'medium',
+            processingLevel: 2,
 
             setPartialState: (partial) =>
                 set(partial),

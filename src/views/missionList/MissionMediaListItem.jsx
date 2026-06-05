@@ -17,10 +17,7 @@ export function MissionMediaListItem(props) {
             <span className='opacity-50'>
                 {media.isVideo ? <FilmIcon /> : <ImageIcon />}
             </span>
-            <StatusIcon
-                status={media.status}
-                percentage={media.percentage}
-            />
+            <StatusIcon status={media.status} />
             {media.name}
         </Link>
     );

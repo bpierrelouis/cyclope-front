@@ -2,7 +2,7 @@ import { CogIcon, XIcon } from 'lucide-react';
 import { useState } from 'react';
 import { useMissionCreationStore } from '../../../stores';
 import { formatFileSize } from '../../../utils/index';
-import { FileConfig } from './config/FileConfig';
+import { FileConfig } from './FileConfig';
 
 export function FileListItem(props) {
     const { file } = props;

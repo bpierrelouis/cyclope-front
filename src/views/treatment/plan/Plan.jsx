@@ -32,8 +32,8 @@ export function Plan() {
     }, [results]);
 
     const mapStyle = useMemo(() => {
-        return buildMapStyle(carto?.downloadUrl);
-    }, [carto?.downloadUrl]);
+        return buildMapStyle(carto);
+    }, [carto]);
 
     const handleMapLoad = () => {
         if (!points?.length) return;

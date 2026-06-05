@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
-import { ProcessConfidenceField, ProcessLevelField, ProcessObjectDetectionField, ProcessStepField } from '../../../../components';
-import { useDefaultConfigStore, useMissionCreationStore } from '../../../../stores';
+import { ProcessConfidenceField, ProcessLevelField, ProcessObjectDetectionField, ProcessStepField } from '../../../components';
+import { useDefaultConfigStore, useMissionCreationStore } from '../../../stores';
 
 export function FileConfig(props) {
     const { file } = props;

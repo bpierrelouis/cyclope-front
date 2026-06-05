@@ -6,7 +6,8 @@ export const filesResourceName = 'files';
 const service = createCrudService(filesResourceName);
 
 const getContent = (url) =>
-    httpRequest(`${filesResourceName}/download?url=${encodeURIComponent(url)}`);
+    httpRequest(`${filesResourceName}/download?url=${encodeURIComponent(url)}`)
+        .then((result) => result.downloadUrl);
 
 const getTree = () =>
     httpRequest(`${filesResourceName}/tree`);

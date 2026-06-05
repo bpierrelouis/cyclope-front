@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { filesQueries } from '../../hooks';
 import { playerService } from '../../services';
 import { usePlayerStore } from '../../stores';
 import { sendOpenStateToMaster } from '../../utils';
@@ -12,6 +13,8 @@ export function Media(props) {
         media,
         isMaster,
     } = usePlayerStore();
+
+    const { data: url } = filesQueries.useGetContent(media?.url);
 
     useEffect(() => {
         if (isMaster) return;
@@ -56,14 +59,14 @@ export function Media(props) {
             ref={videoRef}
             className={`size-full flex-1 min-h-0 object-contain ${props.hidden ? 'hidden' : ''}`}
             onTimeUpdate={handleTimeUpdate}
-            src={media.url}
+            src={url}
             muted
             loop
         />
     ) : (
         <img
             className={`w-full h-full object-contain ${props.hidden ? 'hidden' : ''}`}
-            src={media.url}
+            src={url}
             alt={media.name}
         />
     );

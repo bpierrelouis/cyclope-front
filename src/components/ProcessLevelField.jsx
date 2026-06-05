@@ -6,7 +6,7 @@ export function ProcessLevelField(props) {
     const value = config[key];
 
     const handleChange = (event) =>
-        setPartialConfig({ [key]: event.target.value });
+        setPartialConfig({ [key]: Number(event.target.value) });
 
     return (
         <Field label='Niveau de traitement'>
