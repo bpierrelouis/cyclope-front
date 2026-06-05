@@ -1,3 +1,4 @@
+import { LocateIcon } from 'lucide-react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { Protocol } from 'pmtiles';
@@ -35,16 +36,17 @@ export function Plan() {
         return buildMapStyle(carto);
     }, [carto]);
 
-    const handleMapLoad = () => {
+    const centerMapToPath = async () => {
         if (!points?.length) return;
-        const validPoints = points.filter(p => {
-            return !Number.isNaN(p.longitude) && !Number.isNaN(p.latitude);
-        });
-        if (!validPoints.length) return;
-        const longitudes = validPoints.map(p => p.longitude);
-        const latitudes = validPoints.map(p => p.latitude);
+
+        const longitudes = points.map(p => p.longitude).filter(Boolean);
+        const latitudes = points.map(p => p.latitude).filter(Boolean);
+
+        const min = [Math.min(...longitudes), Math.min(...latitudes)];
+        const max = [Math.max(...longitudes), Math.max(...latitudes)];
+
         mapRef.current?.fitBounds(
-            [[Math.min(...longitudes), Math.min(...latitudes)], [Math.max(...longitudes), Math.max(...latitudes)]],
+            [min, max],
             { padding: 50, duration: 0 },
         );
     };
@@ -52,13 +54,21 @@ export function Plan() {
     return (
         <Map
             ref={mapRef}
-            onLoad={handleMapLoad}
+            onLoad={centerMapToPath}
             minZoom={MIN_ZOOM}
             maxZoom={MAX_ZOOM}
             mapStyle={mapStyle}
             style={{ width: '100%', height: '100%', flex: 1, minHeight: 0 }}
         >
-            <NavigationControl position='top-right' />
+            <NavigationControl />
+            <div className='top-25 right-[10px] z-10 absolute'>
+                <button
+                    className='maplibregl-ctrl-group size-[29px] maplibregl-ctrl btn btn-square'
+                    onClick={centerMapToPath}
+                >
+                    <LocateIcon size={18} />
+                </button>
+            </div>
             <Path points={points} />
         </Map>
     );
