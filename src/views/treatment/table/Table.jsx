@@ -1,12 +1,8 @@
-import {
-    flexRender,
-    getCoreRowModel,
-    getSortedRowModel,
-    useReactTable,
-} from '@tanstack/react-table';
+import { flexRender, getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
 import { useEffect, useMemo, useState } from 'react';
 import { usePlayerStore } from '../../../stores';
 import { sendOpenStateToMaster } from '../../../utils';
+import { DetectionCell } from './DetectionsCell';
 import { FrameCell } from './FrameCell';
 import { ResultPopup } from './ResultPopup';
 
@@ -18,10 +14,9 @@ export function Table() {
         {
             accessorKey: 'url',
             header: 'Image',
-            cell: ({ getValue, row }) => {
-                const url = getValue();
-                return (<FrameCell url={url} onClick={() => setSelected(row.original)} />);
-            },
+            cell: ({ row }) => (
+                <FrameCell url={row.original.url} onClick={() => setSelected(row.original)} />
+            ),
         },
         { accessorKey: 'index', header: 'Frame' },
         { accessorKey: 'coordinates.latitude', header: 'Latitude' },
@@ -35,6 +30,13 @@ export function Table() {
             accessorFn: (row) => `${row.speed.value} ${row.speed.unit}`,
             id: 'speed',
             header: 'Vitesse',
+        },
+        {
+            accessorKey: 'objects',
+            header: 'Détection',
+            cell: ({ row }) => (
+                <DetectionCell objects={row.original.objects} />
+            ),
         },
     ], [setSelected]);
 
@@ -74,11 +76,9 @@ export function Table() {
                     </thead>
                     <tbody>
                         {table.getRowModel().rows.map(row => (
-                            <tr
-                                key={row.id}
-                            >
+                            <tr key={row.id}>
                                 {row.getVisibleCells().map(cell => (
-                                    <td key={cell.id}>
+                                    <td key={cell.id} >
                                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                     </td>
                                 ))}

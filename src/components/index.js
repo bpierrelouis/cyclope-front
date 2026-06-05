@@ -1,3 +1,4 @@
+export * from './ConfidenceBadge';
 export * from './EditableText';
 export * from './Field';
 export * from './ProcessConfidenceField';

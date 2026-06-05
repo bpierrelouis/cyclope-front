@@ -35,6 +35,10 @@ export class Result {
         return this.data.coordinates;
     }
 
+    get objects() {
+        return this.data.objects;
+    }
+
     get coordinates() {
         const { longitude, latitude } = this.allCoordinates[0];
         return { longitude, latitude };
