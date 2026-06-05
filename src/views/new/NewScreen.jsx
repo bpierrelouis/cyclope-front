@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router';
 import { ROUTES } from '../../constants';
 import { filesQueries, missionsQueries } from '../../hooks';
 import { useMissionCreationStore } from '../../stores';
-import { flatTree, postMissionMapper } from '../../utils';
+import { flatTree } from '../../utils';
 import { FileTree } from './fileTree';
 import { WaitingZone } from './waitingZone';
 
@@ -13,7 +13,7 @@ export function NewScreen() {
     const { data: fileNodes } = filesQueries.useGetTree();
     const { mutateAsync: createMission } = missionsQueries.useCreate();
 
-    const { fileIds } = useMissionCreationStore();
+    const { fileIds, configs } = useMissionCreationStore();
 
     const [missionName, setMissionName] = useState('');
 
@@ -25,8 +25,14 @@ export function NewScreen() {
     }, [flattenedFileNodes, fileIds]);
 
     const handleValidate = async () => {
-        const payload = postMissionMapper(missionName, files);
-        await createMission(payload);
+        await createMission({
+            name: missionName,
+            medias: files.map((file) => ({
+                fileId: file.id,
+                displayName: file.name,
+                config: configs[file.id],
+            })),
+        });
         navigate(ROUTES.missionList);
     };
 

@@ -2,11 +2,11 @@ import { Field } from './Field';
 
 export function ProcessStepField(props) {
     const { config, setPartialConfig, max } = props;
-    const key = 'processingInterval';
+    const key = 'frameStep';
     const value = config[key];
 
     const handleChange = (event) =>
-        setPartialConfig({ [key]: event.target.value });
+        setPartialConfig({ [key]: Number(event.target.value) });
 
     return (
         <Field label='Pas (en secondes)'>
@@ -17,7 +17,7 @@ export function ProcessStepField(props) {
                 type='number'
                 min={1}
                 max={max}
-                value={value}
+                value={value || 1}
                 onChange={handleChange}
                 className='w-20 input input-sm' />
         </Field>
