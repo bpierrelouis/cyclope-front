@@ -9,7 +9,7 @@ export const createCrudQueries = (resource, service) => {
     const useGetById = (id) => useQuery({
         queryKey: [resource, id],
         queryFn: () => service.getById(id),
-        enabled: !!id,
+        enabled: !!Number(id),
     });
 
     const useCreate = () => {
