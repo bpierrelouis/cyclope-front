@@ -31,7 +31,7 @@ export const mockMedias = [
             size: 5201,
             extension: 'jpg',
         },
-        last_treatment_status: 'finished',
+        last_treatment_status: 'DONE',
     },
     {
         id: 2,
@@ -45,7 +45,7 @@ export const mockMedias = [
             extension: 'mp4',
             duration: 50,
         },
-        last_treatment_status: 'progress',
+        last_treatment_status: 'RUNNING',
     },
 ];
 
