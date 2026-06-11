@@ -77,10 +77,13 @@ export const handlers = [
         return HttpResponse.json(treatments[0]);
     }),
 
-    http.get('/api/files/download', () => {
+    http.get('/api/files/download', ({ request }) => {
+        const url = new URL(request.url);
+        const searchParams = url.searchParams;
+        const target = searchParams.get('url');
         return HttpResponse.json({
-            url: 'https://picsum.photos/300/200',
-            download_url: 'https://picsum.photos/300/200',
+            url: target,
+            download_url: target,
         });
     }),
 ];
