@@ -19,6 +19,14 @@ export class Media {
         return this.meta.missionId;
     }
 
+    get lastTreatmentId() {
+        return this.meta.lastTreatmentId;
+    }
+
+    get percentage() {
+        return this.meta.percentage;
+    }
+
     get status() {
         return this.meta.lastTreatmentStatus;
     }

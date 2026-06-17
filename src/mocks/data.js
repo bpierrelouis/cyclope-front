@@ -31,6 +31,7 @@ export const mockMedias = [
             size: 5201,
             extension: 'jpg',
         },
+        last_treatment_id: 1,
         last_treatment_status: 'DONE',
     },
     {
@@ -45,6 +46,7 @@ export const mockMedias = [
             extension: 'mp4',
             duration: 50,
         },
+        last_treatment_id: 2,
         last_treatment_status: 'RUNNING',
     },
 ];
@@ -61,7 +63,7 @@ export const mockTreatments = [
         id: 2,
         creation_date: '2026-04-15T10:00:00Z',
         media_id: 1,
-        status: 'DONE',
+        status: 'RUNNING',
         config: {},
     },
 ];
@@ -243,3 +245,21 @@ export const mocksFilesTree = [
         ],
     },
 ];
+
+export const statusUpdate = {
+    event: 'treatment_status',
+    data: {
+        treatment_id: 1,
+        status: 'ERROR',
+    },
+};
+
+const percentageUpdate = (percentage) => ({
+    event: 'treatment_percentage',
+    data: {
+        treatment_id: 2,
+        percentage,
+    },
+});
+
+export const percentageUpdates = Array.from({ length: 10 }, (_, i) => i * 10).map(percentageUpdate);

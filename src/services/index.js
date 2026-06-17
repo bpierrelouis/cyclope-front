@@ -1,3 +1,4 @@
+export * from './eventsManager';
 export * from './files.service';
 export * from './medias.service';
 export * from './missions.service';

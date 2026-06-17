@@ -1,5 +1,5 @@
-import { http, HttpResponse } from 'msw';
-import { mockMedias, mockMissions, mockResults, mocksFilesTree, mockTreatments } from './data';
+import { http, HttpResponse, sse } from 'msw';
+import { mockMedias, mockMissions, mockResults, mocksFilesTree, mockTreatments, percentageUpdates, statusUpdate } from './data';
 
 let missions = [...mockMissions];
 let medias = [...mockMedias];
@@ -85,5 +85,23 @@ export const handlers = [
             url: target,
             download_url: target,
         });
+    }),
+
+    sse('/api/event', async ({ client }) => {
+        let i = 0;
+
+        const interval = setInterval(() => {
+            if (i >= percentageUpdates.length) {
+                clearInterval(interval);
+                return;
+            }
+
+            if (i == Math.floor(percentageUpdates.length / 2)) {
+                client.send(statusUpdate);
+            }
+
+            client.send(percentageUpdates[i]);
+            i++;
+        }, 1000);
     }),
 ];
