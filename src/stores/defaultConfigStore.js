@@ -13,10 +13,10 @@ export const useDefaultConfigStore = create(
                 set(partial),
 
             getDefault: (file) => {
-                const processingInterval = Math.min(get().processingInterval, file.duration ?? Infinity);
+                const frameStep = Math.min(get().frameStep, file.duration ?? Infinity);
                 return {
                     ...get(),
-                    processingInterval,
+                    frameStep,
                 };
             },
         }),
