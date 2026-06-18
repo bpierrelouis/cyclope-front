@@ -16,7 +16,7 @@ export class Result {
     }
 
     get index() {
-        return this.meta.id;
+        return this.meta.index;
     }
 
     get data() {
@@ -25,6 +25,10 @@ export class Result {
 
     get altitude() {
         return this.data.altitude;
+    }
+
+    get timeStamp() {
+        return this.data.timestamp;
     }
 
     get speed() {
