@@ -12,11 +12,14 @@ export function NewScreen() {
 
     const { data: fileNodes } = filesQueries.useGetTree();
     const { mutateAsync: createMission } = missionsQueries.useCreate();
+    const { mutateAsync: addMedias } = missionsQueries.useAddMedias();
 
-    const { fileIds, configs } = useMissionCreationStore();
+    const { fileIds, configs, missionId } = useMissionCreationStore();
     const { getDefault } = useDefaultConfigStore();
 
     const [missionName, setMissionName] = useState('');
+
+    const isAddingModeSelected = Number.isInteger(missionId);
 
     const flattenedFileNodes = useMemo(() => flatTree(fileNodes ?? []), [fileNodes]);
     const files = useMemo(() => {
@@ -26,14 +29,18 @@ export function NewScreen() {
     }, [flattenedFileNodes, fileIds]);
 
     const handleValidate = async () => {
-        await createMission({
-            name: missionName,
-            medias: files.map((file) => ({
-                fileId: file.id,
-                displayName: file.name,
-                config: configs[file.id] || getDefault(file),
-            })),
-        });
+        const medias = files.map((file) => ({
+            fileId: file.id,
+            displayName: file.name,
+            config: configs[file.id] || getDefault(file),
+        }));
+
+        if (isAddingModeSelected) {
+            await addMedias({ id: missionId, medias });
+        } else {
+            await createMission({ name: missionName, medias });
+        }
+
         navigate(ROUTES.missionList);
     };
 
@@ -46,7 +53,7 @@ export function NewScreen() {
                 </p>
                 <button
                     className='btn btn-primary'
-                    disabled={files.length === 0}
+                    disabled={!files.length || (!missionName && !missionId)}
                     onClick={handleValidate}
                 >
                     Lancer le traitement

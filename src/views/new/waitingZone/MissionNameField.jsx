@@ -6,15 +6,12 @@ export function MissionNameField(props) {
         setMissionName(event.target.value);
 
     return (
-        <fieldset className='fieldset'>
-            <legend className='fieldset-legend'>Nom de la nouvelle mission</legend>
-            <input
-                type='text'
-                className='input'
-                placeholder='Nouvelle mission'
-                value={missionName}
-                onChange={handleNameChange}
-            />
-        </fieldset>
+        <input
+            type='text'
+            className='w-full input input-sm'
+            placeholder='Nouvelle mission'
+            value={missionName}
+            onChange={handleNameChange}
+        />
     );
 }

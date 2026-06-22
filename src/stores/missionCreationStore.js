@@ -13,6 +13,7 @@ const toggle = (selection, id) => {
 export const useMissionCreationStore = create((set, get) => ({
     fileIds: new Set(),
     configs: {},
+    missionId: null,
 
     toggle: (id) =>
         set((state) => ({
@@ -38,4 +39,7 @@ export const useMissionCreationStore = create((set, get) => ({
             ...get().configs[id],
             ...partialConfig,
         }),
+
+    setMissionId: (id) =>
+        set(() => ({ missionId: id })),
 }));

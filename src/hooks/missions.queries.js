@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { missionsResourceName, missionsService } from '../services';
 import { createCrudQueries } from './crud.factory';
 
@@ -15,7 +15,13 @@ const useGetAllByStatus = (status) => useQuery({
     queryFn: () => service.getAll(getURLSearchParamsForStatus(status)),
 });
 
+
+const useAddMedias = () => useMutation({
+    mutationFn: ({ id, medias }) => service.addMedias(id, medias),
+});
+
 export const missionsQueries = {
     ...queries,
     useGetAllByStatus,
+    useAddMedias,
 };
