@@ -1,20 +1,25 @@
-import { layers } from '@protomaps/basemaps';
-import { GLYPHS_URL, MAP_THEME, MIN_ZOOM, SPRITE_URL } from '../constants';
+import { layers, namedFlavor } from '@protomaps/basemaps';
+import { GLYPHS_URL, MIN_ZOOM, SPRITE_URL } from '../constants';
 import { sortByKeyPath } from './others';
 
-export const buildMapStyle = (url) => ({
-    version: 8,
-    glyphs: GLYPHS_URL,
-    sprite: SPRITE_URL,
-    sources: {
-        protomaps: {
-            type: 'vector',
-            url: `pmtiles://${url}`,
-            minzoom: MIN_ZOOM,
+export const buildMapStyle = (url, isDark) => {
+    //'light', 'dark', 'white', 'grayscale', 'black'
+    const theme = namedFlavor(isDark ? 'dark' : 'light');
+
+    return {
+        version: 8,
+        glyphs: GLYPHS_URL,
+        sprite: SPRITE_URL,
+        sources: {
+            protomaps: {
+                type: 'vector',
+                url: `pmtiles://${url}`,
+                minzoom: MIN_ZOOM,
+            },
         },
-    },
-    layers: layers('protomaps', MAP_THEME, { lang: 'fr' }),
-});
+        layers: layers('protomaps', theme, { lang: 'fr' }),
+    };
+};
 
 export const getPointLabel = (point) => {
     const { index, isStart, isEnd } = point;

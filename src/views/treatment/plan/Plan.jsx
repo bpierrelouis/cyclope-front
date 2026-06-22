@@ -6,7 +6,7 @@ import { useEffect, useMemo, useRef } from 'react';
 import { Map, NavigationControl } from 'react-map-gl/maplibre';
 import { MAX_ZOOM, MIN_ZOOM } from '../../../constants';
 import { filesQueries } from '../../../hooks';
-import { usePlayerStore } from '../../../stores';
+import { usePlayerStore, useThemeStore } from '../../../stores';
 import { buildMapStyle, sendOpenStateToMaster, sortAndMapPoints } from '../../../utils';
 import { Path } from './Path';
 
@@ -14,6 +14,8 @@ export function Plan() {
     const { isMaster, results } = usePlayerStore();
     const { data: carto } = filesQueries.useCarto();
     const mapRef = useRef(null);
+    const { isDark } = useThemeStore();
+
 
     useEffect(() => {
         if (isMaster) return;
@@ -33,8 +35,8 @@ export function Plan() {
     }, [results]);
 
     const mapStyle = useMemo(() => {
-        return buildMapStyle(carto);
-    }, [carto]);
+        return buildMapStyle(carto, isDark);
+    }, [carto, isDark]);
 
     const centerMapToPath = async () => {
         if (!points?.length) return;
