@@ -102,3 +102,10 @@
 .marker-end {
     background: var(--color-error);
 }
+
+/* Centre l'icône "locate" */
+.maplibregl-ctrl-group button {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}

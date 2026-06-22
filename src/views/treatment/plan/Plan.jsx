@@ -1,4 +1,3 @@
-import { LocateIcon } from 'lucide-react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { Protocol } from 'pmtiles';
@@ -8,6 +7,7 @@ import { MAX_ZOOM, MIN_ZOOM } from '../../../constants';
 import { filesQueries } from '../../../hooks';
 import { usePlayerStore, useThemeStore } from '../../../stores';
 import { buildMapStyle, sendOpenStateToMaster, sortAndMapPoints } from '../../../utils';
+import { LocateButton } from './LocateButton';
 import { Path } from './Path';
 
 export function Plan() {
@@ -35,6 +35,7 @@ export function Plan() {
     }, [results]);
 
     const mapStyle = useMemo(() => {
+        if (!carto) return;
         return buildMapStyle(carto, isDark);
     }, [carto, isDark]);
 
@@ -57,20 +58,14 @@ export function Plan() {
         <Map
             ref={mapRef}
             onLoad={centerMapToPath}
+            maxPitch={0}
             minZoom={MIN_ZOOM}
             maxZoom={MAX_ZOOM}
             mapStyle={mapStyle}
             style={{ width: '100%', height: '100%', flex: 1, minHeight: 0 }}
         >
-            <NavigationControl />
-            <div className='top-25 right-[10px] z-10 absolute'>
-                <button
-                    className='maplibregl-ctrl-group size-[29px] maplibregl-ctrl btn btn-square'
-                    onClick={centerMapToPath}
-                >
-                    <LocateIcon size={18} />
-                </button>
-            </div>
+            <NavigationControl position='top-right' />
+            <LocateButton onClick={centerMapToPath} />
             <Path points={points} />
         </Map>
     );
