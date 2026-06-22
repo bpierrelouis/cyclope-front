@@ -9,7 +9,7 @@ const updateMedia = (queryClient, lastTreatmentId, partial) =>
             m.lastTreatmentId === lastTreatmentId ? new Media({ ...m.meta, ...partial }) : m),
     );
 
-const parseEvent = (event) => {
+export const parseEvent = (event) => {
     const data = JSON.parse(event.data);
     return convertKeysFromSnakeToCamelCase(data);
 };

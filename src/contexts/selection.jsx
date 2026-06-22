@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router';
-import { mediasQueries, missionsQueries, resultsQueries, treatmentsQueries } from '../hooks';
+import { mediasQueries, missionsQueries, treatmentsQueries } from '../hooks';
+import { resultsStream } from '../services';
+import { sortByKeyPath } from '../utils';
 
 const SelectionContext = createContext(null);
 
@@ -8,19 +10,15 @@ export function SelectionProvider({ children }) {
     const [searchParams] = useSearchParams();
 
     const [ids, setIds] = useState({});
+    const [results, setResults] = useState([]);
 
     const { data: mission } = missionsQueries.useGetById(ids.mission);
     const { data: medias } = mediasQueries.useGetAllByMissionId(mission?.id);
-
     const { data: media } = mediasQueries.useGetById(ids.media);
-    const { data: lastTreatment } = treatmentsQueries.useGetLastByMediaId(media?.id);
-
-    const { data: treatment } = treatmentsQueries.useGetById(ids.treatment);
-
-    const { data: results } = resultsQueries.useGetAllByTreatmentId(ids.treatment);
+    const { data: treatment } = treatmentsQueries.useGetById(media?.lastTreatmentId);
 
     useEffect(() => {
-        const newIds = ['mission', 'media', 'treatment']
+        const newIds = ['mission', 'media']
             .reduce((acc, name) => {
                 const id = searchParams.get(name);
                 if (!id) return acc;
@@ -50,14 +48,15 @@ export function SelectionProvider({ children }) {
         }));
     }, [medias, ids.media, setIds]);
 
-    // Vérification de la sélection d'un traitement
     useEffect(() => {
-        if (!lastTreatment || ids.treatment !== undefined) return;
-        setIds((prev) => ({
-            ...prev,
-            treatment: lastTreatment.id,
-        }));
-    }, [lastTreatment, ids.treatment]);
+        setResults([]);
+        if (!Number.isInteger(treatment?.id)) return;
+        resultsStream.connect(
+            treatment?.id,
+            (result) => setResults((prev) => sortByKeyPath([...prev, result], 'index')),
+        );
+        return () => resultsStream.disconnect();
+    }, [treatment?.id]);
 
     const value = useMemo(() => ({
         mission,

@@ -19,3 +19,23 @@ export const sendOpenStateToMaster = (property) => {
         window.removeEventListener('beforeunload', handleBeforeUnload);
     };
 };
+
+const compilePath = (path) => {
+    const keys = path.split('.');
+    return new Function('obj', `return obj?.${keys.join('?.')}`);
+};
+
+export const sortByKeyPath = (arr, path, dir = 'asc') => {
+    const get = compilePath(path);
+
+    const sorted = arr.toSorted((a, b) => {
+        const va = get(a);
+        const vb = get(b);
+
+        if (va === vb) return 0;
+
+        const res = va > vb ? 1 : -1;
+        return dir === 'asc' ? res : -res;
+    });
+    return sorted;
+};

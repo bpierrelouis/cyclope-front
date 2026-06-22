@@ -1,5 +1,6 @@
 import { layers } from '@protomaps/basemaps';
 import { GLYPHS_URL, MAP_THEME, MIN_ZOOM, SPRITE_URL } from '../constants';
+import { sortByKeyPath } from './others';
 
 export const buildMapStyle = (url) => ({
     version: 8,
@@ -32,25 +33,6 @@ export const getMarkerClass = (point) => {
         return 'marker-end';
     }
     return 'marker-step';
-};
-
-const compilePath = (path) => {
-    const keys = path.split('.');
-    return new Function('obj', `return obj?.${keys.join('?.')}`);
-};
-
-const sortByKeyPath = (arr, path, dir = 'asc') => {
-    const get = compilePath(path);
-
-    return arr.toSorted((a, b) => {
-        const va = get(a);
-        const vb = get(b);
-
-        if (va === vb) return 0;
-
-        const res = va > vb ? 1 : -1;
-        return dir === 'asc' ? res : -res;
-    });
 };
 
 const pointMapper = (result, index, array) => ({

@@ -6,10 +6,4 @@ const service = resultsService;
 
 const queries = createCrudQueries(resource, service);
 
-const useGetAllByTreatmentId = (treatmentId) =>
-    queries.useGetAll(new URLSearchParams({ treatment_id: treatmentId }));
-
-export const resultsQueries = {
-    ...queries,
-    useGetAllByTreatmentId,
-};
+export const resultsQueries = queries;

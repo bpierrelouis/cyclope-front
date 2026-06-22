@@ -1,5 +1,5 @@
 import { http, HttpResponse, sse } from 'msw';
-import { mockMedias, mockMissions, mockResults, mocksFilesTree, mockTreatments, percentageUpdates, statusUpdate } from './data';
+import { mockMedias, mockMissions, mockResults, mocksFilesTree, mockTreatments, percentageUpdates } from './data';
 
 let missions = [...mockMissions];
 let medias = [...mockMedias];
@@ -66,6 +66,20 @@ const getHandlers = (resource, data) => [
     }),
 ];
 
+const eventsSender = (client, interval, data) => {
+    let i = 0;
+
+    const func = setInterval(() => {
+        if (i >= data.length) {
+            clearInterval(func);
+            return;
+        }
+
+        client.send(data[i]);
+        i++;
+    }, interval);
+};
+
 export const handlers = [
     ...getHandlers('missions', missions),
     ...getHandlers('medias', medias),
@@ -88,20 +102,15 @@ export const handlers = [
     }),
 
     sse('/api/event', async ({ client }) => {
-        let i = 0;
+        eventsSender(client, 1000, percentageUpdates);
+    }),
 
-        const interval = setInterval(() => {
-            if (i >= percentageUpdates.length) {
-                clearInterval(interval);
-                return;
-            }
-
-            if (i == Math.floor(percentageUpdates.length / 2)) {
-                client.send(statusUpdate);
-            }
-
-            client.send(percentageUpdates[i]);
-            i++;
-        }, 1000);
+    sse('/api/treatments/:id/results/stream', async ({ client, params }) => {
+        const items = results.filter(item => item.treatment_id == params.id);
+        const events = items.map((data) => ({
+            event: 'treatment_result',
+            data,
+        }));
+        eventsSender(client, 500, events);
     }),
 ];
