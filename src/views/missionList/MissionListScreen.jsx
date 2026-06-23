@@ -1,18 +1,23 @@
 import { useState } from 'react';
-import { STATUS } from '../../constants';
 import { missionsQueries, useFilter } from '../../hooks';
+import { filterMissionsByStatus } from '../../utils';
 import { MissionListItem } from './MissionListItem';
 import { StatusTabs } from './StatusTabs';
 
 export function MissionListScreen() {
-    const [status, setStatus] = useState(STATUS[0]);
-    const { data: missions } = missionsQueries.useGetAllByStatus(status);
-    const { items, search, setSearch } = useFilter(missions ?? [], 'name');
+    const [status, setStatus] = useState(null);
+    const { data: missions } = missionsQueries.useGetAll();
+    const { items: searchedMissions, search, setSearch } = useFilter(missions ?? [], 'name');
+
+    const filteredMissions = filterMissionsByStatus(searchedMissions, status);
 
     return (
         <main className='flex flex-col gap-6 m-10'>
             <div className='flex flex-wrap-reverse justify-between items-center gap-1'>
-                <StatusTabs statusState={[status, setStatus]} />
+                <StatusTabs
+                    state={[status, setStatus]}
+                    missions={searchedMissions}
+                />
                 <input
                     type='text'
                     placeholder='Rechercher...'
@@ -22,7 +27,7 @@ export function MissionListScreen() {
                 />
             </div>
             <div className='flex flex-col gap-1 tab-content'>
-                {items.map((m) => (
+                {filteredMissions?.map((m) => (
                     <MissionListItem key={m.id} mission={m} />
                 ))}
             </div>
