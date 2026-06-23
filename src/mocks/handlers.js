@@ -1,5 +1,5 @@
 import { http, HttpResponse, sse } from 'msw';
-import { mockMedias, mockMissions, mockResults, mocksFilesTree, mockTreatments, percentageUpdates } from './data';
+import { events, mockMedias, mockMissions, mockResults, mocksFilesTree, mockTreatments } from './data';
 
 let missions = [...mockMissions];
 let medias = [...mockMedias];
@@ -102,7 +102,7 @@ export const handlers = [
     }),
 
     sse('/api/event', async ({ client }) => {
-        eventsSender(client, 1000, percentageUpdates);
+        eventsSender(client, 200, events);
     }),
 
     sse('/api/treatments/:id/results/stream', async ({ client, params }) => {

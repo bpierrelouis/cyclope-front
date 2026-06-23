@@ -262,4 +262,7 @@ const percentageUpdate = (percentage) => ({
     },
 });
 
-export const percentageUpdates = Array.from({ length: 10 }, (_, i) => i * 10).map(percentageUpdate);
+export const events = [
+    ...Array.from({ length: 50 }, (_, i) => (i + 1) * 2).map(percentageUpdate),
+    statusUpdate,
+];
