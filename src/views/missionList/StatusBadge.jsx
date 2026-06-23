@@ -1,9 +1,11 @@
 export function StatusBadge(props) {
-    const { color, label } = props;
+    const { color, count } = props;
+
+    if (!count) return;
 
     return (
         <span className={`badge badge-sm badge-soft ${color}`}>
-            {label}
+            {count}
         </span>
     );
 }

@@ -47,16 +47,16 @@ export function MissionHeader(props) {
                 </button>
 
                 <div className='flex-1'>
-                    <div className='flex items-center gap-2'>
+                    <div className='flex items-center gap-1'>
                         <EditableText
                             value={mission.name}
                             setValue={handleChangeName}
                         />
                         {opened !== mission.id && (<>
-                            {mission.containsDone && <StatusBadge color='badge-success' label='Terminée(s)' />}
-                            {mission.containsProgress && <StatusBadge color='badge-info' label='En cours' />}
-                            {mission.containsPending && <StatusBadge color='badge-info' label='En attente' />}
-                            {mission.containsError && <StatusBadge color='badge-error' label='En erreur' />}
+                            <StatusBadge color='badge-success' count={mission.doneNumber} />
+                            <StatusBadge color='badge-info' count={mission.progressNumber} />
+                            <StatusBadge color='badge-warning' count={mission.pendingNumber} />
+                            <StatusBadge color='badge-error' count={mission.errorNumber} />
                         </>)}
                     </div>
 

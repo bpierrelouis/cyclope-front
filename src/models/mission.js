@@ -23,16 +23,16 @@ export class Mission {
     get statuses() {
         return this.meta.mediasStatus;
     }
-    get containsDone() {
-        return this.statuses.includes('DONE');
+    get doneNumber() {
+        return this.statuses['DONE'] || 0;
     }
-    get containsError() {
-        return this.statuses.includes('ERROR');
+    get errorNumber() {
+        return this.statuses['ERROR'] || 0;
     }
-    get containsProgress() {
-        return this.statuses.includes('RUNNING');
+    get progressNumber() {
+        return this.statuses['RUNNING'] || 0;
     }
-    get containsPending() {
-        return this.statuses.includes('PENDING');
+    get pendingNumber() {
+        return this.statuses['PENDING'] || 0;
     }
 }

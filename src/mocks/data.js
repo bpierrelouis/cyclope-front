@@ -3,19 +3,28 @@ export const mockMissions = [
         id: '1',
         name: 'Survol zone A — 15/04/2026',
         creation_date: '2026-04-15T10:00:00Z',
-        medias_status: ['DONE', 'RUNNING', 'ERROR'],
+        medias_status: {
+            DONE: 2,
+            RUNNING: 1,
+            PENDING: 1,
+            ERROR: 3,
+        },
     },
     {
         id: '2',
         name: 'Parc Nord B',
         creation_date: '2026-04-15T10:00:00Z',
-        medias_status: ['RUNNING', 'PENDING'],
+        medias_status: {
+            PENDING: 1,
+        },
     },
     {
         id: '3',
         name: 'Hangar H',
         creation_date: '2026-04-15T10:00:00Z',
-        medias_status: ['ERROR'],
+        medias_status: {
+            ERROR: 3,
+        },
     },
 ];
 
@@ -48,6 +57,36 @@ export const mockMedias = [
         },
         last_treatment_id: 2,
         last_treatment_status: 'RUNNING',
+    },
+    {
+        id: 3,
+        display_name: 'drone_survey_A.mp4',
+        mission_id: 1,
+        file_id: 2,
+        parent_file: {
+            name: 'mov_bbb',
+            url: 'https://www.w3schools.com/html/mov_bbb.mp4',
+            size: 60521,
+            extension: 'mp4',
+            duration: 50,
+        },
+        // last_treatment_id: 2,
+        last_treatment_status: 'PENDING',
+    },
+    {
+        id: 4,
+        display_name: 'drone_survey_A.mp4',
+        mission_id: 1,
+        file_id: 2,
+        parent_file: {
+            name: 'mov_bbb',
+            url: 'https://www.w3schools.com/html/mov_bbb.mp4',
+            size: 60521,
+            extension: 'mp4',
+            duration: 50,
+        },
+        // last_treatment_id: 2,
+        last_treatment_status: 'ERROR',
     },
 ];
 
@@ -246,11 +285,11 @@ export const mocksFilesTree = [
     },
 ];
 
-export const statusUpdate = {
+const statusUpdate = {
     event: 'treatment_status',
     data: {
-        treatment_id: 1,
-        status: 'ERROR',
+        treatment_id: 2,
+        status: 'DONE',
     },
 };
 
