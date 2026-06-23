@@ -35,7 +35,7 @@ export function Table() {
             accessorKey: 'objects',
             header: 'Détection',
             cell: ({ row }) => (
-                <DetectionCell objects={row.original.objects} />
+                <DetectionCell result={row.original} />
             ),
         },
     ], [setSelected]);

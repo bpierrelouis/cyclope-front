@@ -1,12 +1,11 @@
-import { ConfidenceBadge } from '../../../components';
+import { ConfidenceBadges } from './ConfidenceBadges';
 
 export function DetectionCell(props) {
-    const { objects } = props;
+    const { result } = props;
+
     return (
         <div className='flex flex-wrap gap-1'>
-            {objects?.map((obj) => (
-                <ConfidenceBadge key={obj.type} object={obj} />
-            ))}
+            <ConfidenceBadges result={result} />
         </div>
     );
 }

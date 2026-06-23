@@ -1,10 +1,10 @@
-import { ConfidenceBadge } from '../../../components';
 import { filesQueries } from '../../../hooks';
+import { ConfidenceBadges } from './ConfidenceBadges';
 
 export function ResultPopup(props) {
     const { result, dismiss } = props;
     const { data } = filesQueries.useGetContent(result.url);
-    console.log(result);
+
     return (
         <dialog className='modal modal-open'>
             <div className='flex gap-4 p-4 w-3/4 max-w-7xl modal-box'>
@@ -30,9 +30,7 @@ export function ResultPopup(props) {
                     ))}
                     <div className='flex flex-wrap justify-center items-center gap-1 bg-base-200 px-2 py-1 rounded-field'>
                         <span className='basis-full stat-title'>Détection</span>
-                        {result.objects?.map((obj) => (
-                            <ConfidenceBadge key={obj.type} object={obj} />
-                        ))}
+                        <ConfidenceBadges result={result} />
                     </div>
                 </div>
 
