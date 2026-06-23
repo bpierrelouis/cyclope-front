@@ -24,7 +24,7 @@ export function FileConfig(props) {
             {!!file.duration && (<ProcessStepField
                 config={config}
                 setPartialConfig={setPartialConfig}
-                max={file.duration}
+                max={file.duration || 1}
             />)}
 
             <ProcessObjectDetectionField

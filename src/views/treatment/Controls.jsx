@@ -45,7 +45,7 @@ export function Controls() {
             <input
                 type='range'
                 min='0'
-                max={rangeMaxValue}
+                max={rangeMaxValue || 1}
                 value={rangeValue}
                 onChange={onRangeChange}
                 className='flex-1 range range-primary range-xs'
