@@ -19,6 +19,11 @@ export function Table() {
             ),
         },
         { accessorKey: 'index', header: 'Frame' },
+        {
+            accessorFn: (row) => row.timeStamp?.split('.')[0],
+            id: 'timestamp',
+            header: 'Timecode',
+        },
         { accessorKey: 'coordinates.latitude', header: 'Latitude' },
         { accessorKey: 'coordinates.longitude', header: 'Longitude' },
         {
