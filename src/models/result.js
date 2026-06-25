@@ -1,6 +1,9 @@
+import { parseTimecode } from '../utils';
+
 export class Result {
     constructor(data) {
         this.meta = data;
+        this.seconds = parseTimecode(data.responseJson.timestamp);
     }
 
     static mapper(data) {
@@ -23,16 +26,20 @@ export class Result {
         return this.meta.responseJson;
     }
 
-    get altitude() {
-        return this.data.altitude;
+    get altitudeLabel() {
+        const altitude = this.data.altitude;
+        if (!altitude) return null;
+        return `${altitude.value} ${altitude.unit}`;
     }
 
-    get timeStamp() {
-        return this.data.timestamp;
+    get timecode() {
+        return this.data.timestamp?.split('.')[0];
     }
 
-    get speed() {
-        return this.data.speed;
+    get speedLabel() {
+        const speed = this.data.speed;
+        if (!speed) return null;
+        return `${speed.value} ${speed.unit}`;
     }
 
     get allCoordinates() {

@@ -6,7 +6,7 @@ import { ThemeSwap } from './ThemeSwap';
 
 export function SideBar(props) {
     return (
-        <aside className='flex flex-col items-stretch bg-base-100 px-2 py-4 w-fit is-drawer-open:w-64 min-h-full is-drawer-close:overflow-visible drawer-side'>
+        <aside className='flex flex-col items-stretch bg-base-100 px-2 py-4 w-fit is-drawer-open:w-xs min-h-full is-drawer-close:overflow-visible drawer-side'>
             <div className='flex items-center'>
                 <label htmlFor={props.drawerId} aria-label='open sidebar' className='btn btn-ghost'>
                     <PanelLeftCloseIcon className='is-drawer-close:hidden' />

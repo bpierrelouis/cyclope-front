@@ -1,47 +1,37 @@
 import { flexRender, getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { usePlayerStore } from '../../../stores';
-import { sendOpenStateToMaster } from '../../../utils';
+import { getCurrentResult, sendOpenStateToMaster } from '../../../utils';
 import { DetectionCell } from './DetectionsCell';
 import { FrameCell } from './FrameCell';
 import { ResultPopup } from './ResultPopup';
 
 export function Table() {
-    const { isMaster, results } = usePlayerStore();
+    const { isMaster, results, currentTime } = usePlayerStore();
     const [selected, setSelected] = useState(null);
+    const activeRowRef = useRef(null);
+
+    const currentResultId = useMemo(
+        () => getCurrentResult(results, currentTime)?.id ?? null,
+        [results, currentTime],
+    );
 
     const columns = useMemo(() => [
         {
             accessorKey: 'url',
             header: 'Image',
-            cell: ({ row }) => (
-                <FrameCell url={row.original.url} onClick={() => setSelected(row.original)} />
-            ),
+            cell: ({ row }) => (<FrameCell row={row} onClick={setSelected} />),
         },
         { accessorKey: 'index', header: 'Frame' },
-        {
-            accessorFn: (row) => row.timeStamp?.split('.')[0],
-            id: 'timestamp',
-            header: 'Timecode',
-        },
+        { accessorKey: 'timecode', header: 'Timecode' },
         { accessorKey: 'coordinates.latitude', header: 'Latitude' },
         { accessorKey: 'coordinates.longitude', header: 'Longitude' },
-        {
-            accessorFn: (row) => `${row.altitude.value} ${row.altitude.unit}`,
-            id: 'altitude',
-            header: 'Altitude',
-        },
-        {
-            accessorFn: (row) => `${row.speed.value} ${row.speed.unit}`,
-            id: 'speed',
-            header: 'Vitesse',
-        },
+        { accessorKey: 'altitudeLabel', header: 'Altitude' },
+        { accessorKey: 'speedLabel', header: 'Vitesse' },
         {
             accessorKey: 'objects',
             header: 'Détection',
-            cell: ({ row }) => (
-                <DetectionCell result={row.original} />
-            ),
+            cell: DetectionCell,
         },
     ], [setSelected]);
 
@@ -49,6 +39,10 @@ export function Table() {
         if (isMaster) return;
         return sendOpenStateToMaster('isTableOpen');
     }, [isMaster]);
+
+    useEffect(() => {
+        activeRowRef.current?.scrollIntoView({ block: 'nearest' });
+    }, [currentResultId]);
 
     const table = useReactTable({
         data: results ?? [],
@@ -59,35 +53,17 @@ export function Table() {
 
     return (
         <div className='flex gap-4 h-full'>
-            <div className='flex-1 overflow-x-auto'>
+            <div className='flex-1 overflow-auto'>
                 <table className='table table-sm table-zebra w-full'>
-                    <thead>
-                        {table.getHeaderGroups().map(headerGroup => (
-                            <tr key={headerGroup.id}>
-                                {headerGroup.headers.map(header => (
-                                    <th
-                                        key={header.id}
-                                        className='cursor-pointer select-none'
-                                        onClick={header.column.getToggleSortingHandler()}
-                                    >
-                                        {flexRender(header.column.columnDef.header, header.getContext())}
-                                        {header.column.getIsSorted() === 'asc' ? ' ↑'
-                                            : header.column.getIsSorted() === 'desc' ? ' ↓'
-                                                : ''}
-                                    </th>
-                                ))}
-                            </tr>
-                        ))}
-                    </thead>
+                    <TableHead table={table} />
                     <tbody>
                         {table.getRowModel().rows.map(row => (
-                            <tr key={row.id}>
-                                {row.getVisibleCells().map(cell => (
-                                    <td key={cell.id} >
-                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                    </td>
-                                ))}
-                            </tr>
+                            <TableBodyRow
+                                key={row.id}
+                                row={row}
+                                selectedId={currentResultId}
+                                selectedRef={activeRowRef}
+                            />
                         ))}
                     </tbody>
                 </table>
@@ -95,5 +71,65 @@ export function Table() {
 
             {selected && (<ResultPopup result={selected} dismiss={() => setSelected(null)} />)}
         </div>
+    );
+}
+
+function TableHead(props) {
+    const { table } = props;
+
+    return (
+        <thead>
+            {table.getHeaderGroups().map(headerGroup => (
+                <tr key={headerGroup.id}>
+                    {headerGroup.headers.map(header => (
+                        <TableHeadCell key={header.id} header={header} />
+                    ))}
+                </tr>
+            ))}
+        </thead>
+    );
+}
+
+function TableHeadCell(props) {
+    const { header } = props;
+    const isSorted = header.column.getIsSorted();
+    const sortAddon = { 'asc': ' ↑', 'desc': ' ↓' }[isSorted];
+
+    return (
+        <th
+            key={header.id}
+            className='cursor-pointer select-none'
+            onClick={header.column.getToggleSortingHandler()}
+        >
+            {flexRender(header.column.columnDef.header, header.getContext())}
+            {sortAddon}
+        </th>
+    );
+}
+
+function TableBodyRow(props) {
+    const { row, selectedId, selectedRef } = props;
+    const isActive = row.original.id === selectedId;
+
+    return (
+        <tr
+            key={row.id}
+            ref={isActive ? selectedRef : null}
+            className={isActive ? 'cyc-row-active' : ''}
+        >
+            {row.getVisibleCells().map(cell => (
+                <TableBodyCell key={cell.id} cell={cell} />
+            ))}
+        </tr>
+    );
+}
+
+function TableBodyCell(props) {
+    const { cell } = props;
+
+    return (
+        <td key={cell.id} >
+            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+        </td>
     );
 }

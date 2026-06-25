@@ -2,9 +2,12 @@ import { filesQueries } from '../../../hooks';
 import { preventDefault } from '../../../utils';
 
 export function FrameCell(props) {
-    const { url, onClick } = props;
+    const { row, onClick } = props;
+    const result = row.original;
 
-    const { data } = filesQueries.useGetContent(url);
+    const { data } = filesQueries.useGetContent(result.url);
+
+    const setSelected = () => onClick(result);
 
     return data ? (
         <img
@@ -12,7 +15,7 @@ export function FrameCell(props) {
             alt='frame'
             style={{ width: 40, height: 30, objectFit: 'cover' }}
             className='hover:opacity-80 rounded cursor-pointer'
-            onClick={preventDefault(onClick)} />
+            onClick={preventDefault(setSelected)} />
     ) : (
         <span>—</span>
     );

@@ -52,13 +52,28 @@ export function Media(props) {
         });
     };
 
-    if (!media) return (null);
+    const handleLoadedMetadata = () => {
+        if (!isMaster) return;
+
+        const video = videoRef.current;
+        const duration = video?.duration ?? 0;
+        const currentTime = video?.currentTime ?? 0;
+
+        playerService.sync({
+            duration,
+            currentTime,
+            media,
+        });
+    };
+
+    if (!media) return null;
 
     return media.isVideo ? (
         <video
             ref={videoRef}
             className={`size-full flex-1 min-h-0 object-contain ${props.hidden ? 'hidden' : ''}`}
             onTimeUpdate={handleTimeUpdate}
+            onLoadedMetadata={handleLoadedMetadata}
             src={url}
             muted
             loop

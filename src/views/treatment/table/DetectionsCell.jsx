@@ -1,7 +1,7 @@
 import { ConfidenceBadges } from './ConfidenceBadges';
 
 export function DetectionCell(props) {
-    const { result } = props;
+    const result = props.row.original;
 
     return (
         <div className='flex flex-wrap gap-1'>

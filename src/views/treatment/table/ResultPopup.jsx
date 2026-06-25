@@ -20,8 +20,8 @@ export function ResultPopup(props) {
                         { label: 'Frame', value: result.index },
                         { label: 'Latitude', value: result.coordinates.latitude },
                         { label: 'Longitude', value: result.coordinates.longitude },
-                        { label: 'Altitude', value: `${result.altitude.value} ${result.altitude.unit}` },
-                        { label: 'Vitesse', value: `${result.speed.value} ${result.speed.unit}` },
+                        { label: 'Altitude', value: result.altitudeLabel },
+                        { label: 'Vitesse', value: result.speedLabel },
                     ].map(({ label, value }) => (
                         <div key={label} className='flex flex-wrap justify-between items-center bg-base-200 px-2 py-1 rounded-field'>
                             <span className='stat-title'>{label}</span>
