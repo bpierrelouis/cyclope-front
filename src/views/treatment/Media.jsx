@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { filesQueries } from '../../hooks';
 import { playerService } from '../../services';
 import { usePlayerStore } from '../../stores';
-import { sendOpenStateToMaster } from '../../utils';
+import { cn, sendOpenStateToMaster } from '../../utils';
 
 export function Media(props) {
     const videoRef = useRef();
@@ -71,7 +71,7 @@ export function Media(props) {
     return media.isVideo ? (
         <video
             ref={videoRef}
-            className={`size-full flex-1 min-h-0 object-contain ${props.hidden ? 'hidden' : ''}`}
+            className={cn('flex-1 min-h-0 size-full object-contain', props.hidden && 'hidden')}
             onTimeUpdate={handleTimeUpdate}
             onLoadedMetadata={handleLoadedMetadata}
             src={url}
@@ -80,7 +80,7 @@ export function Media(props) {
         />
     ) : (
         <img
-            className={`w-full h-full object-contain ${props.hidden ? 'hidden' : ''}`}
+            className={cn('w-full h-full object-contain', props.hidden && 'hidden')}
             src={url}
             alt={media.name}
         />
