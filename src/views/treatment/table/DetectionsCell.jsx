@@ -1,4 +1,4 @@
-import { ConfidenceBadges } from './ConfidenceBadges';
+import { ConfidenceBadges } from '../ConfidenceBadges';
 
 export function DetectionCell(props) {
     const result = props.row.original;

@@ -1,4 +1,4 @@
-import { ConfidenceBadge } from '../../../components';
+import { ConfidenceBadge } from '../../components';
 
 export function ConfidenceBadges(props) {
     const { result } = props;

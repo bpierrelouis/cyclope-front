@@ -2,6 +2,7 @@ import { LocateIcon } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { useControl } from 'react-map-gl/maplibre';
+import { iconSizes } from '../../../constants';
 
 class LocateControl {
     constructor(onClick) {
@@ -31,7 +32,7 @@ class LocateControl {
             this._button.onclick = this._onClick;
 
             this._root = createRoot(this._button);
-            this._root.render(<LocateIcon size={16} />);
+            this._root.render(<LocateIcon size={iconSizes.sm} />);
 
             this._navGroup.appendChild(this._button);
             this._button.onclick = () => this._onClick.current();
@@ -47,15 +48,25 @@ class LocateControl {
     }
 
     onRemove() {
-        this._root?.unmount();
-        this._button?.remove();
-        this._container.remove();
+        const root = this._root;
+        const button = this._button;
+        const container = this._container;
+        this._root = null;
+        this._button = null;
+
+        queueMicrotask(() => {
+            root?.unmount();
+            button?.remove();
+            container?.remove();
+        });
     }
 }
 
 export function LocateButton({ onClick }) {
     const onClickRef = useRef(onClick);
-    useEffect(() => { onClickRef.current = onClick; }, [onClick]);
+    useEffect(() => {
+        onClickRef.current = onClick;
+    }, [onClick]);
     useControl(() => new LocateControl(onClickRef), { position: 'top-right' });
     return null;
 }

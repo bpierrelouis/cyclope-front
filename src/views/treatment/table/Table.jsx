@@ -4,7 +4,7 @@ import { usePlayerStore } from '../../../stores';
 import { cn, getCurrentResult, sendOpenStateToMaster } from '../../../utils';
 import { DetectionCell } from './DetectionsCell';
 import { FrameCell } from './FrameCell';
-import { ResultPopup } from './ResultPopup';
+import { ResultPopup } from '../ResultPopup';
 
 export function Table() {
     const { isMaster, results, currentTime } = usePlayerStore();

@@ -1,12 +1,14 @@
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { Protocol } from 'pmtiles';
-import { useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Map, NavigationControl } from 'react-map-gl/maplibre';
 import { Plan as Constants } from '../../../constants';
 import { filesQueries } from '../../../hooks';
 import { usePlayerStore, useThemeStore } from '../../../stores';
 import { buildMapStyle, sendOpenStateToMaster, sortAndMapPoints } from '../../../utils';
+import { ResultPopup } from '../ResultPopup';
+import { DronePosition } from './DronePosition';
 import { LocateButton } from './LocateButton';
 import { Path } from './Path';
 
@@ -15,7 +17,12 @@ export function Plan() {
     const { data: carto } = filesQueries.useCarto();
     const mapRef = useRef(null);
     const { isDark } = useThemeStore();
+    const [selectedResult, setSelectedResult] = useState(null);
 
+    const handleSelectPoint = useCallback((pointId) => {
+        const result = (results ?? []).find((r) => r.id === pointId);
+        if (result) setSelectedResult(result);
+    }, [results]);
 
     useEffect(() => {
         if (isMaster) return;
@@ -55,18 +62,28 @@ export function Plan() {
     };
 
     return (
-        <Map
-            ref={mapRef}
-            onLoad={centerMapToPath}
-            maxPitch={0}
-            minZoom={Constants.MIN_ZOOM}
-            maxZoom={Constants.MAX_ZOOM}
-            mapStyle={mapStyle}
-            style={{ width: '100%', height: '100%', flex: 1, minHeight: 0 }}
-        >
-            <NavigationControl position='top-right' />
-            <LocateButton onClick={centerMapToPath} />
-            <Path points={points} />
-        </Map>
+        <>
+            <Map
+                ref={mapRef}
+                onLoad={centerMapToPath}
+                maxPitch={0}
+                minZoom={Constants.MIN_ZOOM}
+                maxZoom={Constants.MAX_ZOOM}
+                mapStyle={mapStyle}
+                style={{ width: '100%', height: '100%', flex: 1, minHeight: 0 }}
+            >
+                <NavigationControl position='top-right' />
+                <LocateButton onClick={centerMapToPath} />
+                <Path points={points} onSelect={handleSelectPoint} />
+                <DronePosition />
+            </Map>
+            {
+                selectedResult && (
+                    <ResultPopup
+                        result={selectedResult}
+                        dismiss={() => setSelectedResult(null)} />
+                )
+            }
+        </>
     );
 }

@@ -1,4 +1,4 @@
-import { filesQueries } from '../../../hooks';
+import { filesQueries } from '../../hooks';
 import { ConfidenceBadges } from './ConfidenceBadges';
 
 export function ResultPopup(props) {

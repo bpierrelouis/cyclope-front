@@ -1,26 +1,33 @@
 import { Marker } from 'react-map-gl/maplibre';
-import { getMarkerClass, getPointLabel } from '../../../utils';
+import { getMarkerClass } from '../../../utils';
 
 export function Point(props) {
-    const { point } = props;
-    const { index } = point;
+    const { point, onSelect } = props;
+    const { frame, isStart, isEnd } = point;
 
     const markerClass = getMarkerClass(point);
-    const label = getPointLabel(point);
+    const isWaypoint = !isStart && !isEnd;
+    const title = isStart ? 'Depart' : isEnd ? 'Arrivee' : `Frame ${frame}`;
 
     return (
         <Marker
-            key={point.id}
             longitude={point.longitude}
             latitude={point.latitude}
-            anchor='bottom'
+            anchor='center'
         >
-            <div
+            <button
+                type='button'
                 className={`marker-pin ${markerClass}`}
-                title={`Point ${index + 1}`}
+                title={title}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    onSelect?.(point.id);
+                }}
             >
-                {label}
-            </div>
+                {isWaypoint
+                    ? <span className='marker-label'>{frame}</span>
+                    : <span className='marker-core' aria-hidden='true' />}
+            </button>
         </Marker>
     );
 }

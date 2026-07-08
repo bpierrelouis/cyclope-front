@@ -4,6 +4,9 @@ export const Plan = Object.freeze({
 
     MIN_ZOOM: 0,
     MAX_ZOOM: 20,
+
+    RESYNC_THRESHOLD: 0.35,
+    MARKER_STYLE: { zIndex: 5, pointerEvents: 'none' },
 });
 
 export const iconSizes = Object.freeze({
