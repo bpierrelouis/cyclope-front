@@ -1,5 +1,5 @@
 import { CogIcon, FoldersIcon, PanelLeftCloseIcon, PanelLeftOpenIcon, PlusIcon } from 'lucide-react';
-import { ROUTES } from '../../constants';
+import { ERoute } from '../../constants';
 import { MediaList } from './MediaList';
 import { NavItem } from './NavItem';
 import { ThemeSwap } from './ThemeSwap';
@@ -16,13 +16,13 @@ export function SideBar(props) {
                 <ThemeSwap />
             </div>
             <div className='divider'></div>
-            <NavItem title='Nouveau' to={ROUTES.new}>
+            <NavItem title='Nouveau' to={ERoute.NEW}>
                 <PlusIcon />
             </NavItem>
-            <NavItem title='Missions' to={ROUTES.missionList}>
+            <NavItem title='Missions' to={ERoute.MISSION_LIST}>
                 <FoldersIcon />
             </NavItem>
-            <NavItem title='Paramètres' to={ROUTES.settings}>
+            <NavItem title='Paramètres' to={ERoute.SETTINGS}>
                 <CogIcon />
             </NavItem>
             <MediaList />

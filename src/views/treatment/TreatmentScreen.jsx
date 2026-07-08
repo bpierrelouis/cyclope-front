@@ -1,7 +1,7 @@
 import { ExternalLinkIcon, MapIcon, TableIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { MediaIcon } from '../../components';
-import { ROUTES } from '../../constants';
+import { ERoute } from '../../constants';
 import { useSelectionContext } from '../../contexts';
 import { playerService } from '../../services';
 import { usePlayerStore } from '../../stores';
@@ -13,7 +13,7 @@ import { TreatmentHeader } from './TreatmentHeader';
 
 export function TreatmentScreen() {
     const { media, treatment, results } = useSelectionContext();
-    const [selected, setSelected] = useState(ROUTES.media);
+    const [selected, setSelected] = useState(ERoute.MEDIA);
     const { isMediaOpen, isTableOpen, isPlanOpen } = usePlayerStore();
 
     useEffect(() => {
@@ -38,9 +38,9 @@ export function TreatmentScreen() {
     }, [results]);
 
     const disabledComponents = {
-        [ROUTES.media]: isMediaOpen || selected === ROUTES.media,
-        [ROUTES.table]: isTableOpen || selected === ROUTES.table,
-        [ROUTES.plan]: isPlanOpen || selected === ROUTES.plan,
+        [ERoute.MEDIA]: isMediaOpen || selected === ERoute.MEDIA,
+        [ERoute.TABLE]: isTableOpen || selected === ERoute.TABLE,
+        [ERoute.PLAN]: isPlanOpen || selected === ERoute.PLAN,
     };
 
     /**
@@ -63,9 +63,9 @@ export function TreatmentScreen() {
     if (!media) return null;
 
     const modes = [
-        [ROUTES.plan, 'Carte', <MapIcon size={18} key={'MapIcon'} />],
-        [ROUTES.table, 'Tableau', <TableIcon size={18} key={'TableIcon'} />],
-        [ROUTES.media, media.isVideo ? 'Vidéo' : 'Image', <MediaIcon isVideo={media.isVideo} size={18} key={'MediaIcon'} />],
+        [ERoute.PLAN, 'Carte', <MapIcon key={'MapIcon'} />],
+        [ERoute.TABLE, 'Tableau', <TableIcon key={'TableIcon'} />],
+        [ERoute.MEDIA, media.isVideo ? 'Vidéo' : 'Image', <MediaIcon isVideo={media.isVideo} key={'MediaIcon'} />],
     ].filter(([route]) => route === selected || !disabledComponents[route]);
 
     return (
@@ -95,9 +95,9 @@ export function TreatmentScreen() {
             </aside>
 
             <main className='relative flex flex-col flex-1 bg-base-300 min-w-0 overflow-hidden'>
-                <Media hidden={selected !== ROUTES.media} />
-                {selected === ROUTES.plan && <Plan />}
-                {selected === ROUTES.table && <Table />}
+                <Media hidden={selected !== ERoute.MEDIA} />
+                {selected === ERoute.PLAN && <Plan />}
+                {selected === ERoute.TABLE && <Table />}
             </main>
 
             {media.isVideo && (

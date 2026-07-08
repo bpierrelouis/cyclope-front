@@ -1,6 +1,6 @@
 import { Link } from 'react-router';
 import { MediaIcon } from '../../components';
-import { ROUTES } from '../../constants';
+import { ERoute } from '../../constants';
 
 export function MissionMediaListItem(props) {
     const { media } = props;
@@ -15,7 +15,7 @@ export function MissionMediaListItem(props) {
     return (
         <Link
             to={{
-                pathname: ROUTES.treatment,
+                pathname: ERoute.TREATMENT,
                 search: `?media=${media.id}`,
             }}
             className={`flex items-center gap-2 hover:bg-base-200 px-8 ${color}`}

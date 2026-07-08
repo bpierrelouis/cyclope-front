@@ -2,7 +2,7 @@ import { FolderIcon, FolderOpenIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { EditableText } from '../../components';
-import { ROUTES } from '../../constants';
+import { ERoute } from '../../constants';
 import { missionsQueries } from '../../hooks';
 import { useMissionCollapseStore } from '../../stores';
 import { getMissionDescription, preventDefault } from '../../utils';
@@ -35,7 +35,7 @@ export function MissionHeader(props) {
             <Link
                 className='group flex items-center gap-2 hover:bg-base-200 px-3 py-2 cursor-pointer'
                 to={{
-                    pathname: ROUTES.treatment,
+                    pathname: ERoute.TREATMENT,
                     search: `?mission=${mission.id}`,
                 }}
             >

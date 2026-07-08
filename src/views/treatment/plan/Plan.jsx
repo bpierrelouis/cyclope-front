@@ -3,7 +3,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { Protocol } from 'pmtiles';
 import { useEffect, useMemo, useRef } from 'react';
 import { Map, NavigationControl } from 'react-map-gl/maplibre';
-import { MAX_ZOOM, MIN_ZOOM } from '../../../constants';
+import { Plan as Constants } from '../../../constants';
 import { filesQueries } from '../../../hooks';
 import { usePlayerStore, useThemeStore } from '../../../stores';
 import { buildMapStyle, sendOpenStateToMaster, sortAndMapPoints } from '../../../utils';
@@ -59,8 +59,8 @@ export function Plan() {
             ref={mapRef}
             onLoad={centerMapToPath}
             maxPitch={0}
-            minZoom={MIN_ZOOM}
-            maxZoom={MAX_ZOOM}
+            minZoom={Constants.MIN_ZOOM}
+            maxZoom={Constants.MAX_ZOOM}
             mapStyle={mapStyle}
             style={{ width: '100%', height: '100%', flex: 1, minHeight: 0 }}
         >

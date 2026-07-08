@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { ROUTES } from '../../constants';
+import { ERoute } from '../../constants';
 import { filesQueries, missionsQueries } from '../../hooks';
 import { useDefaultConfigStore, useMissionCreationStore } from '../../stores';
 import { flatTree } from '../../utils';
@@ -41,7 +41,7 @@ export function NewScreen() {
             await createMission({ name: missionName, medias });
         }
 
-        navigate(ROUTES.missionList);
+        navigate(ERoute.MISSION_LIST);
     };
 
     return (

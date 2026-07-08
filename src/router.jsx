@@ -1,5 +1,5 @@
 import { createBrowserRouter, Navigate } from 'react-router';
-import { ROUTES } from './constants';
+import { ERoute } from './constants';
 import { Drawer, Media, MissionListScreen, NewScreen, Plan, SettingsScreen, Table, TreatmentScreen } from './views';
 
 export const BROWSER_ROUTER = createBrowserRouter([
@@ -7,37 +7,37 @@ export const BROWSER_ROUTER = createBrowserRouter([
         Component: Drawer,
         children: [
             {
-                path: ROUTES.settings,
+                path: ERoute.SETTINGS,
                 Component: SettingsScreen,
             },
             {
-                path: ROUTES.new,
+                path: ERoute.NEW,
                 Component: NewScreen,
             },
             {
-                path: ROUTES.missionList,
+                path: ERoute.MISSION_LIST,
                 Component: MissionListScreen,
             },
             {
-                path: ROUTES.treatment,
+                path: ERoute.TREATMENT,
                 Component: TreatmentScreen,
             },
         ],
     },
     {
-        path: ROUTES.media,
+        path: ERoute.MEDIA,
         Component: Media,
     },
     {
-        path: ROUTES.table,
+        path: ERoute.TABLE,
         Component: Table,
     },
     {
-        path: ROUTES.plan,
+        path: ERoute.PLAN,
         Component: Plan,
     },
     {
         path: '*',
-        element: (<Navigate to={ROUTES.missionList} replace />),
+        element: (<Navigate to={ERoute.MISSION_LIST} replace />),
     },
 ]);

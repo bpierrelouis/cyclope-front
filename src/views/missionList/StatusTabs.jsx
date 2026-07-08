@@ -1,4 +1,4 @@
-import { STATUS_LABELS } from '../../constants';
+import { EStatusLabel } from '../../constants';
 import { filterMissionsByStatus } from '../../utils';
 import { StatusTab } from './StatusTab';
 
@@ -10,7 +10,7 @@ export function StatusTabs(props) {
 
     const tabs = [
         [null, 'Toutes', missions?.length],
-        ...Object.entries(STATUS_LABELS).map(([value, label]) => (
+        ...Object.entries(EStatusLabel).map(([value, label]) => (
             [value, label, getStatusNumber(value)]
         )),
     ];

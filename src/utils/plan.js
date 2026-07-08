@@ -1,5 +1,5 @@
 import { layers, namedFlavor } from '@protomaps/basemaps';
-import { GLYPHS_URL, MIN_ZOOM, SPRITE_URL } from '../constants';
+import { Plan } from '../constants';
 import { sortByKeyPath } from './others';
 
 export const buildMapStyle = (url, isDark) => {
@@ -8,13 +8,13 @@ export const buildMapStyle = (url, isDark) => {
 
     return {
         version: 8,
-        glyphs: GLYPHS_URL,
-        sprite: SPRITE_URL,
+        glyphs: Plan.GLYPHS_URL,
+        sprite: Plan.SPRITE_URL,
         sources: {
             protomaps: {
                 type: 'vector',
                 url: `pmtiles://${url}`,
-                minzoom: MIN_ZOOM,
+                minzoom: Plan.MIN_ZOOM,
             },
         },
         layers: layers('protomaps', theme, { lang: 'fr' }),
