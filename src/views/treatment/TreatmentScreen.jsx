@@ -5,7 +5,8 @@ import { ERoute } from '../../constants';
 import { useSelectionContext } from '../../contexts';
 import { playerService } from '../../services';
 import { usePlayerStore } from '../../stores';
-import { Controls } from './Controls';
+import { cn } from '../../utils';
+import { Controls } from './controls';
 import { Media } from './Media';
 import { Plan } from './plan';
 import { Table } from './table';
@@ -75,9 +76,8 @@ export function TreatmentScreen() {
                 {modes.map(([route, label, icon]) => (
                     <button
                         key={route}
-                        type='button'
                         onClick={() => setSelected(route)}
-                        className={`cyc-mode-btn ${selected === route ? 'active' : ''}`}
+                        className={cn('cyc-mode-btn', selected === route && 'active')}
                     >
                         {icon}
                         {label}
@@ -85,11 +85,10 @@ export function TreatmentScreen() {
                 ))}
 
                 <button
-                    type='button'
                     onClick={handleExtract}
                     className='cyc-mode-btn-bottom cyc-mode-btn'
                 >
-                    <ExternalLinkIcon size={18} />
+                    <ExternalLinkIcon />
                     Extraire
                 </button>
             </aside>
