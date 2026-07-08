@@ -1,4 +1,5 @@
 export * from './ConfidenceBadge';
+export * from './ConfigBadges';
 export * from './EditableText';
 export * from './Field';
 export * from './MediaIcon';
