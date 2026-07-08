@@ -1,19 +1,12 @@
-import { useEffect, useMemo } from 'react';
 import { ProcessConfidenceField, ProcessLevelField, ProcessObjectDetectionField, ProcessStepField } from '../../../components';
-import { useDefaultConfigStore, useMissionCreationStore } from '../../../stores';
+import { useMissionCreationStore } from '../../../stores';
 
 export function FileConfig(props) {
     const { file } = props;
 
-    const { configs, updateConfig, updatePartialConfig } = useMissionCreationStore();
-    const { getDefault } = useDefaultConfigStore();
+    const { configs, updatePartialConfig } = useMissionCreationStore();
 
-    const config = useMemo(() => configs[file.id], [configs, file.id]);
-
-    useEffect(() => {
-        if (config) return;
-        updateConfig(file.id, getDefault(file));
-    }, [config, updateConfig, file, getDefault]);
+    const config = configs[file.id];
 
     const setPartialConfig = (data) => updatePartialConfig(file.id, data);
 
@@ -24,7 +17,7 @@ export function FileConfig(props) {
             {!!file.duration && (<ProcessStepField
                 config={config}
                 setPartialConfig={setPartialConfig}
-                max={file.duration || 1}
+                max={file.duration}
             />)}
 
             <ProcessObjectDetectionField

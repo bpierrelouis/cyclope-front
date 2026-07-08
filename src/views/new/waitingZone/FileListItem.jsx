@@ -1,7 +1,7 @@
 import { CogIcon, XIcon } from 'lucide-react';
 import { useState } from 'react';
 import { useMissionCreationStore } from '../../../stores';
-import { formatFileSize } from '../../../utils/index';
+import { formatFileSize } from '../../../utils';
 import { FileConfig } from './FileConfig';
 
 export function FileListItem(props) {
@@ -9,12 +9,12 @@ export function FileListItem(props) {
 
     const [showSettings, setShowSettings] = useState(false);
 
-    const { toggle } = useMissionCreationStore();
+    const { deselect } = useMissionCreationStore();
 
     const toggleSettings = () =>
         setShowSettings((prev) => !prev);
 
-    const handleRemove = () => toggle(file.id);
+    const handleRemove = () => deselect(file.id);
 
     return (
         <div>
@@ -24,14 +24,20 @@ export function FileListItem(props) {
                     <span className='opacity-60'>
                         {formatFileSize(file.size)}
                     </span>
-                    <CogIcon
-                        className='opacity-60 hover:opacity-100 size-4 cursor-pointer'
+                    <button
+                        aria-label={`Configurer ${file.name}`}
+                        className='opacity-60 hover:opacity-100 transition'
                         onClick={toggleSettings}
-                    />
-                    <XIcon
-                        className='opacity-60 hover:opacity-100 size-4 cursor-pointer'
+                    >
+                        <CogIcon className='size-4' />
+                    </button>
+                    <button
+                        aria-label={`Retirer ${file.name}`}
+                        className='opacity-60 hover:opacity-100 transition'
                         onClick={handleRemove}
-                    />
+                    >
+                        <XIcon className='size-4' />
+                    </button>
                 </div>
             </div>
             {showSettings && (

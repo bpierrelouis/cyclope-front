@@ -3,9 +3,7 @@ import { FileListItem } from './FileListItem';
 export function FileList(props) {
     const { files } = props;
 
-    const fileCount = files.length;
-
-    if (!fileCount) return (
+    if (!files.length) return (
         <p className='opacity-50 text-sm text-center'>
             Aucun fichier sélectionné.
             <br />
@@ -14,10 +12,10 @@ export function FileList(props) {
     );
 
     return (
-        <div className='flex flex-col flex-1 overflow-hidden'>
-            {files.map((file, index) => (
+        <div className='flex flex-col'>
+            {files.map((file) => (
                 <FileListItem
-                    key={`${file.name}-${index}`}
+                    key={file.id}
                     file={file}
                 />
             ))}

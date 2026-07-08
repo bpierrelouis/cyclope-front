@@ -1,30 +1,54 @@
 import { create } from 'zustand';
+import { useDefaultConfigStore } from './defaultConfigStore';
 
-const toggle = (selection, id) => {
-    const next = new Set(selection);
-    if (next.has(id)) {
-        next.delete(id);
-    } else {
-        next.add(id);
-    }
-    return next;
-};
-
-export const useMissionCreationStore = create((set, get) => ({
+const initialState = {
     fileIds: new Set(),
     configs: {},
     missionId: null,
+    missionName: '',
+    uploadFolder: '',
+};
 
-    toggle: (id) =>
-        set((state) => ({
-            fileIds: toggle(state.fileIds, id),
-        })),
+export const useMissionCreationStore = create((set, get) => ({
+    ...initialState,
 
-    clear: () =>
-        set({
-            fileIds: new Set(),
-            configs: {},
-        }),
+    setUploadFolder: (path) => set({ uploadFolder: path }),
+
+    setMissionName: (name) => set({ missionName: name }),
+
+    setMissionId: (id) => set({ missionId: id }),
+
+    selectMany: (files) => set((state) => {
+        const fileIds = new Set(state.fileIds);
+        const configs = { ...state.configs };
+        const { getDefault } = useDefaultConfigStore.getState();
+
+        for (const file of files) {
+            // garde fou ignorant les noeuds sans id
+            if (file?.id == null || fileIds.has(file.id)) continue;
+            fileIds.add(file.id);
+            configs[file.id] = getDefault(file);
+        }
+        return { fileIds, configs };
+    }),
+
+    select: (file) => get().selectMany([file]),
+
+    //Deselect supprime le fichier et la config associée
+    deselect: (id) => set((state) => {
+        const fileIds = new Set(state.fileIds);
+        fileIds.delete(id);
+
+        const configs = { ...state.configs };
+        delete configs[id];
+
+        return { fileIds, configs };
+    }),
+
+    toggle: (file) => {
+        if (get().fileIds.has(file.id)) get().deselect(file.id);
+        else get().select(file);
+    },
 
     updateConfig: (id, config) =>
         set((state) => ({
@@ -40,6 +64,12 @@ export const useMissionCreationStore = create((set, get) => ({
             ...partialConfig,
         }),
 
-    setMissionId: (id) =>
-        set(() => ({ missionId: id })),
+    clearSelection: () =>
+        set({
+            fileIds: new Set(),
+            configs: {},
+            uploadFolder: '',
+        }),
+
+    reset: () => set(initialState),
 }));

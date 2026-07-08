@@ -1,16 +1,15 @@
 export function MissionNameField(props) {
-    const { state } = props;
-    const [missionName, setMissionName] = state;
+    const { value, setValue } = props;
 
     const handleNameChange = (event) =>
-        setMissionName(event.target.value);
+        setValue(event.target.value);
 
     return (
         <input
             type='text'
             className='w-full input input-sm'
             placeholder='Nouvelle mission'
-            value={missionName}
+            value={value}
             onChange={handleNameChange}
         />
     );

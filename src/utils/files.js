@@ -1,3 +1,6 @@
+export const joinPath = (parentPath, name) =>
+    parentPath ? `${parentPath}/${name}` : name;
+
 export const formatFileSize = (bytes) => {
     if (bytes < 1024) return `${bytes} o`;
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} ko`;
@@ -11,22 +14,85 @@ export const flatTree = (tree) => tree.reduce((acc, node) => {
     return [...acc, node];
 }, []);
 
-export const isVideoExtension = (extension) => {
-    const videoExtensions = new Set([
-        'mp4',
-        'mkv',
-        'avi',
-        'mov',
-        'wmv',
-        'flv',
-        'webm',
-        'm4v',
-        'mpeg',
-        'mpg',
-        '3gp',
-        'ogv',
-        'ts',
-    ]);
+export const ACCEPTED_VIDEO_EXTENSIONS = ['mp4', 'ts', 'flv', 'mkv'];
+export const ACCEPTED_IMAGE_EXTENSIONS = ['jpg', 'png', 'tiff', 'bmp'];
+export const ACCEPTED_FILES_EXTENSIONS = [
+    ...ACCEPTED_VIDEO_EXTENSIONS,
+    ...ACCEPTED_IMAGE_EXTENSIONS,
+];
 
-    return videoExtensions.has(extension.toLowerCase());
+export const isVideoExtension = (extension) =>
+    ACCEPTED_VIDEO_EXTENSIONS.includes(extension?.toLowerCase());
+
+export const isAcceptedFileExtension = (extension) =>
+    ACCEPTED_FILES_EXTENSIONS.includes(extension?.toLowerCase());
+
+export const getExtension = (fileName) => {
+    const parts = fileName.split('.');
+    return parts.length > 1 ? parts.pop().toLowerCase() : '';
+};
+
+export const getVideoDuration = (file) =>
+    new Promise((resolve) => {
+        const video = document.createElement('video');
+        video.preload = 'metadata';
+        video.onloadedmetadata = () => {
+            URL.revokeObjectURL(video.src);
+            resolve(Math.round(video.duration));
+        };
+        video.onerror = () => {
+            URL.revokeObjectURL(video.src);
+            resolve(undefined);
+        };
+        video.src = URL.createObjectURL(file);
+    });
+
+// Lit un dossier
+const readEntry = (entry) =>
+    new Promise((resolve) => {
+        if (entry.isFile) {
+            entry.file((file) => resolve([file]));
+        } else if (entry.isDirectory) {
+            const reader = entry.createReader();
+            const files = [];
+            const readBatch = () => {
+                reader.readEntries(async (entries) => {
+                    if (!entries.length) {
+                        resolve(files);
+                        return;
+                    }
+                    for (const child of entries) {
+                        files.push(...(await readEntry(child)));
+                    }
+                    readBatch();
+                });
+            };
+            readBatch();
+        } else {
+            resolve([]);
+        }
+    });
+
+// renvoie les fichiers déposés à la racine + la liste des dossiers déposés (chacun avec son nom et ses fichiers).
+export const parseDroppedItems = async (dataTransfer) => {
+    const entries = Array.from(dataTransfer.items ?? [])
+        .map((item) => item.webkitGetAsEntry?.())
+        .filter(Boolean);
+
+    if (!entries.length) {
+        return { rootFiles: Array.from(dataTransfer.files), folders: [] };
+    }
+
+    const rootFiles = [];
+    const folders = [];
+
+    for (const entry of entries) {
+        if (entry.isDirectory) {
+            folders.push({ name: entry.name, files: await readEntry(entry) });
+        } else {
+            rootFiles.push(...(await readEntry(entry)));
+        }
+    }
+
+    return { rootFiles, folders };
 };

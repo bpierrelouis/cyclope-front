@@ -4,3 +4,4 @@ export * from './missions.queries';
 export * from './results.queries';
 export * from './treatments.queries';
 export * from './useFilter';
+export * from './useFileDrop';
