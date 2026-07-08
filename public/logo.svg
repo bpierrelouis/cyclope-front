@@ -1,0 +1,14 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cyclope">
+  <!-- reticule : 4 tirets cardinaux -->
+  <g stroke="#22d3ee" stroke-width="3" stroke-linecap="round">
+    <line x1="32" y1="7"  x2="32" y2="13"/>
+    <line x1="32" y1="51" x2="32" y2="57"/>
+    <line x1="7"  y1="32" x2="13" y2="32"/>
+    <line x1="51" y1="32" x2="57" y2="32"/>
+  </g>
+  <!-- oeil / objectif -->
+  <circle cx="32" cy="32" r="18" stroke="#22d3ee" stroke-width="4.5" fill="none"/>
+  <circle cx="32" cy="32" r="7.5" fill="#22d3ee"/>
+  <!-- reflet -->
+  <circle cx="35.5" cy="28.5" r="2.2" fill="#0d1417"/>
+</svg>
