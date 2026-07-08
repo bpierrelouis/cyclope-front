@@ -12,8 +12,8 @@ export function MissionListScreen() {
     const filteredMissions = filterMissionsByStatus(searchedMissions, status);
 
     return (
-        <main className='flex flex-col gap-6 m-10'>
-            <div className='flex flex-wrap-reverse justify-between items-center gap-1'>
+        <main className='flex flex-col gap-6 m-10 max-h-[calc(100vh-5rem)]'>
+            <div className='flex flex-wrap-reverse justify-between items-center gap-1 shrink-0'>
                 <StatusTabs
                     state={[status, setStatus]}
                     missions={searchedMissions}
@@ -26,7 +26,7 @@ export function MissionListScreen() {
                     className='flex-1 lg:flex-0 w-48 input input-sm input-bordered'
                 />
             </div>
-            <div className='flex flex-col gap-1 tab-content'>
+            <div className='flex flex-col flex-1 gap-1 min-h-0 overflow-y-auto tab-content'>
                 {filteredMissions?.map((m) => (
                     <MissionListItem key={m.id} mission={m} />
                 ))}

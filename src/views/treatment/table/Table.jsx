@@ -1,7 +1,7 @@
 import { flexRender, getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { usePlayerStore } from '../../../stores';
-import { getCurrentResult, sendOpenStateToMaster } from '../../../utils';
+import { cn, getCurrentResult, sendOpenStateToMaster } from '../../../utils';
 import { DetectionCell } from './DetectionsCell';
 import { FrameCell } from './FrameCell';
 import { ResultPopup } from './ResultPopup';
@@ -115,7 +115,7 @@ function TableBodyRow(props) {
         <tr
             key={row.id}
             ref={isActive ? selectedRef : null}
-            className={isActive ? 'cyc-row-active' : ''}
+            className={cn(isActive && 'cyc-row-active')}
         >
             {row.getVisibleCells().map(cell => (
                 <TableBodyCell key={cell.id} cell={cell} />

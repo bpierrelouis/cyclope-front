@@ -1,3 +1,5 @@
+import clsx from 'clsx';
+import { twMerge } from 'tailwind-merge';
 import { playerService } from '../services';
 
 export const preventDefault = (fn) => (event) => {
@@ -39,3 +41,6 @@ export const sortByKeyPath = (arr, path, dir = 'asc') => {
     });
     return sorted;
 };
+
+export const cn = (...inputs) =>
+    twMerge(clsx(...inputs));
