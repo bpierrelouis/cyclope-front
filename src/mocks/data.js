@@ -111,7 +111,7 @@ export const mockResults = [
     {
         treatment_id: 1,
         id: 1,
-        index: 1,
+        index: 0,
         url: 'https://picsum.photos/300/200',
         response_json: {
             frame_number: 0,
@@ -146,11 +146,11 @@ export const mockResults = [
     {
         treatment_id: 2,
         id: 2,
-        index: 1,
+        index: 0,
         url: 'https://picsum.photos/300/200',
         response_json: {
             frame_number: 60,
-            timestamp: '00:01:00.000',
+            timestamp: '00:00:00.000',
             coordinates: [
                 {
                     longitude: 2,
@@ -181,11 +181,11 @@ export const mockResults = [
     {
         treatment_id: 2,
         id: 3,
-        index: 2,
+        index: 1,
         url: 'https://picsum.photos/300/200',
         response_json: {
             frame_number: 120,
-            timestamp: '00:02:00.000',
+            timestamp: '00:00:03.000',
             coordinates: [
                 {
                     longitude: 3,
@@ -216,15 +216,41 @@ export const mockResults = [
     {
         treatment_id: 2,
         id: 4,
-        index: 3,
+        index: 2,
         url: 'https://picsum.photos/300/200',
         response_json: {
             frame_number: 180,
-            timestamp: '00:03:00.000',
+            timestamp: '00:00:06.000',
             coordinates: [
                 {
                     longitude: 3.5,
                     latitude: 50,
+                    unit: 'deg',
+                },
+            ],
+            altitude: {
+                value: 311.5,
+                unit: 'm',
+            },
+            speed: {
+                value: 51.2,
+                unit: 'km/h',
+            },
+            objects: [],
+        },
+    },
+    {
+        treatment_id: 2,
+        id: 4,
+        index: 2,
+        url: 'https://picsum.photos/300/200',
+        response_json: {
+            frame_number: 180,
+            timestamp: '00:00:09.000',
+            coordinates: [
+                {
+                    longitude: 5,
+                    latitude: 51,
                     unit: 'deg',
                 },
             ],
