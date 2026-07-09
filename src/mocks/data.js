@@ -96,14 +96,24 @@ export const mockTreatments = [
         creation_date: '2026-04-15T10:00:00Z',
         media_id: 1,
         status: 'DONE',
-        config: {},
+        config: {
+            frameStep: 3,
+            objectDetectionEnabled: true,
+            confidenceThreshold: 0.5,
+            processingLevel: 2,
+        },
     },
     {
         id: 2,
         creation_date: '2026-04-15T10:00:00Z',
         media_id: 2,
         status: 'RUNNING',
-        config: {},
+        config: {
+            frameStep: 3,
+            objectDetectionEnabled: true,
+            confidenceThreshold: 0.5,
+            processingLevel: 2,
+        },
     },
 ];
 

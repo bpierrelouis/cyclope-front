@@ -71,15 +71,29 @@ const getHandlers = (resource, data) => [
     http.get(`/api/${resource}`, async ({ request }) => {
         const url = new URL(request.url);
         const searchParams = url.searchParams;
-        const params = Object.fromEntries(searchParams.entries());
-        const entries = Object.entries(params);
-        if (!entries.length) return HttpResponse.json(data);
-        const items = data.filter((item) => entries.every(([k, v]) => {
-            if (Array.isArray(item[k])) {
-                return Boolean(item[k].find((iv) => iv == v));
-            }
-            return item[k] == v;
-        }));
+
+        const keys = [...new Set(searchParams.keys())];
+
+        if (!keys.length) {
+            return HttpResponse.json(data);
+        }
+
+        const items = data.filter((item) =>
+            keys.every((key) => {
+                const values = searchParams.getAll(key);
+
+                return values.some((value) => {
+                    const itemValue = item[key];
+
+                    if (Array.isArray(itemValue)) {
+                        return itemValue.some((iv) => String(iv) === value);
+                    }
+
+                    return String(itemValue) === value;
+                });
+            }),
+        );
+
         return HttpResponse.json(items);
     }),
 
