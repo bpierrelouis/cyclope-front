@@ -15,10 +15,13 @@ export function SelectionProvider({ children }) {
     const { data: mission } = missionsQueries.useGetById(ids.mission);
     const { data: medias } = mediasQueries.useGetAllByMissionId(mission?.id);
     const { data: media } = mediasQueries.useGetById(ids.media);
-    const { data: treatment } = treatmentsQueries.useGetById(media?.lastTreatmentId);
+    const { data: treatment } = treatmentsQueries.useGetById(ids.treatment);
+
+    const setPartialIds = (partial) =>
+        setIds((prev) => ({ ...prev, ...partial }));
 
     useEffect(() => {
-        const newIds = ['mission', 'media']
+        const newIds = ['mission', 'media', 'treatment']
             .reduce((acc, name) => {
                 const id = searchParams.get(name);
                 if (!id) return acc;
@@ -33,20 +36,26 @@ export function SelectionProvider({ children }) {
     // Sélection de la mission si média sélectionné sans
     useEffect(() => {
         if (!media?.missionId || ids.mission !== undefined) return;
-        setIds((prev) => ({
-            ...prev,
-            mission: media.missionId,
-        }));
-    }, [media?.missionId, ids.mission, setIds]);
+        setPartialIds({ mission: media.missionId });
+    }, [media?.missionId, ids.mission]);
 
     // Sélection d'un média par défaut si mission sélectionnée sans
     useEffect(() => {
         if (ids.media !== undefined || !medias?.length) return;
-        setIds((prev) => ({
-            ...prev,
-            media: medias[0].id,
-        }));
-    }, [medias, ids.media, setIds]);
+        setPartialIds({ media: medias[0].id });
+    }, [medias, ids.media]);
+
+    // Sélection d'un traitement par défaut si média chargé
+    useEffect(() => {
+        if (ids.treatment !== undefined || !media?.lastTreatmentId) return;
+        setPartialIds({ treatment: media.lastTreatmentId });
+    }, [media?.lastTreatmentId, ids.treatment]);
+
+    // Sélection d'un média par défaut si traitement sélectionné sans
+    useEffect(() => {
+        if (ids.media !== undefined || !treatment?.mediaId) return;
+        setPartialIds({ media: treatment.mediaId });
+    }, [ids.media, treatment?.mediaId]);
 
     useEffect(() => {
         setResults([]);

@@ -99,7 +99,7 @@ export const mockTreatments = [
         config: {
             frameStep: 3,
             objectDetectionEnabled: true,
-            confidenceThreshold: 0.5,
+            confidenceThreshold: 50,
             processingLevel: 2,
         },
     },
@@ -111,7 +111,7 @@ export const mockTreatments = [
         config: {
             frameStep: 3,
             objectDetectionEnabled: true,
-            confidenceThreshold: 0.5,
+            confidenceThreshold: 42,
             processingLevel: 2,
         },
     },

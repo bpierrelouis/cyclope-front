@@ -12,12 +12,7 @@ export function NavItem(props) {
             data-tip={props.title}
         >
             {props.children}
-            <span className='is-drawer-close:hidden'>{props.title}</span>
-            {props.badges && (
-                <span className='is-drawer-close:hidden flex items-center gap-1 ml-auto'>
-                    {props.badges}
-                </span>
-            )}
+            <span className='is-drawer-close:hidden overflow-hidden text-ellipsis'>{props.title}</span>
         </NavLink>
     );
 }

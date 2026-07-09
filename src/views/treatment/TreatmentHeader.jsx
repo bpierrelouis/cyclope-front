@@ -1,6 +1,7 @@
 import { useSelectionContext } from '../../contexts';
 import { usePlayerStore } from '../../stores';
 import { getCurrentResult } from '../../utils';
+import { TreatmentSelector } from './TreatmentSelector';
 
 export function TreatmentHeader() {
     const { mission, results } = useSelectionContext();
@@ -14,21 +15,33 @@ export function TreatmentHeader() {
 
     return (
         <header className='col-span-full cyc-header'>
-            <Item title='MISSION' value={mission?.name} />
-            <Item title='FRAME' value={current?.index} />
-            <Item title='ALT' value={current?.altitudeLabel} />
-            <Item title='VITESSE' value={current?.speedLabel} />
-            <Item title='POSITION' value={position} />
+            <ItemText title='MISSION' value={mission?.name} />
+            <Item title='TRAITEMENT'>
+                <TreatmentSelector />
+            </Item>
+            <ItemText title='FRAME' value={current?.index} />
+            <ItemText title='ALT' value={current?.altitudeLabel} />
+            <ItemText title='VITESSE' value={current?.speedLabel} />
+            <ItemText title='POSITION' value={position} />
         </header>
     );
 }
 
-function Item(props) {
+function ItemText(props) {
     const { title, value } = props;
     return (
-        <div className='cyc-stat first:grow'>
+        <Item title={title}>
+            {value ?? '-'}
+        </Item>
+    );
+}
+
+function Item(props) {
+    const { title, children } = props;
+    return (
+        <div className='cyc-stat nth-[2]:grow'>
             <span className='cyc-stat-label'>{title}</span>
-            <span className='cyc-stat-value'>{value ?? '-'}</span>
+            <span className='cyc-stat-value'>{children}</span>
         </div>
     );
 }
