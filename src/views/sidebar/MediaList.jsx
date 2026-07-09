@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
-import { ConfigBadges, MediaIcon } from '../../components';
+import { MediaIcon } from '../../components';
 import { useSelectionContext } from '../../contexts';
 import { treatmentsQueries } from '../../hooks';
+import { ConfigBadges } from './ConfigBadges';
 import { NavItem } from './NavItem';
 
 export function MediaList() {

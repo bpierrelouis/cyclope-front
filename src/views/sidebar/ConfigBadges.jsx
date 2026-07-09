@@ -1,5 +1,5 @@
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
-import { ELevelLabel, iconSizes } from '../constants';
+import { ELevelLabel, iconSizes } from '../../constants';
 
 export function ConfigBadges(props) {
     const { config } = props;
@@ -8,10 +8,10 @@ export function ConfigBadges(props) {
     const { frameStep, objectDetectionEnabled, processingLevel } = config;
 
     return (
-        <span className='flex items-center gap-1.5 opacity-70 font-mono tabular-nums text-[10px] leading-none'>
+        <span className='flex items-center gap-1 opacity-70 tabular-nums text-xs leading-none'>
             <span>{frameStep}s</span>
-            {objectDetectionEnabled ? (
-                <EyeIcon size={iconSizes.xs} className='text-primary' />
+            {!objectDetectionEnabled ? (
+                <EyeIcon size={iconSizes.xs} />
             ) : (
                 <EyeOffIcon size={iconSizes.xs} className='opacity-40' />
             )}
