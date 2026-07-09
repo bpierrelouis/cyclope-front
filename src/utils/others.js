@@ -44,3 +44,14 @@ export const sortByKeyPath = (arr, path, dir = 'asc') => {
 
 export const cn = (...inputs) =>
     twMerge(clsx(...inputs));
+
+export const hasFalseValue = (obj) => {
+    if (!obj) return false;
+    return Object.values(obj).some((value) => {
+        if (value && typeof value === 'object') {
+            return hasFalseValue(value);
+        }
+
+        return value === false;
+    });
+};

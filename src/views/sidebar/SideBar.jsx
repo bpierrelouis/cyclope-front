@@ -1,5 +1,6 @@
 import { CogIcon, FoldersIcon, PanelLeftCloseIcon, PanelLeftOpenIcon, PlusIcon } from 'lucide-react';
 import { ERoute } from '../../constants';
+import { Health } from './Health';
 import { MediaList } from './MediaList';
 import { NavItem } from './NavItem';
 import { ThemeSwap } from './ThemeSwap';
@@ -26,6 +27,10 @@ export function SideBar(props) {
                 <CogIcon />
             </NavItem>
             <MediaList />
+            <div className='mt-auto divider'></div>
+            <div className='flex flex-col self-center font-mono font-medium text-sm'>
+                <Health />
+            </div>
         </aside>
     );
 }

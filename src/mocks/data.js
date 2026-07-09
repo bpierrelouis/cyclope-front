@@ -341,3 +341,14 @@ export const events = [
     ...Array.from({ length: 50 }, (_, i) => (i + 1) * 2).map(percentageUpdate),
     statusUpdate,
 ];
+
+export const health = {
+    status_api: true,
+    status_storage_s3: true,
+    status_bdd: true,
+    status_api_ia: true,
+    response_health_api_ia: {
+        worker_running: true,
+        ai_function_loaded: false,
+    },
+};
