@@ -13,3 +13,19 @@ export const iconSizes = Object.freeze({
     xs: 12,
     sm: 16,
 });
+
+export const HEALTH = Object.freeze({
+    LIMITING_KEYPATH: 'statusBdd',
+    IA_MAIN_KEYPATH: 'statusApiIa',
+    IA_RESPONSE_KEYPATH: 'responseHealthApiIa',
+
+    BACK_LABEL_BY_KEYPATH: [
+        ['statusStorageS3', 'Stockage de fichier'],
+        ['statusBdd', 'Base de données'],
+    ],
+
+    IA_LABEL_BY_KEYPATH: [
+        ['workerRunning', 'IA processus'],
+        ['aiFunctionLoaded', 'IA fonction chargée'],
+    ],
+});

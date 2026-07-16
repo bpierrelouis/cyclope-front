@@ -1,5 +1,5 @@
 import { http, HttpResponse, sse } from 'msw';
-import { events, mockMedias, mockMissions, mockResults, mocksFilesTree, mockTreatments } from './data';
+import { events, health, mockMedias, mockMissions, mockResults, mocksFilesTree, mockTreatments } from './data';
 
 let missions = [...mockMissions];
 let medias = [...mockMedias];
@@ -154,6 +154,10 @@ const eventsSender = (client, interval, data) => {
 };
 
 export const handlers = [
+    http.get('/api/health', () => {
+        return HttpResponse.json(health);
+    }),
+
     ...getHandlers('missions', missions),
     ...getHandlers('medias', medias),
     ...getHandlers('treatments', treatments),
