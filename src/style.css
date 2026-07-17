@@ -482,34 +482,62 @@ aside label.btn-ghost {
     color: var(--color-base-content);
 }
 
-/* Rail de sélection de mode (colonne gauche) */
-.cyc-rail {
-    flex: 0 0 60px;
+.cyc-dock {
+    position: absolute;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    /* MapLibre monte ses contrôles à z-index 1000 */
+    z-index: 1100;
+    isolation: isolate;
     display: flex;
-    flex-direction: column;
-    background: var(--color-base-100);
-    border-right: 1px solid var(--p-20);
+    align-items: center;
+    gap: 4px;
+    padding: 6px;
+    border-radius: 16px;
+    background: color-mix(in oklch, var(--color-base-100) 32%, transparent);
+    border: 1px solid color-mix(in oklch, var(--color-primary) 28%, transparent);
+    box-shadow:
+            0 10px 32px rgb(0 0 0 / 0.5),
+            inset 0 1px 0 color-mix(in oklch, white 14%, transparent),
+            inset 0 -1px 0 rgb(0 0 0 / 0.35);
+    backdrop-filter: blur(14px) saturate(1.6) brightness(1.05);
 }
 
-.cyc-mode-btn {
+/* Couche de réfraction : déforme le contenu derrière le dock (Chromium).
+   Si backdrop-filter: url() n'est pas supporté, cette couche est simplement inerte
+   et le blur de .cyc-dock reste en fallback. */
+.cyc-dock::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    backdrop-filter: url(#cyc-glass-distortion);
+    pointer-events: none;
+}
+
+.cyc-dock-btn {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 5px;
-    width: 60px;
-    height: 60px;
+    gap: 8px;
+    height: 42px;
+    padding: 0 14px;
     cursor: pointer;
-    border: none;
-    border-left: 2px solid transparent;
-    border-bottom: 1px solid color-mix(in oklch, var(--color-primary) 12%, transparent);
+    border: 1px solid transparent;
+    border-radius: 11px;
     background: transparent;
-    color: color-mix(in oklch, var(--color-base-content) 55%, transparent);
+    color: color-mix(in oklch, var(--color-base-content) 60%, transparent);
     font-family: var(--font-mono);
     font-weight: 600;
-    font-size: 8.5px;
+    font-size: 9.5px;
     letter-spacing: 0.1em;
     transition: all 0.12s;
+
+    & svg {
+        width: 17px;
+        height: 17px;
+    }
 
     &:hover {
         background: var(--p-10);
@@ -517,16 +545,18 @@ aside label.btn-ghost {
     }
 
     &.active {
-        border-left-color: var(--color-primary);
-        background: var(--color-neutral);
+        background: color-mix(in oklch, var(--color-primary) 16%, transparent);
+        border-color: color-mix(in oklch, var(--color-primary) 45%, transparent);
         color: var(--color-primary);
+        box-shadow: inset 0 0 12px color-mix(in oklch, var(--color-primary) 12%, transparent);
     }
 }
 
-.cyc-mode-btn-bottom {
-    margin-top: auto;
-    border-bottom: none;
-    border-top: 1px solid color-mix(in oklch, var(--color-primary) 18%, transparent);
+.cyc-dock-sep {
+    width: 1px;
+    height: 24px;
+    margin: 0 3px;
+    background: var(--p-20);
 }
 
 /* Transport — boutons secondaires */
