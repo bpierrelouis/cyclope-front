@@ -70,38 +70,50 @@ export function TreatmentScreen() {
     ].filter(([route]) => route === selected || !disabledComponents[route]);
 
     return (
-        <div className='grid grid-cols-[max-content_1fr] grid-rows-[max-content_1fr_max-content] bg-base-200 h-screen max-h-screen size-full'>
+        <div className='flex flex-col bg-base-200 h-screen max-h-screen size-full'>
             <TreatmentHeader />
-            <aside className='cyc-rail'>
-                {modes.map(([route, label, icon]) => (
-                    <button
-                        key={route}
-                        onClick={() => setSelected(route)}
-                        className={cn('cyc-mode-btn', selected === route && 'active')}
-                    >
-                        {icon}
-                        {label}
-                    </button>
-                ))}
 
-                <button
-                    onClick={handleExtract}
-                    className='cyc-mode-btn-bottom cyc-mode-btn'
-                >
-                    <ExternalLinkIcon />
-                    Extraire
-                </button>
-            </aside>
-
-            <main className='relative flex flex-col flex-1 bg-base-300 min-w-0 overflow-hidden'>
+            <main className='relative flex flex-col flex-1 bg-base-300 min-w-0 min-h-0 overflow-hidden'>
                 <Media hidden={selected !== ERoute.MEDIA} />
                 {selected === ERoute.PLAN && <Plan />}
                 {selected === ERoute.TABLE && <Table />}
+
+                {/* Dock liquid glass — sélection de vue */}
+                <nav className='cyc-dock'>
+                    {modes.map(([route, label, icon]) => (
+                        <button
+                            key={route}
+                            onClick={() => setSelected(route)}
+                            className={cn('cyc-dock-btn', selected === route && 'active')}
+                        >
+                            {icon}
+                            {label}
+                        </button>
+                    ))}
+
+                    <span className='cyc-dock-sep' />
+
+                    <button
+                        onClick={handleExtract}
+                        className='cyc-dock-btn'
+                    >
+                        <ExternalLinkIcon />
+                        Extraire
+                    </button>
+                </nav>
             </main>
 
             {media.isVideo && (
                 <Controls />
             )}
+
+            <svg className='absolute size-0' aria-hidden='true'>
+                <filter id='cyc-glass-distortion' x='-20%' y='-20%' width='140%' height='140%'>
+                    <feTurbulence type='fractalNoise' baseFrequency='0.008 0.014' numOctaves='2' seed='7' result='noise' />
+                    <feGaussianBlur in='noise' stdDeviation='2' result='soft' />
+                    <feDisplacementMap in='SourceGraphic' in2='soft' scale='60' xChannelSelector='R' yChannelSelector='G' />
+                </filter>
+            </svg>
         </div>
     );
 }
