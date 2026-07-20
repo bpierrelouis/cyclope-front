@@ -52,18 +52,31 @@ const saveFile = async (file, folder) => {
     });
 };
 
-const saveFiles = async (files, folder) => {
-    let i = 0;
-    for (const file of files) {
-        try {
-            await saveFile(file, folder);
-            i++;
-        } catch (error) {
-            openErrorToast(error.message);
-        }
+const saveFiles = async ({ files, folder }) => {
+    const results = await Promise.allSettled(
+        files.map(file => saveFile(file, folder)),
+    );
+
+    results
+        .filter((result) => result.status === 'rejected')
+        .forEach(result => {
+            openErrorToast(
+                result.reason instanceof Error
+                    ? result.reason.message
+                    : 'Une erreur est survenue.',
+            );
+        });
+
+    const succeeded = results.filter(result => result.status === 'fulfilled');
+    const uploadedCount = succeeded.length;
+
+    if (uploadedCount > 0) {
+        openSuccessToast(
+            `${uploadedCount} fichier${uploadedCount > 1 ? 's' : ''} uploadé${uploadedCount > 1 ? 's' : ''}.`,
+        );
     }
-    if (!i) return;
-    openSuccessToast(`${i} fichier${i > 1 ? 's' : ''} uploadé${i > 1 ? 's' : ''}.`);
+
+    return succeeded.map((result) => result.value);
 };
 
 export const filesService = {

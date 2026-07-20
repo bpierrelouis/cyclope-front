@@ -35,7 +35,10 @@ export const useFileDrop = ({ path, onDropToFolder, onDropFolder, onDropStart })
         onDropStart?.();
 
         if (rootFiles.length) {
-            await onDropToFolder?.(rootFiles, path);
+            await onDropToFolder?.({
+                files: rootFiles,
+                folder: path,
+            });
         }
 
         for (const droppedFolder of folders) {

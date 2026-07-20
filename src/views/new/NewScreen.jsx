@@ -14,7 +14,7 @@ export function NewScreen() {
     const { data: fileNodes, isLoading, isError } = filesQueries.useGetTree();
     const { mutateAsync: createMission, isPending: isCreating } = missionsQueries.useCreate();
     const { mutateAsync: addMedias, isPending: isAdding } = missionsQueries.useAddMedias();
-    const { uploadFiles, isUploading } = filesQueries.useUploadFiles();
+    const { mutateAsync: uploadFiles, isPending: isUploading } = filesQueries.useUploadFiles();
 
     const { fileIds, configs, missionId, missionName, setMissionName, selectMany, reset } =
         useMissionCreationStore();
@@ -57,7 +57,10 @@ export function NewScreen() {
 
     // Dossier déposé sur l'explorateur : upload des fichiers dans le S3 puis pré-remplissage de la zone de création
     const handleDropFolder = async (droppedFolder, targetPath) => {
-        const createdFiles = await uploadFiles(droppedFolder.files, targetPath ? `${targetPath}/${droppedFolder.name}` : droppedFolder.name);
+        const createdFiles = await uploadFiles({
+            files: droppedFolder.files,
+            folder: targetPath ? `${targetPath}/${droppedFolder.name}` : droppedFolder.name,
+        });
         if (!createdFiles.length) return;
 
         if (!missionName.trim()) setMissionName(droppedFolder.name);
