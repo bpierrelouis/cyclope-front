@@ -126,13 +126,16 @@ export const mockResults = [
         response_json: {
             frame_number: 0,
             timestamp: '00:00:00.000',
-            coordinates: [
+            acft:
                 {
                     longitude: 2,
                     latitude: 48,
-                    unit: 'deg',
                 },
-            ],
+            tgt:
+                {
+                    longitude: 2.8,
+                    latitude: 47.5,
+                },
             altitude: {
                 value: 300.5,
                 unit: 'm',
@@ -161,13 +164,16 @@ export const mockResults = [
         response_json: {
             frame_number: 60,
             timestamp: '00:00:00.000',
-            coordinates: [
+            acft:
                 {
                     longitude: 2,
                     latitude: 48,
-                    unit: 'deg',
                 },
-            ],
+            tgt:
+                {
+                    longitude: 2.8,
+                    latitude: 47.5,
+                },
             altitude: {
                 value: 300.5,
                 unit: 'm',
@@ -196,13 +202,16 @@ export const mockResults = [
         response_json: {
             frame_number: 120,
             timestamp: '00:00:03.000',
-            coordinates: [
+            acft:
                 {
                     longitude: 3,
                     latitude: 49,
-                    unit: 'deg',
                 },
-            ],
+            tgt:
+                {
+                    longitude: 2.8,
+                    latitude: 47.5,
+                },
             altitude: {
                 value: 310.2,
                 unit: 'm',
@@ -231,13 +240,16 @@ export const mockResults = [
         response_json: {
             frame_number: 180,
             timestamp: '00:00:06.000',
-            coordinates: [
+            acft:
                 {
                     longitude: 3.5,
                     latitude: 50,
-                    unit: 'deg',
                 },
-            ],
+            tgt:
+                {
+                    longitude: 2.8,
+                    latitude: 47.5,
+                },
             altitude: {
                 value: 311.5,
                 unit: 'm',
@@ -257,13 +269,16 @@ export const mockResults = [
         response_json: {
             frame_number: 180,
             timestamp: '00:00:09.000',
-            coordinates: [
+            acft:
                 {
                     longitude: 5,
                     latitude: 51,
-                    unit: 'deg',
                 },
-            ],
+            tgt:
+                {
+                    longitude: 2.8,
+                    latitude: 47.5,
+                },
             altitude: {
                 value: 311.5,
                 unit: 'm',
@@ -338,7 +353,7 @@ const percentageUpdate = (percentage) => ({
 });
 
 export const events = [
-    ...Array.from({ length: 50 }, (_, i) => (i + 1) * 2).map(percentageUpdate),
+    ...Array.from({length: 50}, (_, i) => (i + 1) * 2).map(percentageUpdate),
     statusUpdate,
 ];
 

@@ -42,16 +42,18 @@ export class Result {
         return `${speed.value} ${speed.unit}`;
     }
 
-    get allCoordinates() {
-        return this.data.coordinates;
-    }
 
     get objects() {
         return this.data.objects;
     }
 
     get coordinates() {
-        const { longitude, latitude } = this.allCoordinates[0];
+        const { longitude, latitude } = this.data.acft;
+        return { longitude, latitude };
+    }
+
+    get target() {
+        const { longitude, latitude } = this.data.tgt;
         return { longitude, latitude };
     }
 }

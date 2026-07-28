@@ -62,7 +62,10 @@ export function SelectionProvider({ children }) {
         if (!Number.isInteger(treatment?.id)) return;
         resultsStream.connect(
             treatment?.id,
-            (result) => setResults((prev) => sortByKeyPath([...prev, result], 'index')),
+            (result) => setResults((prev) => sortByKeyPath(
+                [...prev.filter((r) => r.id !== result.id), result],
+                'index',
+            )),
         );
         return () => resultsStream.disconnect();
     }, [treatment?.id]);

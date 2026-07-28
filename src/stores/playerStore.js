@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { sortAndMapPoints } from '../utils';
 
 export const usePlayerStore = create((set) => ({
     playing: false,
@@ -16,8 +17,12 @@ export const usePlayerStore = create((set) => ({
     isTableOpen: false,
 
     setStatePartial: (data) =>
-        set((state) => ({
-            ...state,
-            ...data,
-        })),
+        set((state) => {
+            const newState = {
+                ...state,
+                ...data,
+            };
+            newState.track = sortAndMapPoints(newState.results);
+            return newState;
+        }),
 }));

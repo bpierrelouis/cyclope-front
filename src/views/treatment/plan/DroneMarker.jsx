@@ -1,15 +1,13 @@
 import { Navigation2Icon } from 'lucide-react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Marker, useMap } from 'react-map-gl/maplibre';
 import { Plan } from '../../../constants';
 import { usePlayerStore } from '../../../stores';
-import { interpolatePosition, sortAndMapPoints } from '../../../utils';
+import { interpolatePosition } from '../../../utils';
 
-export function DronePosition() {
-    const { results, currentTime, playing } = usePlayerStore();
+export function DroneMarker() {
+    const { currentTime, playing, track } = usePlayerStore();
     const { current: map } = useMap();
-
-    const track = useMemo(() => sortAndMapPoints(results), [results]);
 
     const [pos, setPos] = useState(() => interpolatePosition(track, currentTime));
     const [mapBearing, setMapBearing] = useState(0);

@@ -6,14 +6,15 @@ import { Map, NavigationControl } from 'react-map-gl/maplibre';
 import { Plan as Constants } from '../../../constants';
 import { filesQueries } from '../../../hooks';
 import { usePlayerStore, useThemeStore } from '../../../stores';
-import { buildMapStyle, sendOpenStateToMaster, sortAndMapPoints } from '../../../utils';
+import { buildMapStyle, sendOpenStateToMaster } from '../../../utils';
 import { ResultPopup } from '../ResultPopup';
-import { DronePosition } from './DronePosition';
+import { DroneMarker } from './DroneMarker';
 import { LocateButton } from './LocateButton';
 import { Path } from './Path';
+import { TargetMarker } from './TargetMarker';
 
 export function Plan() {
-    const { isMaster, results } = usePlayerStore();
+    const { isMaster, results, track } = usePlayerStore();
     const { data: carto } = filesQueries.useCarto();
     const mapRef = useRef(null);
     const { isDark } = useThemeStore();
@@ -37,20 +38,16 @@ export function Plan() {
         };
     }, []);
 
-    const points = useMemo(() => {
-        return sortAndMapPoints(results ?? []);
-    }, [results]);
-
     const mapStyle = useMemo(() => {
         if (!carto) return;
         return buildMapStyle(carto, isDark);
     }, [carto, isDark]);
 
     const centerMapToPath = async () => {
-        if (!points?.length) return;
+        if (!track?.length) return;
 
-        const longitudes = points.map(p => p.longitude).filter(Boolean);
-        const latitudes = points.map(p => p.latitude).filter(Boolean);
+        const longitudes = track.map(p => p.longitude).filter(Boolean);
+        const latitudes = track.map(p => p.latitude).filter(Boolean);
 
         const min = [Math.min(...longitudes), Math.min(...latitudes)];
         const max = [Math.max(...longitudes), Math.max(...latitudes)];
@@ -74,16 +71,16 @@ export function Plan() {
             >
                 <NavigationControl position='top-right' />
                 <LocateButton onClick={centerMapToPath} />
-                <Path points={points} onSelect={handleSelectPoint} />
-                <DronePosition />
+                <Path onSelect={handleSelectPoint} />
+                <DroneMarker />
+                <TargetMarker />
             </Map>
-            {
-                selectedResult && (
-                    <ResultPopup
-                        result={selectedResult}
-                        dismiss={() => setSelectedResult(null)} />
-                )
-            }
+            {selectedResult && (
+                <ResultPopup
+                    result={selectedResult}
+                    dismiss={() => setSelectedResult(null)}
+                />
+            )}
         </>
     );
 }
