@@ -1,23 +1,24 @@
 import { useMemo } from 'react';
 import { Layer, Source } from 'react-map-gl/dist/esm/exports-maplibre';
-import { useThemeStore } from '../../../stores';
+import { usePlayerStore, useThemeStore } from '../../../stores';
 import { Point } from './Point';
 
 const ROUTE_ON_LIGHT_MAP = '#008398';
 const ROUTE_ON_DARK_MAP = '#5ad7d7';
 
 export function Path(props) {
-    const { points, onSelect } = props;
+    const { onSelect } = props;
     const { isDark } = useThemeStore();
+    const { track } = usePlayerStore();
 
     const routeGeoJson = useMemo(() => ({
         type: 'Feature',
         properties: {},
         geometry: {
             type: 'LineString',
-            coordinates: points.map((p) => [p.longitude, p.latitude]),
+            coordinates: track.map((p) => [p.longitude, p.latitude]),
         },
-    }), [points]);
+    }), [track]);
 
     const lineColor = isDark ? ROUTE_ON_DARK_MAP : ROUTE_ON_LIGHT_MAP;
 
@@ -37,7 +38,7 @@ export function Path(props) {
                     'line-join': 'round',
                 }} />
         </Source>
-        {points.map((point) => (
+        {track.map((point) => (
             <Point
                 key={point.id}
                 point={point}

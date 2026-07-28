@@ -826,6 +826,54 @@ aside label.btn-ghost {
     transition: transform 0.08s linear;
 }
 
+/* --- Cible de vision du drone --- */
+.marker-target {
+    position: relative;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px dashed var(--color-warning);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: target-spin 12s linear infinite;
+}
+
+.marker-target::before,
+.marker-target::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    background: var(--color-warning);
+}
+
+.marker-target::before {
+    width: 1.5px;
+    height: 38px;
+    transform: translate(-50%, -50%);
+}
+
+.marker-target::after {
+    width: 38px;
+    height: 1.5px;
+    transform: translate(-50%, -50%);
+}
+
+.marker-target-core {
+    position: relative;
+    z-index: 1;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--color-warning);
+    box-shadow: 0 0 6px var(--color-warning);
+}
+
+@keyframes target-spin {
+    to { transform: rotate(360deg); }
+}
 
 /* LocateButton */
 .maplibregl-ctrl-group {
