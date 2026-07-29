@@ -1,5 +1,5 @@
 import { Media } from '../models';
-import { mediasResourceName } from '../services';
+import { mediasResourceName, missionsResourceName, treatmentsResourceName } from '../services';
 import { convertKeysFromSnakeToCamelCase } from './request';
 
 const updateMedia = (queryClient, lastTreatmentId, partial) =>
@@ -21,6 +21,8 @@ export const handleStatusUpdate = (event, queryClient) => {
         data.treatmentId,
         { lastTreatmentStatus: data.status },
     );
+    queryClient.invalidateQueries({ queryKey: [missionsResourceName] });
+    queryClient.invalidateQueries({ queryKey: [treatmentsResourceName, data.treatmentId] });
 };
 
 export const handlePercentageUpdate = (event, queryClient) => {
