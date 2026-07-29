@@ -158,16 +158,18 @@ export const mockResults = [
         response_json: {
             frame_number: 0,
             timestamp: '00:00:00.000',
-            acft:
-                {
-                    longitude: 2,
-                    latitude: 48,
-                },
-            tgt:
-                {
-                    longitude: 2.8,
-                    latitude: 47.5,
-                },
+            acft: {
+                longitude: 2,
+                latitude: 48,
+            },
+            tgt: {
+                longitude: 2.8,
+                latitude: 47.5,
+            },
+            deg: {
+                confidence: 1,
+            },
+            is_freezing: false,
             altitude: {
                 value: 300.5,
                 unit: 'm',
@@ -196,16 +198,18 @@ export const mockResults = [
         response_json: {
             frame_number: 0,
             timestamp: '00:00:00.000',
-            acft:
-                {
-                    longitude: 2,
-                    latitude: 48,
-                },
-            tgt:
-                {
-                    longitude: 2.8,
-                    latitude: 47.5,
-                },
+            acft: {
+                longitude: 2,
+                latitude: 48,
+            },
+            tgt: {
+                longitude: 2.8,
+                latitude: 47.5,
+            },
+            deg: {
+                confidence: 1,
+            },
+            is_freezing: false,
             altitude: {
                 value: 300.5,
                 unit: 'm',
@@ -234,16 +238,18 @@ export const mockResults = [
         response_json: {
             frame_number: 60,
             timestamp: '00:00:03.000',
-            acft:
-                {
-                    longitude: 3,
-                    latitude: 49,
-                },
-            tgt:
-                {
-                    longitude: 2.8,
-                    latitude: 47.5,
-                },
+            acft: {
+                longitude: 3,
+                latitude: 49,
+            },
+            is_freezing: true,
+            tgt: {
+                longitude: 2.8,
+                latitude: 47.5,
+            },
+            deg: {
+                confidence: 0.5,
+            },
             altitude: {
                 value: 310.2,
                 unit: 'm',
@@ -272,16 +278,18 @@ export const mockResults = [
         response_json: {
             frame_number: 120,
             timestamp: '00:00:06.000',
-            acft:
-                {
-                    longitude: 3.5,
-                    latitude: 50,
-                },
-            tgt:
-                {
-                    longitude: 2.8,
-                    latitude: 47.5,
-                },
+            acft: {
+                longitude: 3.5,
+                latitude: 50,
+            },
+            tgt: {
+                longitude: 2.8,
+                latitude: 47.5,
+            },
+            deg: {
+                confidence: 1,
+            },
+            is_freezing: false,
             altitude: {
                 value: 311.5,
                 unit: 'm',
@@ -301,16 +309,18 @@ export const mockResults = [
         response_json: {
             frame_number: 180,
             timestamp: '00:00:09.000',
-            acft:
-                {
-                    longitude: 5,
-                    latitude: 51,
-                },
-            tgt:
-                {
-                    longitude: 2.8,
-                    latitude: 47.5,
-                },
+            acft: {
+                longitude: 5,
+                latitude: 51,
+            },
+            tgt: {
+                longitude: 2.8,
+                latitude: 47.5,
+            },
+            is_freezing: false,
+            deg: {
+                confidence: 1,
+            },
             altitude: {
                 value: 311.5,
                 unit: 'm',
@@ -385,7 +395,7 @@ const percentageUpdate = (percentage) => ({
 });
 
 export const events = [
-    ...Array.from({length: 50}, (_, i) => (i + 1) * 2).map(percentageUpdate),
+    ...Array.from({ length: 50 }, (_, i) => (i + 1) * 2).map(percentageUpdate),
     statusUpdate,
 ];
 

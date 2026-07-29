@@ -56,4 +56,8 @@ export class Result {
         const { longitude, latitude } = this.data.tgt;
         return { longitude, latitude };
     }
+
+    get isFreezing() {
+        return this.data.isFreezing ?? false;
+    }
 }
