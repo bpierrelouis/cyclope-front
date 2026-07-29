@@ -9,6 +9,7 @@ export const usePlayerStore = create((set) => ({
     media: null,
     treatment: null,
     results: [],
+    track: [],
 
     isMaster: false,
 
