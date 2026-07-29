@@ -2,7 +2,7 @@ import { usePlayerStore } from '../../../stores';
 import { formatTime } from '../../../utils';
 
 export function ProgressBar(props) {
-    const { detections, safeDuration, seek } = props;
+    const { detections, zonesFreezing, safeDuration, seek } = props;
 
     const { currentTime } = usePlayerStore();
 
@@ -28,6 +28,17 @@ export function ProgressBar(props) {
                         background: 'var(--color-warning)',
                     }}
                     title={`Détection · ${formatTime(t.seconds)}`} />
+            ))}
+            {zonesFreezing.map((zone) => (
+                <div
+                    key={zone.id}
+                    className='cyc-scrub-dead'
+                    style={{
+                        left: `${(zone.start / safeDuration) * 100}%`,
+                        width: `${((zone.end - zone.start) / safeDuration) * 100}%`,
+                    }}
+                    title='Freezing'
+                />
             ))}
             <div className='cyc-scrub-head' style={{ left: `${progress}%` }} />
             <div className='cyc-scrub-dot' style={{ left: `${progress}%` }} />
