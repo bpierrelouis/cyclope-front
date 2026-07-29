@@ -1,17 +1,17 @@
 export const mockMissions = [
     {
-        id: '1',
+        id: 1,
         name: 'Survol zone A — 15/04/2026',
         creation_date: '2026-04-15T10:00:00Z',
         medias_status: {
-            DONE: 2,
+            DONE: 1,
             RUNNING: 1,
             PENDING: 1,
-            ERROR: 3,
+            ERROR: 1,
         },
     },
     {
-        id: '2',
+        id: 2,
         name: 'Parc Nord B',
         creation_date: '2026-04-15T10:00:00Z',
         medias_status: {
@@ -19,11 +19,11 @@ export const mockMissions = [
         },
     },
     {
-        id: '3',
+        id: 3,
         name: 'Hangar H',
         creation_date: '2026-04-15T10:00:00Z',
         medias_status: {
-            ERROR: 3,
+            ERROR: 1,
         },
     },
 ];
@@ -35,9 +35,10 @@ export const mockMedias = [
         mission_id: 1,
         file_id: 1,
         parent_file: {
-            name: 'IMG_0234',
+            id: 1,
+            name: 'fichier1.jpg',
             url: 'https://picsum.photos/300/200',
-            size: 5201,
+            size: 6000,
             extension: 'jpg',
         },
         last_treatment_id: 1,
@@ -47,9 +48,10 @@ export const mockMedias = [
         id: 2,
         display_name: 'drone_survey_A.mp4',
         mission_id: 1,
-        file_id: 2,
+        file_id: 5,
         parent_file: {
-            name: 'mov_bbb',
+            id: 5,
+            name: 'mov_bbb.mp4',
             url: 'https://www.w3schools.com/html/mov_bbb.mp4',
             size: 60521,
             extension: 'mp4',
@@ -62,9 +64,10 @@ export const mockMedias = [
         id: 3,
         display_name: 'drone_survey_A.mp4',
         mission_id: 1,
-        file_id: 2,
+        file_id: 5,
         parent_file: {
-            name: 'mov_bbb',
+            id: 5,
+            name: 'mov_bbb.mp4',
             url: 'https://www.w3schools.com/html/mov_bbb.mp4',
             size: 60521,
             extension: 'mp4',
@@ -77,15 +80,44 @@ export const mockMedias = [
         id: 4,
         display_name: 'drone_survey_A.mp4',
         mission_id: 1,
-        file_id: 2,
+        file_id: 5,
         parent_file: {
-            name: 'mov_bbb',
+            id: 5,
+            name: 'mov_bbb.mp4',
             url: 'https://www.w3schools.com/html/mov_bbb.mp4',
             size: 60521,
             extension: 'mp4',
             duration: 50,
         },
         // last_treatment_id: 2,
+        last_treatment_status: 'ERROR',
+    },
+    {
+        id: 5,
+        display_name: 'fichier3.jpg',
+        mission_id: 2,
+        file_id: 3,
+        parent_file: {
+            id: 3,
+            name: 'fichier3.jpg',
+            url: 'https://picsum.photos/300/200',
+            size: 6000,
+            extension: 'jpg',
+        },
+        last_treatment_status: 'PENDING',
+    },
+    {
+        id: 6,
+        display_name: 'fichier4.jpg',
+        mission_id: 3,
+        file_id: 4,
+        parent_file: {
+            id: 4,
+            name: 'fichier4.jpg',
+            url: 'https://picsum.photos/300/200',
+            size: 6000,
+            extension: 'jpg',
+        },
         last_treatment_status: 'ERROR',
     },
 ];
@@ -97,10 +129,10 @@ export const mockTreatments = [
         media_id: 1,
         status: 'DONE',
         config: {
-            frameStep: 3,
-            objectDetectionEnabled: true,
-            confidenceThreshold: 50,
-            processingLevel: 2,
+            frame_step: 3,
+            object_detection_enabled: true,
+            confidence_threshold: 50,
+            processing_level: 2,
         },
     },
     {
@@ -109,10 +141,10 @@ export const mockTreatments = [
         media_id: 2,
         status: 'RUNNING',
         config: {
-            frameStep: 3,
-            objectDetectionEnabled: true,
-            confidenceThreshold: 42,
-            processingLevel: 2,
+            frame_step: 3,
+            object_detection_enabled: true,
+            confidence_threshold: 42,
+            processing_level: 2,
         },
     },
 ];
@@ -162,7 +194,7 @@ export const mockResults = [
         index: 0,
         url: 'https://picsum.photos/300/200',
         response_json: {
-            frame_number: 60,
+            frame_number: 0,
             timestamp: '00:00:00.000',
             acft:
                 {
@@ -200,7 +232,7 @@ export const mockResults = [
         index: 1,
         url: 'https://picsum.photos/300/200',
         response_json: {
-            frame_number: 120,
+            frame_number: 60,
             timestamp: '00:00:03.000',
             acft:
                 {
@@ -238,7 +270,7 @@ export const mockResults = [
         index: 2,
         url: 'https://picsum.photos/300/200',
         response_json: {
-            frame_number: 180,
+            frame_number: 120,
             timestamp: '00:00:06.000',
             acft:
                 {
@@ -263,8 +295,8 @@ export const mockResults = [
     },
     {
         treatment_id: 2,
-        id: 4,
-        index: 2,
+        id: 5,
+        index: 3,
         url: 'https://picsum.photos/300/200',
         response_json: {
             frame_number: 180,
@@ -328,7 +360,7 @@ export const mocksFilesTree = [
                 id: 5,
                 name: 'mov_bbb.mp4',
                 url: 'https://www.w3schools.com/html/mov_bbb.mp4',
-                size: 8000,
+                size: 60521,
                 extension: 'mp4',
                 duration: 50,
             },

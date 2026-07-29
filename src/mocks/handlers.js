@@ -52,12 +52,13 @@ const findFileInTree = (id) =>
 // Crée les médias d'une mission à partir des fichiers de l'arbre.
 const createMedias = (missionId, items = []) =>
     items.map((item) => {
-        const file = findFileInTree(item.file_id);
+        const fileId = Number(item.file_id);
+        const file = findFileInTree(fileId);
         const media = {
             id: nextMediaId++,
             display_name: item.display_name,
-            mission_id: missionId,
-            file_id: item.file_id,
+            mission_id: Number(missionId),
+            file_id: fileId,
             parent_file: file ?? null,
             last_treatment_status: 'PENDING',
         };
@@ -115,6 +116,14 @@ const getHandlers = (resource, data) => [
     http.patch(`/api/${resource}/:id`, async ({ params, request }) => {
         const changes = await request.clone().json();
         const index = data.findIndex(({ id }) => id == params.id);
+
+        if (index === -1) {
+            return HttpResponse.json(
+                { message: `${resource} not found` },
+                { status: 404 },
+            );
+        }
+
         const updated = { ...data[index], ...changes };
         data[index] = updated;
         return HttpResponse.json(updated);
@@ -153,6 +162,30 @@ const eventsSender = (client, interval, data) => {
     }, interval);
 };
 
+const applyTreatmentStatus = ({ treatment_id: treatmentId, status }) => {
+    const treatment = treatments.find((item) => item.id === treatmentId);
+    if (!treatment || treatment.status === status) return;
+
+    const media = medias.find((item) => item.id === treatment.media_id);
+    const previousStatus = media?.last_treatment_status ?? treatment.status;
+
+    treatment.status = status;
+
+    if (!media) return;
+
+    media.last_treatment_status = status;
+    if (status === 'DONE') media.percentage = 100;
+
+    const mission = missions.find((item) => item.id === media.mission_id);
+    if (!mission) return;
+
+    mission.medias_status = {
+        ...mission.medias_status,
+        [previousStatus]: Math.max(0, (mission.medias_status?.[previousStatus] ?? 0) - 1),
+        [status]: (mission.medias_status?.[status] ?? 0) + 1,
+    };
+};
+
 export const handlers = [
     http.get('/api/health', () => {
         return HttpResponse.json(health);
@@ -164,8 +197,20 @@ export const handlers = [
     ...getHandlers('results', results),
     ...getHandlers('files/tree', mocksFilesTree),
 
-    http.get('/api/medias/:id/last_treatment', () => {
-        return HttpResponse.json(treatments[0]);
+    http.get('/api/medias/:id/last_treatment', ({ params }) => {
+        const media = medias.find((item) => item.id === Number(params.id));
+        const treatment = treatments.find((item) =>
+            item.id === media?.last_treatment_id && item.media_id === media.id,
+        );
+
+        if (!treatment) {
+            return HttpResponse.json(
+                { message: 'treatment not found' },
+                { status: 404 },
+            );
+        }
+
+        return HttpResponse.json(treatment);
     }),
 
     http.get('/api/files/download', ({ request }) => {
@@ -228,7 +273,7 @@ export const handlers = [
     // Création d'une mission avec ses médias.
     http.post('/api/missions', async ({ request }) => {
         const body = await request.json();
-        const id = String(nextMissionId++);
+        const id = nextMissionId++;
         const createdMedias = createMedias(id, body.medias);
 
         const mission = {
@@ -264,6 +309,10 @@ export const handlers = [
     }),
 
     sse('/api/event', async ({ client }) => {
+        const statusEvent = events.find((event) => event.event === 'treatment_status');
+        if (statusEvent) {
+            setTimeout(() => applyTreatmentStatus(statusEvent.data), events.length * 200);
+        }
         eventsSender(client, 200, events);
     }),
 
