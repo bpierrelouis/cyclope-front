@@ -62,7 +62,7 @@ export function DroneMarker() {
             style={Plan.MARKER_STYLE}
         >
             <div
-                className='drone-marker'
+                className='flex justify-center items-center text-primary transition-transform duration-75 pointer-events-none drop-shadow-[0_0_6px_color-mix(in_oklch,var(--color-primary)_55%,transparent)]'
                 style={{ transform: `rotate(${pos.bearing - mapBearing}deg)` }}
             >
                 <Navigation2Icon color='white' fill='currentColor' />

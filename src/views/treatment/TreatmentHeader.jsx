@@ -1,11 +1,16 @@
+import { ExternalLinkIcon, MapIcon, TableIcon } from 'lucide-react';
 import { useSelectionContext } from '../../contexts';
 import { usePlayerStore } from '../../stores';
 import { getCurrentResult } from '../../utils';
 import { TreatmentSelector } from './TreatmentSelector';
+import { ERoute } from '../../constants';
+import { MediaIcon } from '../../components';
 
-export function TreatmentHeader() {
+export function TreatmentHeader(props) {
+    const { state } = props;
+    const [selected, setSelected] = state;
     const { mission, results } = useSelectionContext();
-    const { currentTime } = usePlayerStore();
+    const { currentTime, isMediaOpen, isTableOpen, isPlanOpen } = usePlayerStore();
 
     const current = getCurrentResult(results, currentTime);
 
@@ -13,8 +18,30 @@ export function TreatmentHeader() {
         ? `${current.coordinates.latitude} · ${current.coordinates.longitude}`
         : '—';
 
+    const disabledComponents = {
+        [ERoute.MEDIA]: isMediaOpen || selected === ERoute.MEDIA,
+        [ERoute.TABLE]: isTableOpen || selected === ERoute.TABLE,
+        [ERoute.PLAN]: isPlanOpen || selected === ERoute.PLAN,
+    };
+
+    /**
+     * Méthode permettant d'extraire la vue courante dans une nouvelle fenêtre.
+     * Change la vue courante vers une non visible.
+     */
+    const handleExtract = () => {
+        window.open(
+            selected,
+            undefined,
+            'width=900,height=700',
+        );
+
+        const entries = Object.entries(disabledComponents);
+        const entry = entries.find(([route, disabled]) => route !== selected && !disabled);
+        if (entry) setSelected(entry[0]);
+    };
+
     return (
-        <header className='col-span-full cyc-header'>
+        <header className='grid-cols-[max-content_minmax(18rem,1fr)_repeat(5,max-content)] col-span-full bg-base-100 overflow-visible stats'>
             <ItemText title='MISSION' value={mission?.name} />
             <Item title='TRAITEMENT'>
                 <TreatmentSelector />
@@ -23,6 +50,15 @@ export function TreatmentHeader() {
             <ItemText title='ALT' value={current?.altitudeLabel} />
             <ItemText title='VITESSE' value={current?.speedLabel} />
             <ItemText title='POSITION' value={position} />
+            <ScreenSelector
+                state={state}
+                disabledComponents={disabledComponents}
+            />
+            <Button
+                onClick={handleExtract}
+            >
+                <ExternalLinkIcon />
+            </Button>
         </header>
     );
 }
@@ -39,9 +75,54 @@ function ItemText(props) {
 function Item(props) {
     const { title, children } = props;
     return (
-        <div className='cyc-stat nth-[2]:grow'>
-            <span className='cyc-stat-label'>{title}</span>
-            <span className='cyc-stat-value'>{children}</span>
+        <div className='px-4 py-2 stat'>
+            <span className='stat-title'>{title}</span>
+            <span className='text-sm stat-value'>{children}</span>
         </div>
+    );
+}
+
+function ScreenSelector(props) {
+    const { state, disabledComponents } = props;
+    const [selected, setSelected] = state;
+    const { media } = usePlayerStore();
+
+    const modes = [
+        [ERoute.PLAN, 'Carte', <MapIcon key={'MapIcon'} />],
+        [ERoute.TABLE, 'Tableau', <TableIcon key={'TableIcon'} />],
+        [ERoute.MEDIA, media?.isVideo ? 'Vidéo' : 'Image', <MediaIcon isVideo={media?.isVideo} key={'MediaIcon'} />],
+    ];
+
+    const allowed = modes.filter(([r]) => !disabledComponents[r]);
+
+    return (
+        <div className='block p-0 dropdown-down dropdown dropdown-hover stat'>
+            <Button>
+                {modes.find(([r]) => r === selected)[2]}
+            </Button>
+            <ul className='bg-base-100 shadow-sm p-0 rounded-box dropdown-content menu'>
+                {allowed.map(([route, , Icon]) => (
+                    <li
+                        key={route}
+                        className='w-full aspect-square'
+                    >
+                        <Button onClick={() => setSelected(route)}>
+                            {Icon}
+                        </Button>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+}
+
+function Button(props) {
+    return (
+        <button
+            className='h-full aspect-square btn btn-ghost'
+            onClick={props.onClick}
+        >
+            {props.children}
+        </button>
     );
 }

@@ -12,13 +12,13 @@ export function FileList(props) {
     );
 
     return (
-        <div className='flex flex-col'>
+        <ul className='list'>
             {files.map((file) => (
                 <FileListItem
                     key={file.id}
                     file={file}
                 />
             ))}
-        </div>
+        </ul>
     );
 }

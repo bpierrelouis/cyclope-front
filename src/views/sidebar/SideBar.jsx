@@ -7,16 +7,17 @@ import { ThemeSwap } from './ThemeSwap';
 
 export function SideBar(props) {
     return (
-        <aside className='flex flex-col items-stretch bg-base-100 w-fit is-drawer-open:w-xs min-h-full is-drawer-close:overflow-visible drawer-side'>
-            <div className='flex items-center px-2 border-b border-(--p-20) h-[54px]'>
+        <aside className='flex flex-col items-stretch bg-base-100 border-base-300 border-r w-fit is-drawer-open:w-xs min-h-full is-drawer-close:overflow-visible drawer-side'>
+            <div className='flex items-center px-2 pt-5'>
                 <label htmlFor={props.drawerId} aria-label='open sidebar' className='btn btn-ghost'>
                     <PanelLeftCloseIcon className='is-drawer-close:hidden' />
                     <PanelLeftOpenIcon className='is-drawer-open:hidden' />
                 </label>
-                <h1 className='is-drawer-close:hidden text-xl text-center grow'>Cyclope</h1>
+                <h1 className='is-drawer-close:hidden font-bold text-primary text-xl text-center uppercase tracking-[0.25em] grow'>Cyclope</h1>
                 <ThemeSwap />
             </div>
-            <div className='flex flex-col grow px-2 py-4'>
+            <div className='divider'></div>
+            <ul className='px-2 w-full menu'>
                 <NavItem title='Nouveau' to={ERoute.NEW}>
                     <PlusIcon />
                 </NavItem>
@@ -26,11 +27,14 @@ export function SideBar(props) {
                 <NavItem title='Paramètres' to={ERoute.SETTINGS}>
                     <CogIcon />
                 </NavItem>
+            </ul>
+            <div className='divider'></div>
+            <ul className='flex-nowrap px-2 w-full overflow-auto menu grow'>
                 <MediaList />
-                <div className='mt-auto divider'></div>
-                <div className='flex flex-col self-left px-4 font-mono font-medium text-sm'>
-                    <Health />
-                </div>
+            </ul>
+            <div className='divider'></div>
+            <div className='flex flex-col self-left mb-4 pl-8 font-medium text-sm'>
+                <Health />
             </div>
         </aside>
     );

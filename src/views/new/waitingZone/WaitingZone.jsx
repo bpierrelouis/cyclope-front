@@ -24,8 +24,8 @@ export function WaitingZone(props) {
     }, [setMissionId]);
 
     return (
-        <div className='flex flex-col bg-base-100 shadow-md rounded-box max-h-[calc(100vh-8rem)] size-full overflow-hidden'>
-            <h3 className='mx-4 mt-2 font-medium text-lg'>Zone d'attente</h3>
+        <section className='flex flex-col bg-base-100 border border-base-300 shadow-sm card max-h-[calc(100vh-8rem)] size-full overflow-hidden'>
+            <h2 className='px-4 pt-4 card-title'>Zone d'attente</h2>
 
             <div className='flex flex-col gap-2 px-4 shrink-0'>
                 <div className='tabs'>
@@ -79,6 +79,6 @@ export function WaitingZone(props) {
             <div className='flex-1 px-4 pb-2 min-h-0 overflow-y-auto'>
                 <FileList files={files} />
             </div>
-        </div>
+        </section>
     );
 }

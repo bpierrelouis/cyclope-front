@@ -9,9 +9,9 @@ export function MissionListItem(props) {
     const isOpened = mission.id === opened;
 
     return (
-        <div className='bg-base-100 shadow-md rounded-box overflow-clip'>
+        <article className='bg-base-100 border border-base-300 shadow-sm card overflow-clip'>
             <MissionHeader mission={mission} />
             {isOpened && <MissionMediaList mission={mission} />}
-        </div>
+        </article>
     );
 }

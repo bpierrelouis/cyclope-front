@@ -17,8 +17,8 @@ export function FileListItem(props) {
     const handleRemove = () => deselect(file.id);
 
     return (
-        <div>
-            <div className='flex items-center py-2 text-sm'>
+        <li className='block px-0 list-row'>
+            <div className='flex items-center text-sm'>
                 <span className='flex-1 mr-2 truncate'>{file.name}</span>
                 <div className='flex items-center gap-2 shrink-0'>
                     <span className='opacity-60'>
@@ -26,14 +26,14 @@ export function FileListItem(props) {
                     </span>
                     <button
                         aria-label={`Configurer ${file.name}`}
-                        className='opacity-60 hover:opacity-100 transition'
+                        className='btn btn-ghost btn-circle btn-xs'
                         onClick={toggleSettings}
                     >
                         <CogIcon className='size-4' />
                     </button>
                     <button
                         aria-label={`Retirer ${file.name}`}
-                        className='opacity-60 hover:opacity-100 transition'
+                        className='btn btn-ghost btn-circle btn-xs'
                         onClick={handleRemove}
                     >
                         <XIcon className='size-4' />
@@ -43,6 +43,6 @@ export function FileListItem(props) {
             {showSettings && (
                 <FileConfig file={file} />
             )}
-        </div>
+        </li>
     );
 }
