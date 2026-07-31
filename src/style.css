@@ -4,63 +4,6 @@
     themes: light, dark;
 }
 
-/* ============================================================
-   FONTS — IBM Plex
-   ============================================================ */
-@font-face {
-    font-family: 'IBM Plex Sans';
-    src: url('/fonts/IBMPlexSans-400.woff2') format('woff2');
-    font-weight: 400;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'IBM Plex Sans';
-    src: url('/fonts/IBMPlexSans-500.woff2') format('woff2');
-    font-weight: 500;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'IBM Plex Sans';
-    src: url('/fonts/IBMPlexSans-600.woff2') format('woff2');
-    font-weight: 600;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'IBM Plex Sans';
-    src: url('/fonts/IBMPlexSans-700.woff2') format('woff2');
-    font-weight: 700;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'IBM Plex Mono';
-    src: url('/fonts/IBMPlexMono-400.woff2') format('woff2');
-    font-weight: 400;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'IBM Plex Mono';
-    src: url('/fonts/IBMPlexMono-500.woff2') format('woff2');
-    font-weight: 500;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'IBM Plex Mono';
-    src: url('/fonts/IBMPlexMono-600.woff2') format('woff2');
-    font-weight: 600;
-    font-display: swap;
-}
-
-/* ============================================================
-   THÈMES DAISYUI — CYCLOPE
-   Toutes les décisions visuelles sont ici : couleurs, rayons,
-   typographie des composants, états hover/focus des inputs.
-   ============================================================ */
 @plugin "daisyui/theme" {
     name: "dark";
     default: false;
@@ -133,525 +76,8 @@
     --noise: 0;
 }
 
-/* ============================================================
-   TOKENS GLOBAUX
-   Modifier ici pour changer l'aspect de toute l'UI.
-   ============================================================ */
-:root {
-    /* Typographie */
-    --font-sans: 'IBM Plex Sans', system-ui, sans-serif;
-    --font-mono: 'IBM Plex Mono', monospace;
-
-    /* Rayon des boutons — indépendant de --radius-field pour pouvoir varier */
-    --btn-radius: 0.625rem;
-
-    /* Échelle de teinte primaire — toutes les couleurs contextuelles découlent d'ici */
-    --p-5: color-mix(in oklch, var(--color-primary) 5%, transparent);
-    --p-10: color-mix(in oklch, var(--color-primary) 10%, transparent);
-    --p-15: color-mix(in oklch, var(--color-primary) 15%, transparent);
-    --p-20: color-mix(in oklch, var(--color-primary) 20%, transparent);
-    --p-25: color-mix(in oklch, var(--color-primary) 25%, transparent);
-    --p-35: color-mix(in oklch, var(--color-primary) 35%, transparent);
-    --p-50: color-mix(in oklch, var(--color-primary) 50%, transparent);
-    --p-55: color-mix(in oklch, var(--color-primary) 55%, transparent);
-    --p-60: color-mix(in oklch, var(--color-primary) 60%, transparent);
-}
-
-/* ============================================================
-   BASE
-   ============================================================ */
 html {
     font-size: 14px;
-}
-
-/* ← seul curseur pour scaler toute l'UI */
-
-html,
-body,
-#root {
-    height: 100%;
-    background: var(--color-base-200);
-    color: var(--color-base-content);
-    font-family: var(--font-sans);
-}
-
-/* Les contrôles de formulaire n'héritent pas la police par défaut */
-button,
-input,
-select,
-textarea,
-optgroup {
-    font-family: inherit;
-}
-
-/* Scrollbar fine et cohérente avec la palette */
-::-webkit-scrollbar {
-    width: 9px;
-    height: 9px;
-}
-
-::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--p-35);
-    border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: var(--p-60);
-}
-
-/* Titres — style tactique uniforme */
-h1,
-h2,
-h3 {
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-}
-
-/* ============================================================
-   DAISYUI — SURCHARGES COMPOSANTS
-   Objectif : zéro !important, on joue avec les tokens DaisyUI.
-   ============================================================ */
-
-/* --- Boutons --- */
-/* Rayon et typo communs à tous les boutons */
-.btn {
-    border-radius: var(--btn-radius);
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-}
-
-
-.cyc-tp-btn:hover:not(:disabled) {
-    border-color: var(--p-60);
-    color: var(--color-primary);
-}
-
-.cyc-tp-btn:disabled {
-    opacity: 0.4;
-    pointer-events: none;
-}
-
-.btn-primary {
-    --btn-bg: transparent;
-    --btn-fg: var(--color-primary);
-    --btn-border: var(--color-primary);
-    --btn-shadow: 0 0 10px var(--p-20), inset 0 0 10px var(--p-5);
-
-    &:hover:not(:disabled) {
-        --btn-bg: var(--p-15);
-        --btn-shadow: 0 0 20px var(--p-35), inset 0 0 20px var(--p-10);
-    }
-
-
-}
-
-.btn-error {
-    --btn-bg: transparent;
-    --btn-fg: var(--color-error);
-    --btn-border: color-mix(in oklch, var(--color-error) 60%, transparent);
-
-    &:hover {
-        --btn-bg: color-mix(in oklch, var(--color-error) 10%, transparent);
-        --btn-shadow: 0 0 16px color-mix(in oklch, var(--color-error) 30%, transparent);
-    }
-}
-
-.btn-ghost {
-    --btn-bg: transparent;
-}
-
-.btn-ghost:hover {
-    --btn-bg: var(--p-10);
-}
-
-/* --- Input --- */
-/*
-  On surcharge --input-color (token DaisyUI) pour la bordure/focus,
-  et on cible le fond via background direct (pas de token dispo).
-*/
-.input {
-    background: var(--color-base-300);
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
-    --input-color: var(--p-25);
-
-    &:focus,
-    &:focus-within {
-        --input-color: var(--p-60);
-    }
-
-    &::placeholder {
-        color: var(--p-25);
-    }
-}
-
-.search-missions {
-    color: color-mix(in oklch, var(--color-primary) 95%, white);
-    letter-spacing: 0.08em;
-
-    &::placeholder {
-        color: var(--p-60);
-    }
-}
-
-/* --- Tabs --- */
-.tabs-border {
-    border-bottom: 1px solid var(--p-20);
-}
-
-.tab {
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    font-size: 0.75rem;
-    border-radius: 0;
-    --tab-border-color: var(--p-20);
-}
-
-.tab-active,
-[aria-selected="true"] {
-    text-shadow: 0 0 8px var(--p-35);
-}
-
-/* --- Cards --- */
-.card,
-.bg-base-100.shadow-md.rounded-box {
-    border: 1px solid color-mix(in oklch, var(--color-primary) 12%, transparent);
-    border-left: 2px solid var(--p-35);
-    box-shadow: none;
-    transition: border-color 0.2s;
-
-    &:hover {
-        border-left-color: var(--p-60);
-    }
-}
-
-/* --- Badges --- */
-.badge {
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-}
-
-/* --- Divider, tooltip, modal --- */
-.divider {
-    --tw-border-opacity: 0;
-    border-color: var(--p-15);
-}
-
-.tooltip {
-    @apply z-50;
-    --tooltip-bg: var(--color-base-300);
-    --tooltip-color: var(--color-primary);
-}
-
-.modal-box {
-    border: 1px solid color-mix(in oklch, var(--color-primary) 30%, transparent);
-    box-shadow: 0 0 40px var(--p-10), 0 0 80px oklch(0% 0 0 / 0.5);
-}
-
-/* ============================================================
-   SIDEBAR
-   ============================================================ */
-aside.drawer-side {
-    background: var(--color-base-100);
-    border-right: 1px solid color-mix(in oklch, var(--color-primary) 18%, transparent);
-    position: relative;
-    overflow: visible;
-}
-
-/* Liseré lumineux sur le bord droit */
-aside.drawer-side::after {
-    content: '';
-    position: absolute;
-    inset: 0 0 0 auto;
-    width: 1px;
-    pointer-events: none;
-    background: linear-gradient(to bottom, transparent, var(--p-50) 20%, var(--p-50) 80%, transparent);
-}
-
-aside h1 {
-    color: var(--color-primary);
-    letter-spacing: 0.25em;
-    text-shadow: 0 0 12px var(--p-55);
-}
-
-/* Entrées de menu (nav items = <a> ou <button>) */
-aside a.btn-ghost,
-aside button.btn-ghost {
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    font-size: 0.85rem;
-    border-radius: 0;
-    border-left: 2px solid transparent;
-    transition: background 0.2s, border-color 0.2s, color 0.2s;
-
-    &:hover {
-        --btn-bg: var(--p-10);
-        border-left-color: var(--p-50);
-        color: color-mix(in oklch, var(--color-primary) 90%, white);
-    }
-}
-
-/* Élément actif */
-aside .btn-soft.btn-primary {
-    border-left: 2px solid var(--color-primary);
-    border-radius: 0;
-}
-
-/* Boutons icônes (<label>) dans la sidebar — ronds et compacts */
-aside label.btn-ghost {
-    border-radius: var(--btn-radius);
-    border-left: none;
-    width: 2.25rem;
-    height: 2.25rem;
-    min-height: 0;
-    padding: 0;
-
-    &:hover {
-        --btn-bg: transparent;
-        color: var(--color-primary);
-    }
-}
-
-/* ============================================================
-   COMPOSANTS CYCLOPE — CHROME DE L'APPLICATION
-   ============================================================ */
-
-/* Propriétés communes des bandes horizontales (header, transport) */
-.cyc-header,
-.cyc-transport {
-    flex: 0 0 auto;
-    display: flex;
-    align-items: center;
-    background: var(--color-base-100);
-    padding: 0 18px;
-    gap: 18px;
-}
-
-.cyc-header {
-    height: 54px;
-    justify-content: space-between;
-    border-bottom: 1px solid var(--p-20);
-}
-
-.cyc-transport {
-    height: 86px;
-    border-top: 1px solid var(--p-20);
-}
-
-/* Statistiques dans le header */
-.cyc-stat {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-    padding: 0 14px;
-    border-left: 1px solid var(--p-20);
-    justify-content: center;
-
-    &:first-child {
-        border-left: none;
-        padding-left: 0;
-    }
-}
-
-.cyc-stat-label {
-    font-family: var(--font-mono);
-    font-weight: 600;
-    font-size: 9px;
-    letter-spacing: 0.12em;
-    color: color-mix(in oklch, var(--color-base-content) 45%, transparent);
-}
-
-.cyc-stat-value {
-    font-family: var(--font-mono);
-    font-weight: 500;
-    font-size: 13px;
-    color: var(--color-base-content);
-}
-
-.cyc-dock {
-    position: absolute;
-    bottom: 14px;
-    left: 50%;
-    transform: translateX(-50%);
-    /* MapLibre monte ses contrôles à z-index 1000 */
-    z-index: 1100;
-    isolation: isolate;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    padding: 6px;
-    border-radius: 16px;
-    background: color-mix(in oklch, var(--color-base-100) 32%, transparent);
-    border: 1px solid color-mix(in oklch, var(--color-primary) 28%, transparent);
-    box-shadow:
-        0 10px 32px rgb(0 0 0 / 0.5),
-        inset 0 1px 0 color-mix(in oklch, white 14%, transparent),
-        inset 0 -1px 0 rgb(0 0 0 / 0.35);
-    backdrop-filter: blur(14px) saturate(1.6) brightness(1.05);
-}
-
-/* Couche de réfraction : déforme le contenu derrière le dock (Chromium).
-   Si backdrop-filter: url() n'est pas supporté, cette couche est simplement inerte
-   et le blur de .cyc-dock reste en fallback. */
-.cyc-dock::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    border-radius: inherit;
-    backdrop-filter: url(#cyc-glass-distortion);
-    pointer-events: none;
-}
-
-.cyc-dock-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    height: 42px;
-    padding: 0 14px;
-    cursor: pointer;
-    border: 1px solid transparent;
-    border-radius: 11px;
-    background: transparent;
-    color: color-mix(in oklch, var(--color-base-content) 60%, transparent);
-    font-family: var(--font-mono);
-    font-weight: 600;
-    font-size: 9.5px;
-    letter-spacing: 0.1em;
-    transition: all 0.12s;
-
-    & svg {
-        width: 17px;
-        height: 17px;
-    }
-
-    &:hover {
-        background: var(--p-10);
-        color: color-mix(in oklch, var(--color-primary) 85%, white);
-    }
-
-    &.active {
-        background: color-mix(in oklch, var(--color-primary) 16%, transparent);
-        border-color: color-mix(in oklch, var(--color-primary) 45%, transparent);
-        color: var(--color-primary);
-        box-shadow: inset 0 0 12px color-mix(in oklch, var(--color-primary) 12%, transparent);
-    }
-}
-
-.cyc-dock-sep {
-    width: 1px;
-    height: 24px;
-    margin: 0 3px;
-    background: var(--p-20);
-}
-
-/* Transport — boutons secondaires */
-.cyc-tp-btn {
-    width: 34px;
-    height: 34px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 5px;
-    cursor: pointer;
-    border: 1px solid color-mix(in oklch, var(--color-primary) 28%, transparent);
-    background: var(--color-neutral);
-    color: color-mix(in oklch, var(--color-base-content) 85%, transparent);
-    transition: border-color 0.12s, color 0.12s;
-
-    &:hover {
-        border-color: var(--p-60);
-        color: var(--color-primary);
-    }
-}
-
-/* Transport — bouton play (plein, lumineux) */
-.cyc-tp-play {
-    width: 46px;
-    height: 38px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 6px;
-    cursor: pointer;
-    border: 1px solid var(--color-primary);
-    background: var(--color-primary);
-    color: var(--color-primary-content);
-    box-shadow: 0 0 14px -2px var(--p-60);
-}
-
-/* Transport — affichage temps */
-.cyc-tp-time {
-    font-family: var(--font-mono);
-    font-weight: 600;
-    font-size: 14px;
-    min-width: 48px;
-    color: var(--color-base-content);
-
-    &.muted {
-        color: color-mix(in oklch, var(--color-base-content) 55%, transparent);
-        text-align: right;
-    }
-}
-
-/* Scrubber (barre de progression timeline) */
-.cyc-scrub {
-    flex: 1 1 auto;
-    position: relative;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-}
-
-.cyc-scrub-rail,
-.cyc-scrub-fill {
-    position: absolute;
-    top: 50%;
-    height: 6px;
-    transform: translateY(-50%);
-    border-radius: 3px;
-}
-
-.cyc-scrub-rail {
-    inset-inline: 0;
-    background: var(--p-20);
-}
-
-.cyc-scrub-fill {
-    left: 0;
-    background: var(--p-55);
-}
-
-.cyc-scrub-tick {
-    position: absolute;
-    top: 6px;
-    bottom: 6px;
-    width: 2px;
-    transform: translateX(-1px);
-    opacity: 0.85;
-}
-
-.cyc-scrub-dot {
-    position: absolute;
-    top: 50%;
-    width: 13px;
-    height: 13px;
-    border-radius: 50%;
-    background: var(--color-primary);
-    transform: translate(-50%, -50%);
-    box-shadow: 0 0 10px var(--color-primary);
-    pointer-events: none;
 }
 
 /* ============================================================
@@ -662,7 +88,7 @@ aside label.btn-ghost {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: var(--font-mono);
+    font-family: ui-monospace, monospace;
     font-weight: 700;
     user-select: none;
     cursor: pointer;
@@ -685,7 +111,7 @@ aside label.btn-ghost {
     transform: rotate(45deg);
     border: 1.5px solid color-mix(in oklch, var(--color-primary) 65%, white);
     background: var(--color-primary);
-    box-shadow: 0 0 8px var(--p-55);
+    box-shadow: 0 0 8px color-mix(in oklch, var(--color-primary) 55%, transparent);
     color: var(--color-primary-content);
     font-size: 0.6rem;
 }
@@ -699,8 +125,8 @@ aside label.btn-ghost {
     width: 27px;
     height: 27px;
     transform: translate(-50%, -50%);
-    border: 1px solid var(--p-55);
-    box-shadow: 0 0 6px var(--p-35);
+    border: 1px solid color-mix(in oklch, var(--color-primary) 55%, transparent);
+    box-shadow: 0 0 6px color-mix(in oklch, var(--color-primary) 35%, transparent);
     pointer-events: none;
 }
 
@@ -799,17 +225,9 @@ aside label.btn-ghost {
     border: 1px solid color-mix(in oklch, var(--color-primary) 30%, transparent) !important;
     border-radius: var(--radius-field) !important;
     color: var(--color-base-content) !important;
-    font-family: var(--font-mono) !important;
+    font-family: ui-monospace, monospace !important;
     font-size: 0.75rem !important;
     padding: 6px 10px !important;
-}
-
-/* ============================================================
-   TABLEAU — ligne active (suivi lecture vidéo)
-   ============================================================ */
-.table tbody tr.cyc-row-active td {
-    background-color: var(--p-20);
-    color: color-mix(in oklch, var(--color-base-content) 80%, var(--color-primary));
 }
 
 .drone-marker {
@@ -906,7 +324,7 @@ aside label.btn-ghost {
 
 .maplibregl-ctrl-group button:focus {
     outline: none;
-    box-shadow: inset 0 0 0 2px var(--p-50);
+    box-shadow: inset 0 0 0 2px color-mix(in oklch, var(--color-primary) 50%, transparent);
 }
 
 /* le bouton "Recentrer" rend une icône lucide (stroke=currentColor) */
@@ -927,14 +345,15 @@ aside label.btn-ghost {
 .cyc-scrub-dead {
     position: absolute;
     top: 50%;
-    height: 6px;
+    height: 8px;
     transform: translateY(-50%);
     border-radius: 3px;
-    background: repeating-linear-gradient(45deg,
-            var(--color-base-content) 0 2px, transparent 2px 5px);
-    opacity: 0.5;
+    background-color: var(--color-base-100);
+    background-image: repeating-linear-gradient(45deg,
+            var(--color-error) 0 3px, transparent 3px 6px);
+    box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--color-error) 70%, transparent);
     pointer-events: none;
-    z-index: 1;
+    z-index: 10;
 }
 
 /* Zone colonne : checkbox au-dessus de la timeline */

@@ -23,7 +23,7 @@ export function MissionListScreen() {
                     placeholder='Rechercher...'
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className='flex-1 lg:flex-0 w-48 input input-sm input-bordered'
+                    className='flex-1 lg:flex-0 w-48 input input-sm'
                 />
             </div>
             <div className='flex flex-col flex-1 gap-1 min-h-0 overflow-y-auto tab-content'>

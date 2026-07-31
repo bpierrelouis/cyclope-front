@@ -115,7 +115,7 @@ function TableBodyRow(props) {
         <tr
             key={row.id}
             ref={isActive ? selectedRef : null}
-            className={cn(isActive && 'cyc-row-active')}
+            className={cn(isActive && '*:bg-primary/20')}
         >
             {row.getVisibleCells().map(cell => (
                 <TableBodyCell key={cell.id} cell={cell} />

@@ -8,7 +8,6 @@ export function MediaList() {
     if (!mission || !medias) return null;
 
     return (<>
-        <div className='divider'></div>
         {medias.map((m) => (
             <NavItem
                 to={`?media=${m.id}`}

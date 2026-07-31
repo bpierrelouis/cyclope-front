@@ -1,4 +1,4 @@
-import { ProcessConfidenceField, ProcessLevelField, ProcessObjectDetectionField, ProcessStepField } from '../../../components';
+import { ConfigurationCard, ProcessConfidenceField, ProcessLevelField, ProcessObjectDetectionField, ProcessStepField } from '../../../components';
 import { useMissionCreationStore } from '../../../stores';
 
 export function FileConfig(props) {
@@ -13,7 +13,7 @@ export function FileConfig(props) {
     if (!config) return;
 
     return (
-        <div className='flex flex-col gap-2 bg-base-300 p-4 rounded-box'>
+        <ConfigurationCard className='bg-base-200 shadow-none'>
             {!!file.duration && (<ProcessStepField
                 config={config}
                 setPartialConfig={setPartialConfig}
@@ -34,6 +34,6 @@ export function FileConfig(props) {
                 config={config}
                 setPartialConfig={setPartialConfig}
             />
-        </div>
+        </ConfigurationCard>
     );
 }

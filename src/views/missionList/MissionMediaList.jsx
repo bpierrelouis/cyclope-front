@@ -6,18 +6,20 @@ export function MissionMediaList(props) {
     const { data: medias, isLoading } = mediasQueries.useGetAllByMissionId(mission.id);
 
     return (
-        <div className='py-2'>
+        <ul className='list'>
             {isLoading && (
-                <span className='block mx-auto loading loading-spinner'></span>
+                <li className='place-items-center grid list-row'>
+                    <span className='loading loading-spinner'></span>
+                </li>
             )}
             {medias?.length === 0 && (
-                <span className='px-8'>Aucun média</span>
+                <li className='opacity-60 list-row'>Aucun média</li>
             )}
             {medias?.map((media) => (
                 <MissionMediaListItem
                     key={media.id}
                     media={media} />
             ))}
-        </div>
+        </ul>
     );
 }

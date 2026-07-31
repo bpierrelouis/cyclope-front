@@ -1,4 +1,5 @@
 export * from './ConfidenceBadge';
+export * from './ConfigurationCard';
 export * from './DeletePopup';
 export * from './EditableText';
 export * from './Field';

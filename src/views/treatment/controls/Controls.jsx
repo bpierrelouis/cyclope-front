@@ -70,7 +70,7 @@ export function Controls() {
     }, [currentTime, playing, skipFreezing, zonesFreezing]);
 
     return (
-        <footer className='col-span-full cyc-transport'>
+        <footer className='flex items-center gap-4 col-span-full bg-base-100 p-4 border-base-300 border-t'>
             <div className='flex items-center gap-2'>
                 <button className='btn btn-square' onClick={goToPrevDetection} disabled={!previousDetection}>
                     <SkipBackIcon size={iconSizes.sm} />
@@ -90,7 +90,7 @@ export function Controls() {
                 </button>
             </div>
 
-            <span className='cyc-tp-time'>{formatTime(currentTime)}</span>
+            <span className='min-w-10 font-semibold tabular-nums'>{formatTime(currentTime)}</span>
 
             <ProgressBar
                 detections={detections}
@@ -99,7 +99,7 @@ export function Controls() {
                 seek={seek}
             />
 
-            <span className='cyc-tp-time muted'>{formatTime(duration)}</span>
+            <span className='opacity-60 min-w-10 font-semibold tabular-nums text-right'>{formatTime(duration)}</span>
         </footer>
     );
 }
