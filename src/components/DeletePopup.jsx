@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { preventDefault } from '../utils';
+import { createPortal } from 'react-dom';
 
 export function DeletePopup(props) {
     const { title, children, onDelete, openState } = props;
@@ -16,7 +17,7 @@ export function DeletePopup(props) {
 
     const handleClose = () => setIsModalOpen(false);
 
-    return (
+    return createPortal(
         <dialog
             ref={dialogRef}
             className='modal'
@@ -36,6 +37,7 @@ export function DeletePopup(props) {
             <form method='dialog' className='modal-backdrop'>
                 <button onClick={handleClose}>Fermer</button>
             </form>
-        </dialog>
+        </dialog>,
+        document.body,
     );
 }
