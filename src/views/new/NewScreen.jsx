@@ -23,7 +23,12 @@ export function NewScreen() {
 
     const isAddingMode = Number.isInteger(missionId);
 
-    const flattenedFileNodes = useMemo(() => flatTree(fileNodes ?? []), [fileNodes]);
+    const safeFileNodes = useMemo(
+        () => (Array.isArray(fileNodes) ? fileNodes : []),
+        [fileNodes],
+    );
+
+    const flattenedFileNodes = useMemo(() => flatTree(safeFileNodes), [safeFileNodes]);
     const files = useMemo(() => {
         return flattenedFileNodes.filter((file) => fileIds.has(file.id));
     }, [flattenedFileNodes, fileIds]);
@@ -73,12 +78,6 @@ export function NewScreen() {
         </main>
     );
 
-    if (isError) return (
-        <main className='place-items-center grid size-full'>
-            <p className='opacity-60'>Impossible de charger l'explorateur de médias.</p>
-        </main>
-    );
-
     return (
         <main className='flex flex-col gap-4 p-4 min-h-0 size-full'>
             <div className='flex justify-between items-center shrink-0'>
@@ -98,7 +97,8 @@ export function NewScreen() {
 
             <div className='flex-1 gap-4 grid grid-cols-1 md:grid-cols-2 min-h-0'>
                 <FileTree
-                    nodes={fileNodes ?? []}
+                    nodes={safeFileNodes}
+                    isError={isError}
                     onDropToFolder={uploadFiles}
                     onDropFolder={handleDropFolder}
                 />
