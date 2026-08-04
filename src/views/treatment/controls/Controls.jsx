@@ -1,4 +1,4 @@
-import { PauseIcon, PlayIcon, SkipBackIcon, SkipForwardIcon, SnowflakeIcon } from 'lucide-react';
+import { PauseIcon, PlayIcon, SkipBackIcon, SkipForwardIcon, SnowflakeIcon, SquareBottomDashedScissors } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { iconSizes } from '../../../constants';
 import { useSelectionContext } from '../../../contexts';
@@ -61,6 +61,22 @@ export function Controls() {
         seek(nextDetection.seconds, { pause: true });
     };
 
+    // Capture la frame courante de la vidéo.
+    const handleCapture = () => {
+        const video = document.querySelector('video');
+        if (!video?.videoWidth) return;
+
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext('2d').drawImage(video, 0, 0);
+
+        const link = document.createElement('a');
+        link.href = canvas.toDataURL('image/png');
+        link.download = `capture-${formatTime(currentTime).replaceAll(':', '-')}.png`;
+        link.click();
+    };
+
     useEffect(() => {
         if (!skipFreezing || !playing) return;
         const t = currentTime;
@@ -87,6 +103,13 @@ export function Controls() {
                     data-tip='Sauter les frames figées'
                 >
                     <SnowflakeIcon size={iconSizes.sm} />
+                </button>
+                <button
+                    className='tooltip-top btn btn-square tooltip'
+                    onClick={handleCapture}
+                    data-tip='Capturer l&#39;écran'
+                >
+                    <SquareBottomDashedScissors size={iconSizes.sm} />
                 </button>
             </div>
 

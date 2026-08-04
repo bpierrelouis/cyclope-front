@@ -13,7 +13,7 @@ export default defineConfig({
     server: {
         proxy: {
             '/api': {
-                target: 'http://localhost:8000/',
+                target: 'http://localhost:8001/',
                 changeOrigin: true,
                 secure: false,
                 configure: (proxy) => {
@@ -21,6 +21,12 @@ export default defineConfig({
                         proxyRes.headers['Access-Control-Allow-Origin'] = '*';
                     });
                 },
+            },
+            // Proxy dev : sert la vidéo de test w3schools en same-origin pour éviter le non secure pour la capture d'écran.
+            '/dev-media': {
+                target: 'https://www.w3schools.com',
+                changeOrigin: true,
+                rewrite: (path) => path.replace(/^\/dev-media/, ''),
             },
         },
     },

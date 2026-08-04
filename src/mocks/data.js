@@ -52,7 +52,7 @@ export const mockMedias = [
         parent_file: {
             id: 5,
             name: 'mov_bbb.mp4',
-            url: 'https://www.w3schools.com/html/mov_bbb.mp4',
+            url: '/dev-media/html/mov_bbb.mp4',
             size: 60521,
             extension: 'mp4',
             duration: 50,
@@ -68,7 +68,7 @@ export const mockMedias = [
         parent_file: {
             id: 5,
             name: 'mov_bbb.mp4',
-            url: 'https://www.w3schools.com/html/mov_bbb.mp4',
+            url: '/dev-media/html/mov_bbb.mp4',
             size: 60521,
             extension: 'mp4',
             duration: 50,
@@ -84,7 +84,7 @@ export const mockMedias = [
         parent_file: {
             id: 5,
             name: 'mov_bbb.mp4',
-            url: 'https://www.w3schools.com/html/mov_bbb.mp4',
+            url: '/dev-media/html/mov_bbb.mp4',
             size: 60521,
             extension: 'mp4',
             duration: 50,
@@ -369,7 +369,7 @@ export const mocksFilesTree = [
             {
                 id: 5,
                 name: 'mov_bbb.mp4',
-                url: 'https://www.w3schools.com/html/mov_bbb.mp4',
+                url: '/dev-media/html/mov_bbb.mp4',
                 size: 60521,
                 extension: 'mp4',
                 duration: 50,
