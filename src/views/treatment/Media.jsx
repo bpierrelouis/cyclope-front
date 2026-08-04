@@ -71,6 +71,9 @@ export function Media(props) {
     return media.isVideo ? (
         <video
             ref={videoRef}
+            // key force le remontage si l'URL change, sinon impossible de capturer l'écran (non secure).
+            key={url}
+            crossOrigin='anonymous'
             className={cn('flex-1 min-h-0 size-full object-contain', props.hidden && 'hidden')}
             onTimeUpdate={handleTimeUpdate}
             onLoadedMetadata={handleLoadedMetadata}
@@ -80,6 +83,7 @@ export function Media(props) {
         />
     ) : (
         <img
+            crossOrigin='anonymous'
             className={cn('w-full h-full object-contain', props.hidden && 'hidden')}
             src={url}
             alt={media.name}
