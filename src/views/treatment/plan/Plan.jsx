@@ -4,9 +4,9 @@ import { Protocol } from 'pmtiles';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Map, NavigationControl } from 'react-map-gl/maplibre';
 import { Plan as Constants } from '../../../constants';
-import { filesQueries } from '../../../hooks';
+import { filesQueries, useOpenState } from '../../../hooks';
 import { usePlayerStore, useThemeStore } from '../../../stores';
-import { buildMapStyle, sendOpenStateToMaster } from '../../../utils';
+import { buildMapStyle } from '../../../utils';
 import { ResultPopup } from '../ResultPopup';
 import { DroneMarker } from './DroneMarker';
 import { LocateButton } from './LocateButton';
@@ -14,7 +14,7 @@ import { Path } from './Path';
 import { TargetMarker } from './TargetMarker';
 
 export function Plan() {
-    const { isMaster, results, track } = usePlayerStore();
+    const { results, track } = usePlayerStore();
     const { data: carto } = filesQueries.useCarto();
     const mapRef = useRef(null);
     const { isDark } = useThemeStore();
@@ -25,10 +25,7 @@ export function Plan() {
         if (result) setSelectedResult(result);
     }, [results]);
 
-    useEffect(() => {
-        if (isMaster) return;
-        return sendOpenStateToMaster('isPlanOpen');
-    }, [isMaster]);
+    useOpenState('isPlanOpen');
 
     useEffect(() => {
         const protocol = new Protocol();

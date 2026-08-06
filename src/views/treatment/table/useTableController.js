@@ -1,16 +1,16 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DETECTION_FORMAT_MESSAGE, NOTIFICATION_LABELS } from '../../../constants';
-import { resultsQueries } from '../../../hooks';
+import { resultsQueries, useOpenState } from '../../../hooks';
 import { tableService } from '../../../services';
 import { usePlayerStore, useTableStore } from '../../../stores';
-import { dismissToast, getCurrentResult, openErrorToast, openInfoToast, openSuccessToast, sendOpenStateToMaster } from '../../../utils';
+import { dismissToast, getCurrentResult, openErrorToast, openInfoToast, openSuccessToast } from '../../../utils';
 import { getColumnDefs } from './columnDefs';
 import { applyColumnVisibility, getChangedRowNodes, getExportParams, prepareResultPatch } from './table.utils';
 
 const DETECTION_HELP_TOAST_ID = 'detection-format-help';
 
 export const useTableController = () => {
-    const { isMaster, media, results, currentTime } = usePlayerStore();
+    const { media, results, currentTime } = usePlayerStore();
     const { hiddenColumnIds, filterModel } = useTableStore();
     const { mutate: updateResult } = resultsQueries.useUpdate();
     const [selected, setSelected] = useState(null);
@@ -120,10 +120,7 @@ export const useTableController = () => {
         }
     }, [currentResultId]);
 
-    useEffect(() => {
-        if (isMaster) return;
-        return sendOpenStateToMaster('isTableOpen');
-    }, [isMaster]);
+    useOpenState('isTableOpen');
 
     useEffect(() => () => dismissToast(DETECTION_HELP_TOAST_ID), []);
 

@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react';
-import { filesQueries } from '../../hooks';
+import { filesQueries, useOpenState } from '../../hooks';
 import { playerService } from '../../services';
 import { usePlayerStore } from '../../stores';
-import { cn, sendOpenStateToMaster } from '../../utils';
+import { cn } from '../../utils';
 
 export function Media(props) {
     const videoRef = useRef();
@@ -16,10 +16,7 @@ export function Media(props) {
 
     const { data: url } = filesQueries.useGetContent(media?.url);
 
-    useEffect(() => {
-        if (isMaster) return;
-        return sendOpenStateToMaster('isMediaOpen');
-    }, [isMaster]);
+    useOpenState('isMediaOpen');
 
     useEffect(() => {
         const video = videoRef.current;
