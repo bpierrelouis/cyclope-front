@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { Layer, Source } from 'react-map-gl/dist/esm/exports-maplibre';
+import { useShallow } from 'zustand/react/shallow';
 import { usePlayerStore, useTableStore, useThemeStore } from '../../../stores';
 import { filterResultsLikeTable } from '../../../utils';
 import { Point } from './Point';
@@ -9,8 +10,11 @@ const ROUTE_ON_DARK_MAP = '#5ad7d7';
 
 export function Path(props) {
     const { onSelect } = props;
-    const { isDark } = useThemeStore();
-    const { results, track } = usePlayerStore();
+    const isDark = useThemeStore((state) => state.isDark);
+    const { results, track } = usePlayerStore(useShallow((state) => ({
+        results: state.results,
+        track: state.track,
+    })));
     const filterModel = useTableStore((state) => state.filterModel);
 
     const routeGeoJson = useMemo(() => ({

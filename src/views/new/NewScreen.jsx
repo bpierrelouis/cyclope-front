@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { LoaderCircleIcon } from 'lucide-react';
+import { useShallow } from 'zustand/react/shallow';
 import { ERoute } from '../../constants';
 import { filesQueries, missionsQueries } from '../../hooks';
 import { useMissionCreationStore } from '../../stores';
@@ -11,13 +12,21 @@ import { WaitingZone } from './waitingZone';
 export function NewScreen() {
     const navigate = useNavigate();
 
-    const { data: fileNodes, isLoading, isError } = filesQueries.useGetTree();
+    const { data: fileNodes, isLoading } = filesQueries.useGetTree();
     const { mutateAsync: createMission, isPending: isCreating } = missionsQueries.useCreate();
     const { mutateAsync: addMedias, isPending: isAdding } = missionsQueries.useAddMedias();
     const { mutateAsync: uploadFiles, isPending: isUploading } = filesQueries.useUploadFiles();
 
     const { fileIds, configs, missionId, missionName, setMissionName, selectMany, reset } =
-        useMissionCreationStore();
+        useMissionCreationStore(useShallow((state) => ({
+            fileIds: state.fileIds,
+            configs: state.configs,
+            missionId: state.missionId,
+            missionName: state.missionName,
+            setMissionName: state.setMissionName,
+            selectMany: state.selectMany,
+            reset: state.reset,
+        })));
 
     useEffect(() => reset, [reset]);
 

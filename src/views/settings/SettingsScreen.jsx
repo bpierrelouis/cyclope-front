@@ -1,8 +1,15 @@
 import { ConfigurationCard, ProcessConfidenceField, ProcessLevelField, ProcessObjectDetectionField, ProcessStepField } from '../../components';
 import { useDefaultConfigStore } from '../../stores';
+import { useShallow } from 'zustand/react/shallow';
 
 export function SettingsScreen() {
-    const { setPartialState, ...config } = useDefaultConfigStore();
+    const { setPartialState, ...config } = useDefaultConfigStore(useShallow((state) => ({
+        frameStep: state.frameStep,
+        objectDetectionEnabled: state.objectDetectionEnabled,
+        confidenceThreshold: state.confidenceThreshold,
+        processingLevel: state.processingLevel,
+        setPartialState: state.setPartialState,
+    })));
 
     return (
         <main className='m-auto p-4 w-full max-w-xl'>

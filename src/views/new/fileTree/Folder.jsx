@@ -1,5 +1,6 @@
 import { FolderIcon, ListPlusIcon } from 'lucide-react';
 import { useRef } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { useFileDrop } from '../../../hooks';
 import { useMissionCreationStore } from '../../../stores';
 import { cn, flatTree } from '../../../utils';
@@ -9,7 +10,10 @@ export function Folder(props) {
     const { folder, path, onDropToFolder, onDropFolder } = props;
     const { name, children } = folder;
 
-    const { uploadFolder, selectMany } = useMissionCreationStore();
+    const { uploadFolder, selectMany } = useMissionCreationStore(useShallow((state) => ({
+        uploadFolder: state.uploadFolder,
+        selectMany: state.selectMany,
+    })));
 
     const detailsRef = useRef(null);
 

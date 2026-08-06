@@ -4,7 +4,7 @@ import { MissionMediaList } from './MissionMediaList';
 
 export function MissionListItem(props) {
     const mission = props.mission;
-    const { opened } = useMissionCollapseStore();
+    const opened = useMissionCollapseStore((state) => state.opened);
 
     const isOpened = mission.id === opened;
 

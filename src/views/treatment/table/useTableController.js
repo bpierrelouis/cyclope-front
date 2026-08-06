@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { DETECTION_FORMAT_MESSAGE, NOTIFICATION_LABELS } from '../../../constants';
 import { resultsQueries, useOpenState } from '../../../hooks';
 import { tableService } from '../../../services';
@@ -10,8 +11,15 @@ import { applyColumnVisibility, getChangedRowNodes, getExportParams, prepareResu
 const DETECTION_HELP_TOAST_ID = 'detection-format-help';
 
 export const useTableController = () => {
-    const { media, results, currentTime } = usePlayerStore();
-    const { hiddenColumnIds, filterModel } = useTableStore();
+    const { media, results, currentTime } = usePlayerStore(useShallow((state) => ({
+        media: state.media,
+        results: state.results,
+        currentTime: state.currentTime,
+    })));
+    const { hiddenColumnIds, filterModel } = useTableStore(useShallow((state) => ({
+        hiddenColumnIds: state.hiddenColumnIds,
+        filterModel: state.filterModel,
+    })));
     const { mutate: updateResult } = resultsQueries.useUpdate();
     const [selected, setSelected] = useState(null);
     const gridRef = useRef(null);

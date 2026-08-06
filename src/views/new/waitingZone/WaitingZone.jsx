@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { missionsQueries } from '../../../hooks';
 import { useMissionCreationStore } from '../../../stores';
 import { formatFileSize } from '../../../utils';
@@ -12,7 +13,13 @@ export function WaitingZone(props) {
         missionId, setMissionId,
         missionName, setMissionName,
         clearSelection,
-    } = useMissionCreationStore();
+    } = useMissionCreationStore(useShallow((state) => ({
+        missionId: state.missionId,
+        setMissionId: state.setMissionId,
+        missionName: state.missionName,
+        setMissionName: state.setMissionName,
+        clearSelection: state.clearSelection,
+    })));
 
     const totalSize = files.reduce((sum, f) => sum + (f.size || 0), 0);
     const fileCount = files.length;

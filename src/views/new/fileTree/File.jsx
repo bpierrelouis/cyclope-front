@@ -1,5 +1,6 @@
 import { XIcon } from 'lucide-react';
 import { useState } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { MediaIcon } from '../../../components';
 import { useMissionCreationStore } from '../../../stores';
 import { cn, isVideoExtension } from '../../../utils';
@@ -9,7 +10,10 @@ export function File(props) {
     const { file } = props;
     const { id, name } = file;
 
-    const { fileIds, toggle } = useMissionCreationStore();
+    const { fileIds, toggle } = useMissionCreationStore(useShallow((state) => ({
+        fileIds: state.fileIds,
+        toggle: state.toggle,
+    })));
     const [isPopupOpen, setIsPopupOpen] = useState(false);
 
     const isVideo = isVideoExtension(file.extension);

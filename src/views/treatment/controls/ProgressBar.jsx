@@ -4,7 +4,7 @@ import { formatTime } from '../../../utils';
 export function ProgressBar(props) {
     const { detections, zonesFreezing, safeDuration, seek } = props;
 
-    const { currentTime } = usePlayerStore();
+    const currentTime = usePlayerStore((state) => state.currentTime);
 
     // Repères affichés : seulement ceux positionnables (durée connue + dans la plage).
     const ticks = safeDuration > 0

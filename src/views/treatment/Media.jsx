@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { filesQueries, useOpenState } from '../../hooks';
 import { playerService } from '../../services';
 import { usePlayerStore } from '../../stores';
@@ -12,7 +13,12 @@ export function Media(props) {
         currentTime,
         media,
         isMaster,
-    } = usePlayerStore();
+    } = usePlayerStore(useShallow((state) => ({
+        playing: state.playing,
+        currentTime: state.currentTime,
+        media: state.media,
+        isMaster: state.isMaster,
+    })));
 
     const { data: url } = filesQueries.useGetContent(media?.url);
 

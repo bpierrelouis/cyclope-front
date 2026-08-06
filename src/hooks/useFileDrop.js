@@ -3,7 +3,7 @@ import { useMissionCreationStore } from '../stores';
 import { parseDroppedItems } from '../utils';
 
 export const useFileDrop = ({ path, onDropToFolder, onDropFolder, onDropStart }) => {
-    const { setUploadFolder } = useMissionCreationStore();
+    const setUploadFolder = useMissionCreationStore((state) => state.setUploadFolder);
     const [isDragOver, setIsDragOver] = useState(false);
 
     const hasFiles = (event) =>

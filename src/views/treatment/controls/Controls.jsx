@@ -1,5 +1,6 @@
 import { PauseIcon, PlayIcon, SkipBackIcon, SkipForwardIcon, SnowflakeIcon, SquareBottomDashedScissors } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { iconSizes } from '../../../constants';
 import { useSelectionContext } from '../../../contexts';
 import { playerService } from '../../../services';
@@ -15,7 +16,11 @@ export function Controls() {
         playing,
         currentTime,
         duration,
-    } = usePlayerStore();
+    } = usePlayerStore(useShallow((state) => ({
+        playing: state.playing,
+        currentTime: state.currentTime,
+        duration: state.duration,
+    })));
 
     const [skipFreezing, setSkipFreezing] = useState(false);
 
@@ -35,12 +40,12 @@ export function Controls() {
         playerService.sync({ playing: !playing });
     };
 
-    const seek = (value, { pause = false } = {}) => {
+    const seek = useCallback((value, { pause = false } = {}) => {
         playerService.sync({
             currentTime: Math.max(0, Math.min(safeDuration || value, value)),
             ...(pause && { playing: false }),
         });
-    };
+    }, [safeDuration]);
 
     const previousDetection = detections.findLast(
         (d) => d.seconds < currentTime - EPSILON,
@@ -83,7 +88,7 @@ export function Controls() {
         const zone = zonesFreezing.find((z) => t >= z.start && t < z.end);
         if (!zone) return;
         seek(zone.end);
-    }, [currentTime, playing, skipFreezing, zonesFreezing]);
+    }, [currentTime, playing, seek, skipFreezing, zonesFreezing]);
 
     return (
         <footer className='flex items-center gap-4 col-span-full bg-base-100 p-4 border-base-300 border-t'>

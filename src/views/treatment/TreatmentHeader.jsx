@@ -1,4 +1,5 @@
 import { ExternalLinkIcon, MapIcon, TableIcon } from 'lucide-react';
+import { useShallow } from 'zustand/react/shallow';
 import { MediaIcon } from '../../components';
 import { ERoute } from '../../constants';
 import { useSelectionContext } from '../../contexts';
@@ -10,7 +11,13 @@ export function TreatmentHeader(props) {
     const { state } = props;
     const [selected, setSelected] = state;
     const { mission } = useSelectionContext();
-    const { currentTime, results, isMediaOpen, isTableOpen, isPlanOpen } = usePlayerStore();
+    const { currentTime, results, isMediaOpen, isTableOpen, isPlanOpen } = usePlayerStore(useShallow((store) => ({
+        currentTime: store.currentTime,
+        results: store.results,
+        isMediaOpen: store.isMediaOpen,
+        isTableOpen: store.isTableOpen,
+        isPlanOpen: store.isPlanOpen,
+    })));
 
     const current = getCurrentResult(results, currentTime);
 
@@ -85,7 +92,7 @@ function Item(props) {
 function ScreenSelector(props) {
     const { state, disabledComponents } = props;
     const [selected, setSelected] = state;
-    const { media } = usePlayerStore();
+    const media = usePlayerStore((store) => store.media);
 
     const modes = [
         [ERoute.PLAN, 'Carte', <MapIcon key={'MapIcon'} />],
@@ -119,6 +126,7 @@ function ScreenSelector(props) {
 function Button(props) {
     return (
         <button
+            type='button'
             className='h-full aspect-square btn btn-ghost'
             onClick={props.onClick}
         >

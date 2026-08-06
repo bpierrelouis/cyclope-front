@@ -1,18 +1,24 @@
 import { Navigation2Icon } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Marker, useMap } from 'react-map-gl/maplibre';
+import { useShallow } from 'zustand/react/shallow';
 import { Plan } from '../../../constants';
 import { usePlayerStore } from '../../../stores';
 import { interpolatePosition } from '../../../utils';
 
 export function DroneMarker() {
-    const { currentTime, playing, track } = usePlayerStore();
+    const { currentTime, playing, track } = usePlayerStore(useShallow((state) => ({
+        currentTime: state.currentTime,
+        playing: state.playing,
+        track: state.track,
+    })));
     const { current: map } = useMap();
 
-    const [pos, setPos] = useState(() => interpolatePosition(track, currentTime));
+    const [animatedPos, setAnimatedPos] = useState(() => interpolatePosition(track, currentTime));
     const [mapBearing, setMapBearing] = useState(0);
 
     const animTimeRef = useRef(currentTime);
+    const currentTimeRef = useRef(currentTime);
     const lastWallRef = useRef(0);
     const rafRef = useRef(0);
 
@@ -25,32 +31,31 @@ export function DroneMarker() {
     }, [map]);
 
     useEffect(() => {
-        if (Math.abs(animTimeRef.current - currentTime) > Plan.RESYNC_THRESHOLD) {
-            animTimeRef.current = currentTime;
+        currentTimeRef.current = currentTime;
+        if (Math.abs(animTimeRef.current - currentTimeRef.current) > Plan.RESYNC_THRESHOLD) {
+            animTimeRef.current = currentTimeRef.current;
         }
     }, [currentTime]);
 
     useEffect(() => {
-        if (playing) return;
-        animTimeRef.current = currentTime;
-        setPos(interpolatePosition(track, currentTime));
-    }, [playing, currentTime, track]);
-
-    useEffect(() => {
         if (!playing) return;
-        animTimeRef.current = currentTime;
+        animTimeRef.current = currentTimeRef.current;
         lastWallRef.current = performance.now();
 
         const tick = (now) => {
             const dt = (now - lastWallRef.current) / 1000;
             lastWallRef.current = now;
             animTimeRef.current += dt;
-            setPos(interpolatePosition(track, animTimeRef.current));
+            setAnimatedPos(interpolatePosition(track, animTimeRef.current));
             rafRef.current = requestAnimationFrame(tick);
         };
         rafRef.current = requestAnimationFrame(tick);
         return () => cancelAnimationFrame(rafRef.current);
     }, [playing, track]);
+
+    const pos = playing
+        ? animatedPos
+        : interpolatePosition(track, currentTime);
 
     if (!pos) return null;
 

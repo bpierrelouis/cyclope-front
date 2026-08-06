@@ -1,4 +1,5 @@
 import { DeletePopup } from '../../../components';
+import { useShallow } from 'zustand/react/shallow';
 import { filesQueries } from '../../../hooks';
 import { useMissionCreationStore } from '../../../stores';
 import { openErrorToast } from '../../../utils';
@@ -6,7 +7,10 @@ import { openErrorToast } from '../../../utils';
 export function DeleteFilePopup(props) {
     const { file, openState } = props;
 
-    const { fileIds, deselect } = useMissionCreationStore();
+    const { fileIds, deselect } = useMissionCreationStore(useShallow((state) => ({
+        fileIds: state.fileIds,
+        deselect: state.deselect,
+    })));
     const deleteMutation = filesQueries.useDelete();
 
     const handleDelete = () => deleteMutation.mutate(file.id, {

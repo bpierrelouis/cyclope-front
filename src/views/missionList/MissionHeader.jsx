@@ -1,6 +1,7 @@
 import { FolderIcon, FolderOpenIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
+import { useShallow } from 'zustand/react/shallow';
 import { EditableText } from '../../components';
 import { ERoute } from '../../constants';
 import { missionsQueries } from '../../hooks';
@@ -12,7 +13,10 @@ import { StatusBadge } from './StatusBadge';
 export function MissionHeader(props) {
     const { mission } = props;
 
-    const { opened, toggle } = useMissionCollapseStore();
+    const { opened, toggle } = useMissionCollapseStore(useShallow((state) => ({
+        opened: state.opened,
+        toggle: state.toggle,
+    })));
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const updateMutation = missionsQueries.useUpdate();

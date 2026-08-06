@@ -9,7 +9,7 @@ export function FileListItem(props) {
 
     const [showSettings, setShowSettings] = useState(false);
 
-    const { deselect } = useMissionCreationStore();
+    const deselect = useMissionCreationStore((state) => state.deselect);
 
     const toggleSettings = () =>
         setShowSettings((prev) => !prev);

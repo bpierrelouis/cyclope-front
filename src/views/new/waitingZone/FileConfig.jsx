@@ -1,10 +1,14 @@
 import { ConfigurationCard, ProcessConfidenceField, ProcessLevelField, ProcessObjectDetectionField, ProcessStepField } from '../../../components';
 import { useMissionCreationStore } from '../../../stores';
+import { useShallow } from 'zustand/react/shallow';
 
 export function FileConfig(props) {
     const { file } = props;
 
-    const { configs, updatePartialConfig } = useMissionCreationStore();
+    const { configs, updatePartialConfig } = useMissionCreationStore(useShallow((state) => ({
+        configs: state.configs,
+        updatePartialConfig: state.updatePartialConfig,
+    })));
 
     const config = configs[file.id];
 
