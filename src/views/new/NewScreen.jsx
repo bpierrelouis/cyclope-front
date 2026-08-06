@@ -98,7 +98,6 @@ export function NewScreen() {
             <div className='flex-1 gap-4 grid grid-cols-1 md:grid-cols-2 min-h-0'>
                 <FileTree
                     nodes={safeFileNodes}
-                    isError={isError}
                     onDropToFolder={uploadFiles}
                     onDropFolder={handleDropFolder}
                 />
