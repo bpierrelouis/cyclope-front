@@ -12,7 +12,8 @@
   "dependencies": {
     "@protomaps/basemaps": "^5.7.2",
     "@tanstack/react-query": "^5.100.9",
-    "@tanstack/react-table": "^8.21.3",
+    "ag-grid-community": "^36.0.0",
+    "ag-grid-react": "^36.0.0",
     "clsx": "^2.1.1",
     "lucide-react": "^1.17.0",
     "maplibre-gl": "^4.7.1",

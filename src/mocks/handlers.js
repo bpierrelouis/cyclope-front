@@ -49,6 +49,20 @@ const removeFileFromTree = (nodes, id) => {
 const findFileInTree = (id) =>
     flattenTree(mocksFilesTree).find((file) => file.id == id);
 
+const isPlainObject = (value) =>
+    value !== null && typeof value === 'object' && !Array.isArray(value);
+
+// Les objets imbriqués du patch fusionnent avec l'existant au lieu de le remplacer.
+const mergePatch = (current, changes) => {
+    const updated = { ...current, ...changes };
+    for (const [key, value] of Object.entries(changes)) {
+        if (isPlainObject(value) && isPlainObject(current[key])) {
+            updated[key] = { ...current[key], ...value };
+        }
+    }
+    return updated;
+};
+
 // Crée les médias d'une mission à partir des fichiers de l'arbre.
 const createMedias = (missionId, items = []) =>
     items.map((item) => {
@@ -114,7 +128,7 @@ const getHandlers = (resource, data) => [
 
     // UPDATE
     http.patch(`/api/${resource}/:id`, async ({ params, request }) => {
-        const changes = await request.clone().json();
+        const changes = await request.json();
         const index = data.findIndex(({ id }) => id == params.id);
 
         if (index === -1) {
@@ -124,9 +138,8 @@ const getHandlers = (resource, data) => [
             );
         }
 
-        const updated = { ...data[index], ...changes };
-        data[index] = updated;
-        return HttpResponse.json(updated);
+        data[index] = mergePatch(data[index], changes);
+        return HttpResponse.json(data[index]);
     }),
 
     // DELETE
@@ -313,7 +326,7 @@ export const handlers = [
         if (statusEvent) {
             setTimeout(() => applyTreatmentStatus(statusEvent.data), events.length * 200);
         }
-        eventsSender(client, 200, events);
+        eventsSender(client, 10, events);
     }),
 
     sse('/api/treatments/:id/results/stream', async ({ client, params }) => {
@@ -322,6 +335,6 @@ export const handlers = [
             event: 'treatment_result',
             data,
         }));
-        eventsSender(client, 500, events);
+        eventsSender(client, 10, events);
     }),
 ];

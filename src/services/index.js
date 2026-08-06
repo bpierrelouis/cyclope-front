@@ -6,4 +6,5 @@ export * from './missions.service';
 export * from './player.service';
 export * from './results.service';
 export * from './resultsStream';
+export * from './table.service';
 export * from './treatments.service';
