@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-export const createCrudQueries = (resource, service) => {
+export const createCrudQueries = (resource, service, options = {}) => {
     const useGetAll = (urlSearchParams, options) => useQuery({
         queryKey: urlSearchParams ? [resource, urlSearchParams.toString()] : [resource],
         queryFn: () => service.getAll(urlSearchParams),
@@ -28,10 +28,14 @@ export const createCrudQueries = (resource, service) => {
         return useMutation({
             mutationFn: ({ id, data }) =>
                 service.update({ id, data }),
-            onSuccess: (_, { id }) => {
+            onMutate: options.update?.onMutate,
+            onSuccess: (updated, variables, context) => {
+                const { id } = variables;
                 qc.invalidateQueries({ queryKey: [resource] });
                 qc.invalidateQueries({ queryKey: [resource, id] });
+                options.update?.onSuccess?.(updated, variables, context);
             },
+            onError: options.update?.onError,
         });
     };
 

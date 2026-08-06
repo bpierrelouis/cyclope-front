@@ -32,6 +32,11 @@ export const getExtension = (fileName) => {
     return parts.length > 1 ? parts.pop().toLowerCase() : '';
 };
 
+export const suppressExtension = (fileName) => {
+    const parts = fileName.split('.');
+    return parts.length > 1 ? parts.slice(0, -1).join('.') : fileName;
+};
+
 export const getVideoDuration = (file) =>
     new Promise((resolve) => {
         const video = document.createElement('video');

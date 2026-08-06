@@ -26,6 +26,10 @@ export class Result {
         return this.meta.responseJson;
     }
 
+    get isFavorite() {
+        return !!this.meta.isFavorite;
+    }
+
     get altitudeLabel() {
         const altitude = this.data.altitude;
         if (!altitude) return null;

@@ -43,20 +43,28 @@ export function Plan() {
         return buildMapStyle(carto, isDark);
     }, [carto, isDark]);
 
-    const centerMapToPath = async () => {
-        if (!track?.length) return;
+    const pathBounds = useMemo(() => {
+        const coordinates = (track ?? []).filter(
+            ({ longitude, latitude }) =>
+                Number.isFinite(longitude) && Number.isFinite(latitude),
+        );
+        if (coordinates.length === 0) return null;
 
-        const longitudes = track.map(p => p.longitude).filter(Boolean);
-        const latitudes = track.map(p => p.latitude).filter(Boolean);
+        const longitudes = coordinates.map(({ longitude }) => longitude);
+        const latitudes = coordinates.map(({ latitude }) => latitude);
+        return [
+            [Math.min(...longitudes), Math.min(...latitudes)],
+            [Math.max(...longitudes), Math.max(...latitudes)],
+        ];
+    }, [track]);
 
-        const min = [Math.min(...longitudes), Math.min(...latitudes)];
-        const max = [Math.max(...longitudes), Math.max(...latitudes)];
-
+    const centerMapToPath = useCallback(() => {
+        if (!pathBounds) return;
         mapRef.current?.fitBounds(
-            [min, max],
+            pathBounds,
             { padding: 50, duration: 0 },
         );
-    };
+    }, [pathBounds]);
 
     return (
         <>

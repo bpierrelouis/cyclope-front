@@ -1,13 +1,15 @@
+import { StarIcon } from 'lucide-react';
 import { Marker } from 'react-map-gl/maplibre';
-import { getMarkerClass } from '../../../utils';
+import { cn, getMarkerClass } from '../../../utils';
 
 export function Point(props) {
     const { point, onSelect } = props;
-    const { frame, isStart, isEnd } = point;
+    const { frame, isStart, isEnd, isFavorite } = point;
 
     const markerClass = getMarkerClass(point);
     const isWaypoint = !isStart && !isEnd;
-    const title = isStart ? 'Depart' : isEnd ? 'Arrivee' : `Frame ${frame}`;
+    const baseTitle = isStart ? 'Depart' : isEnd ? 'Arrivee' : `Frame ${frame}`;
+    const title = isFavorite ? `${baseTitle} — Favori` : baseTitle;
 
     return (
         <Marker
@@ -17,16 +19,30 @@ export function Point(props) {
         >
             <button
                 type='button'
-                className={`marker-pin ${markerClass}`}
+                className={cn('marker-pin', markerClass, isFavorite && 'is-favorite')}
                 title={title}
                 onClick={(e) => {
                     e.stopPropagation();
                     onSelect?.(point.id);
                 }}
             >
-                {isWaypoint
-                    ? <span className='marker-label'>{frame}</span>
-                    : <span className='marker-core' aria-hidden='true' />}
+                {isWaypoint ? (
+                    <>
+                        {isFavorite && (
+                            <StarIcon className='marker-fav-shape' fill='currentColor' aria-hidden='true' />
+                        )}
+                        <span className='marker-label'>{frame}</span>
+                    </>
+                ) : (
+                    <>
+                        <span className='marker-core' aria-hidden='true' />
+                        {isFavorite && (
+                            <span className='marker-fav' aria-hidden='true'>
+                                <StarIcon fill='currentColor' />
+                            </span>
+                        )}
+                    </>
+                )}
             </button>
         </Marker>
     );

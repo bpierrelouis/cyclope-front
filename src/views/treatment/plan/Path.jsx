@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { Layer, Source } from 'react-map-gl/dist/esm/exports-maplibre';
-import { usePlayerStore, useThemeStore } from '../../../stores';
+import { usePlayerStore, useTableStore, useThemeStore } from '../../../stores';
+import { filterResultsLikeTable } from '../../../utils';
 import { Point } from './Point';
 
 const ROUTE_ON_LIGHT_MAP = '#008398';
@@ -9,7 +10,8 @@ const ROUTE_ON_DARK_MAP = '#5ad7d7';
 export function Path(props) {
     const { onSelect } = props;
     const { isDark } = useThemeStore();
-    const { track } = usePlayerStore();
+    const { results, track } = usePlayerStore();
+    const filterModel = useTableStore((state) => state.filterModel);
 
     const routeGeoJson = useMemo(() => ({
         type: 'Feature',
@@ -19,6 +21,11 @@ export function Path(props) {
             coordinates: track.map((p) => [p.longitude, p.latitude]),
         },
     }), [track]);
+
+
+    const visibleIds = useMemo(() => new Set(
+        filterResultsLikeTable(results, filterModel).map((result) => result.id),
+    ), [results, filterModel]);
 
     const lineColor = isDark ? ROUTE_ON_DARK_MAP : ROUTE_ON_LIGHT_MAP;
 
@@ -38,11 +45,13 @@ export function Path(props) {
                     'line-join': 'round',
                 }} />
         </Source>
-        {track.map((point) => (
-            <Point
-                key={point.id}
-                point={point}
-                onSelect={onSelect} />
-        ))}
+        {track
+            .filter((point) => visibleIds.has(point.id))
+            .map((point) => (
+                <Point
+                    key={point.id}
+                    point={point}
+                    onSelect={onSelect} />
+            ))}
     </>);
 }

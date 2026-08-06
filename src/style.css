@@ -152,6 +152,85 @@ html {
     box-shadow: 0 0 6px color-mix(in oklch, var(--color-warning) 35%, transparent);
 }
 
+/* --- Favori : la frame passe du losange a l'etoile (couleur inchangee :
+   teal = normal, orange = detection ; la forme encode le favori) --- */
+.marker-pin.is-favorite {
+    z-index: 2;
+}
+
+.marker-step.is-favorite {
+    width: 27px;
+    height: 27px;
+    transform: none;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    filter: drop-shadow(0 0 6px color-mix(in oklch, var(--color-primary) 55%, transparent));
+}
+
+.marker-step.is-favorite.marker-detection {
+    filter: drop-shadow(0 0 6px color-mix(in oklch, var(--color-warning) 55%, transparent));
+}
+
+/* pas de halo losange sur l'etoile, le drop-shadow fait le glow */
+.marker-step.is-favorite::before {
+    content: none;
+}
+
+.marker-step.is-favorite:hover {
+    transform: scale(1.12);
+}
+
+/* l'etoile occupe tout le bouton, memes recettes de bordure que les losanges */
+.marker-fav-shape {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    color: var(--color-primary);
+    stroke: color-mix(in oklch, var(--color-primary) 65%, white);
+    stroke-width: 1.2;
+}
+
+.marker-detection .marker-fav-shape {
+    color: var(--color-warning);
+    stroke: color-mix(in oklch, var(--color-warning) 65%, white);
+}
+
+/* numero de frame centre dans l'etoile, sans la contre-rotation du losange */
+.marker-step.is-favorite .marker-label {
+    position: relative;
+    z-index: 1;
+    transform: none;
+    font-size: 0.55rem;
+    color: var(--color-primary-content);
+}
+
+.marker-step.is-favorite.marker-detection .marker-label {
+    color: var(--color-warning-content);
+}
+
+/* depart/arrivee favoris : forme imposee (vert/rouge), badge etoile en rappel */
+.marker-fav {
+    position: absolute;
+    top: -9px;
+    right: -9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-primary);
+    filter: drop-shadow(0 0 3px color-mix(in oklch, var(--color-primary) 70%, transparent));
+    pointer-events: none;
+    z-index: 2;
+}
+
+.marker-fav .lucide {
+    width: 11px;
+    height: 11px;
+    stroke: var(--color-base-100);
+    stroke-width: 1.5;
+}
+
 /* --- Depart & Arrivee : anneau lumineux centre sur la coordonnee --- */
 .marker-start,
 .marker-end {
@@ -228,16 +307,6 @@ html {
     font-family: ui-monospace, monospace !important;
     font-size: 0.75rem !important;
     padding: 6px 10px !important;
-}
-
-.drone-marker {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--color-primary);
-    filter: drop-shadow(0 0 6px var(--p-55));
-    pointer-events: none;
-    transition: transform 0.08s linear;
 }
 
 /* --- Cible de vision du drone --- */
@@ -356,28 +425,45 @@ html {
     z-index: 10;
 }
 
-/* Zone colonne : checkbox au-dessus de la timeline */
-.cyc-tp-track {
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    min-width: 0;
+/* ============================================================
+   TABLEAU — menus & grille de résultats
+   ============================================================ */
+
+.cyc-results-grid.has-detection-filter .ag-header-cell[col-id='objects'] .ag-icon-filter {
+    position: relative;
+    color: var(--color-primary);
 }
 
-.cyc-tp-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+.cyc-results-grid.has-detection-filter .ag-header-cell[col-id='objects'] .ag-icon-filter::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: var(--color-primary);
+    box-shadow: 0 0 0 1.5px var(--color-base-200);
 }
 
-/* Option "sauter les zones qui freeze" */
-.cyc-tp-skip {
+/* Conteneur de la grille : ag-grid remplit la hauteur + thème daisyUI */
+.cyc-results-grid {
+    height: 100%;
+
+    --ag-background-color: var(--color-base-100);
+    --ag-foreground-color: var(--color-base-content);
+    --ag-header-background-color: var(--color-base-200);
+    --ag-border-color: var(--color-base-300);
+    --ag-row-hover-color: color-mix(in oklch, var(--color-primary) 8%, var(--color-base-100));
+    --ag-selected-row-background-color: color-mix(in oklch, var(--color-primary) 15%, var(--color-base-100));
+    --ag-accent-color: var(--color-primary);
+    --ag-font-size: 0.8rem;
+    --ag-header-font-family: ui-monospace, monospace;
+}
+
+.ag-cell[col-id='isFavorite'] {
     display: flex;
     align-items: center;
-    gap: 6px;
-    align-self: flex-end;
-    font-size: 12px;
-    color: color-mix(in oklch, var(--color-base-content) 60%, transparent);
-    cursor: pointer;
+    justify-content: center;
+    padding: 0;
 }

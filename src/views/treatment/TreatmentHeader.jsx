@@ -1,16 +1,16 @@
 import { ExternalLinkIcon, MapIcon, TableIcon } from 'lucide-react';
+import { MediaIcon } from '../../components';
+import { ERoute } from '../../constants';
 import { useSelectionContext } from '../../contexts';
 import { usePlayerStore } from '../../stores';
 import { getCurrentResult } from '../../utils';
 import { TreatmentSelector } from './TreatmentSelector';
-import { ERoute } from '../../constants';
-import { MediaIcon } from '../../components';
 
 export function TreatmentHeader(props) {
     const { state } = props;
     const [selected, setSelected] = state;
-    const { mission, results } = useSelectionContext();
-    const { currentTime, isMediaOpen, isTableOpen, isPlanOpen } = usePlayerStore();
+    const { mission } = useSelectionContext();
+    const { currentTime, results, isMediaOpen, isTableOpen, isPlanOpen } = usePlayerStore();
 
     const current = getCurrentResult(results, currentTime);
 

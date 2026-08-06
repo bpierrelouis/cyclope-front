@@ -39,6 +39,7 @@ const pointMapper = (result, index, array) => ({
     isStart: index === 0,
     isEnd: index === array.length - 1,
     hasDetection: (result.objects?.length ?? 0) > 0,
+    isFavorite: result.isFavorite,
     seconds: result.seconds,
     ...result.coordinates,
 });

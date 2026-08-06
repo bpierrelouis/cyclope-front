@@ -55,3 +55,11 @@ export const hasFalseValue = (obj) => {
         return value === false;
     });
 };
+
+export const getTimestamp = () => {
+    const now = new Date();
+    const pad = (n) => String(n).padStart(2, '0');
+    const date = `${pad(now.getDate())}_${pad(now.getMonth() + 1)}_${now.getFullYear()}`;
+    const time = `${pad(now.getHours())}_${pad(now.getMinutes())}_${pad(now.getSeconds())}`;
+    return `${date}_${time}`;
+};
