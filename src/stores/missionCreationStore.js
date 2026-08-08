@@ -1,9 +1,10 @@
 import { create } from 'zustand';
+
 import { useDefaultConfigStore } from './defaultConfigStore';
 
 const initialState = {
-    fileIds: new Set(),
     configs: {},
+    fileIds: new Set(),
     missionId: null,
     missionName: '',
     uploadFolder: '',
@@ -12,11 +13,32 @@ const initialState = {
 export const useMissionCreationStore = create((set, get) => ({
     ...initialState,
 
-    setUploadFolder: (path) => set({ uploadFolder: path }),
 
-    setMissionName: (name) => set({ missionName: name }),
+    clearSelection: () =>
+        set({
+            configs: {},
+            fileIds: new Set(),
+            uploadFolder: '',
+        }),
 
-    setMissionId: (id) => set({ missionId: id }),
+
+    //Deselect supprime le fichier et la config associée
+    deselect: (id) => set((state) => {
+        const fileIds = new Set(state.fileIds);
+        fileIds.delete(id);
+
+        const configs = { ...state.configs };
+        delete configs[id];
+
+        return { configs, fileIds };
+    }),
+
+
+    reset: () => set(initialState),
+
+
+    select: (file) => get().selectMany([file]),
+
 
     selectMany: (files) => set((state) => {
         const fileIds = new Set(state.fileIds);
@@ -29,21 +51,15 @@ export const useMissionCreationStore = create((set, get) => ({
             fileIds.add(file.id);
             configs[file.id] = getDefault(file);
         }
-        return { fileIds, configs };
+        return { configs, fileIds };
     }),
 
-    select: (file) => get().selectMany([file]),
 
-    //Deselect supprime le fichier et la config associée
-    deselect: (id) => set((state) => {
-        const fileIds = new Set(state.fileIds);
-        fileIds.delete(id);
+    setMissionId: (id) => set({ missionId: id }),
 
-        const configs = { ...state.configs };
-        delete configs[id];
+    setMissionName: (name) => set({ missionName: name }),
 
-        return { fileIds, configs };
-    }),
+    setUploadFolder: (path) => set({ uploadFolder: path }),
 
     toggle: (file) => {
         if (get().fileIds.has(file.id)) get().deselect(file.id);
@@ -63,13 +79,4 @@ export const useMissionCreationStore = create((set, get) => ({
             ...get().configs[id],
             ...partialConfig,
         }),
-
-    clearSelection: () =>
-        set({
-            fileIds: new Set(),
-            configs: {},
-            uploadFolder: '',
-        }),
-
-    reset: () => set(initialState),
 }));

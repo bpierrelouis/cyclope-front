@@ -15,11 +15,13 @@ const parseNumber = (validate = () => true) => (raw) => {
 };
 
 const editableColumn = (parse, createPatch, errorMessage, isEditable = true) => ({
+    context: { edit: { createPatch, errorMessage, parse } },
     editable: isEditable,
-    context: { edit: { parse, createPatch, errorMessage } },
 });
 
-const measurementColumn = ({ field, key, headerName, validate, errorMessage }) => ({
+const measurementColumn = ({
+    field, key, headerName, validate, errorMessage,
+}) => ({
     field,
     headerName,
     valueFormatter: ({ data: result }) => result[`${key}Label`] ?? '—',
@@ -35,45 +37,45 @@ const measurementColumn = ({ field, key, headerName, validate, errorMessage }) =
  * Colonne de favoris
  */
 const FAVORITE_COLUMN = {
-    field: 'isFavorite',
-    headerComponent: FavoriteHeader,
-    editable: false,
-    sortable: false,
-    resizable: false,
-    pinned: 'left',
-    flex: 0,
-    width: 52,
-    minWidth: 52,
-    maxWidth: 52,
     cellRenderer: FavoriteCell,
+    context: { isControlColumn: true },
+    editable: false,
+    field: 'isFavorite',
     filter: {
         component: EmptyFilter,
         doesFilterPass: ({ data }) => data.isFavorite,
     },
+    flex: 0,
+    headerComponent: FavoriteHeader,
+    maxWidth: 52,
+    minWidth: 52,
+    pinned: 'left',
+    resizable: false,
+    sortable: false,
     suppressHeaderMenuButton: true,
-    context: { isControlColumn: true },
+    width: 52,
 };
 
 
 export const getColumnDefs = (onImageClick) => [
     FAVORITE_COLUMN,
     {
-        field: 'url',
-        headerName: 'Image',
-        editable: false,
-        sortable: false,
         cellRenderer: FrameCell,
         cellRendererParams: { onClick: onImageClick },
+        editable: false,
+        field: 'url',
+        headerName: 'Image',
+        sortable: false,
     },
     {
+        editable: false,
         field: 'index',
         headerName: 'Frame',
-        editable: false,
     },
     {
+        editable: false,
         field: 'timecode',
         headerName: 'Timecode',
-        editable: false,
     },
     {
         field: 'coordinates.latitude',
@@ -94,22 +96,22 @@ export const getColumnDefs = (onImageClick) => [
         ),
     },
     measurementColumn({
-        field: 'data.altitude.value',
-        key: 'altitude',
-        headerName: 'Altitude',
         errorMessage: 'Valeur invalide',
+        field: 'data.altitude.value',
+        headerName: 'Altitude',
+        key: 'altitude',
     }),
     measurementColumn({
-        field: 'data.speed.value',
-        key: 'speed',
-        headerName: 'Vitesse',
-        validate: (value) => value >= 0,
         errorMessage: 'La vitesse doit être positive',
+        field: 'data.speed.value',
+        headerName: 'Vitesse',
+        key: 'speed',
+        validate: (value) => value >= 0,
     }),
     {
+        cellRenderer: DetectionCell,
         field: 'objects',
         headerName: 'Détection',
-        cellRenderer: DetectionCell,
         ...editableColumn(
             fromText,
             (_result, objects) => ({ objects }),
@@ -123,8 +125,8 @@ export const getColumnDefs = (onImageClick) => [
                 return selectedTypes.some((type) => resultTypes.includes(type));
             },
         },
-        suppressHeaderMenuButton: false,
         suppressHeaderFilterButton: false,
+        suppressHeaderMenuButton: false,
         valueGetter: ({ data: result }) => toText(result.objects),
     },
 ];

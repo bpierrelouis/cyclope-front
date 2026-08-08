@@ -2,6 +2,7 @@ import { LocateIcon } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { useControl } from 'react-map-gl/maplibre';
+
 import { iconSizes } from '../../../constants';
 
 class LocateControl {

@@ -24,15 +24,15 @@ export class Mission {
         return this.meta.mediasStatus;
     }
     get doneNumber() {
-        return this.statuses['DONE'] || 0;
+        return this.statuses.DONE || 0;
     }
     get errorNumber() {
-        return this.statuses['ERROR'] || 0;
+        return this.statuses.ERROR || 0;
     }
     get progressNumber() {
-        return this.statuses['RUNNING'] || 0;
+        return this.statuses.RUNNING || 0;
     }
     get pendingNumber() {
-        return this.statuses['PENDING'] || 0;
+        return this.statuses.PENDING || 0;
     }
 }

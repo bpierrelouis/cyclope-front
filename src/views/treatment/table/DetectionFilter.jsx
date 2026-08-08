@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+
 import { usePlayerStore } from '../../../stores';
 import { SelectionMenu } from './SelectionMenu';
 
@@ -20,7 +21,7 @@ export function DetectionFilter(props) {
     }, [results]);
 
     const options = useMemo(
-        () => availableTypes.map((type) => ({ value: type, label: type })),
+        () => availableTypes.map((type) => ({ label: type, value: type })),
         [availableTypes],
     );
 

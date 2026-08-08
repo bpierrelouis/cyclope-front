@@ -53,12 +53,12 @@ export class Result {
 
     get coordinates() {
         const { longitude, latitude } = this.data.acft;
-        return { longitude, latitude };
+        return { latitude, longitude };
     }
 
     get target() {
         const { longitude, latitude } = this.data.tgt;
-        return { longitude, latitude };
+        return { latitude, longitude };
     }
 
     get isFreezing() {

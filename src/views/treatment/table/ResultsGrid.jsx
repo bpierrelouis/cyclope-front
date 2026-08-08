@@ -1,5 +1,6 @@
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
+
 import { cn } from '../../../utils';
 import { DEFAULT_COL_DEF } from './table.utils';
 

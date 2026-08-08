@@ -1,8 +1,8 @@
 import { usePlayerStore, useTableStore } from '../stores';
 
 const MESSAGE_TYPES = {
-    REQUEST_FILTERS: 'REQUEST_FILTERS',
     FILTERS_UPDATE: 'FILTERS_UPDATE',
+    REQUEST_FILTERS: 'REQUEST_FILTERS',
 };
 
 const filtersChannel = new BroadcastChannel('table-filters-channel');
@@ -51,8 +51,8 @@ class TableService {
 
     broadcastFilterModel(filterModel) {
         filtersChannel.postMessage({
-            type: MESSAGE_TYPES.FILTERS_UPDATE,
             payload: { filterModel },
+            type: MESSAGE_TYPES.FILTERS_UPDATE,
         });
     }
 }

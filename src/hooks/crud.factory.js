@@ -1,16 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export const createCrudQueries = (resource, service, options = {}) => {
-    const useGetAll = (urlSearchParams, options) => useQuery({
-        queryKey: urlSearchParams ? [resource, urlSearchParams.toString()] : [resource],
+    const useGetAll = (urlSearchParams, queryOptions) => useQuery({
         queryFn: () => service.getAll(urlSearchParams),
-        ...options,
+        queryKey: urlSearchParams ? [resource, urlSearchParams.toString()] : [resource],
+        ...queryOptions,
     });
 
     const useGetById = (id) => useQuery({
-        queryKey: [resource, id],
-        queryFn: () => service.getById(id),
         enabled: !!Number(id),
+        queryFn: () => service.getById(id),
+        queryKey: [resource, id],
     });
 
     const useCreate = () => {
@@ -27,7 +27,8 @@ export const createCrudQueries = (resource, service, options = {}) => {
 
         return useMutation({
             mutationFn: ({ id, data }) =>
-                service.update({ id, data }),
+                service.update({ data, id }),
+            onError: options.update?.onError,
             onMutate: options.update?.onMutate,
             onSuccess: (updated, variables, context) => {
                 const { id } = variables;
@@ -35,7 +36,6 @@ export const createCrudQueries = (resource, service, options = {}) => {
                 qc.invalidateQueries({ queryKey: [resource, id] });
                 options.update?.onSuccess?.(updated, variables, context);
             },
-            onError: options.update?.onError,
         });
     };
 
@@ -48,5 +48,7 @@ export const createCrudQueries = (resource, service, options = {}) => {
         });
     };
 
-    return { useGetAll, useGetById, useCreate, useUpdate, useDelete };
+    return {
+        useCreate, useDelete, useGetAll, useGetById, useUpdate,
+    };
 };

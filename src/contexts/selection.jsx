@@ -1,10 +1,12 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+/* Selection is synchronized with URL parameters, query results and an SSE stream. */
+/* eslint-disable react-hooks/set-state-in-effect */
+import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router';
+
 import { mediasQueries, missionsQueries, treatmentsQueries } from '../hooks';
 import { resultsStream } from '../services';
 import { sortByKeyPath } from '../utils';
-
-const SelectionContext = createContext(null);
+import { SelectionContext } from './selectionContext';
 
 export function SelectionProvider({ children }) {
     const [searchParams] = useSearchParams();
@@ -71,11 +73,11 @@ export function SelectionProvider({ children }) {
     }, [treatment?.id]);
 
     const value = useMemo(() => ({
-        mission,
         media,
-        treatment,
         medias,
+        mission,
         results,
+        treatment,
     }), [
         mission,
         media,
@@ -92,6 +94,3 @@ export function SelectionProvider({ children }) {
         </SelectionContext.Provider>
     );
 }
-
-export const useSelectionContext = () =>
-    useContext(SelectionContext);

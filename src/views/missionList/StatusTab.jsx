@@ -1,7 +1,9 @@
 import { cn } from '../../utils';
 
 export function StatusTab(props) {
-    const { status, label, setter, isSelected, count } = props;
+    const {
+        status, label, setter, isSelected, count,
+    } = props;
 
     const title = `${label} (${count ?? '-'})`;
     const className = cn(

@@ -7,9 +7,9 @@ export function FileTree(props) {
     const { nodes, onDropToFolder, onDropFolder } = props;
 
     const { isDragOver, dropProps } = useFileDrop({
-        path: ROOT_PATH,
-        onDropToFolder,
         onDropFolder,
+        onDropToFolder,
+        path: ROOT_PATH,
     });
 
     return (

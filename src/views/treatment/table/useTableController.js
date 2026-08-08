@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
+
 import { DETECTION_FORMAT_MESSAGE, NOTIFICATION_LABELS } from '../../../constants';
 import { resultsQueries, useOpenState } from '../../../hooks';
 import { tableService } from '../../../services';
@@ -12,13 +13,13 @@ const DETECTION_HELP_TOAST_ID = 'detection-format-help';
 
 export const useTableController = () => {
     const { media, results, currentTime } = usePlayerStore(useShallow((state) => ({
+        currentTime: state.currentTime,
         media: state.media,
         results: state.results,
-        currentTime: state.currentTime,
     })));
     const { hiddenColumnIds, filterModel } = useTableStore(useShallow((state) => ({
-        hiddenColumnIds: state.hiddenColumnIds,
         filterModel: state.filterModel,
+        hiddenColumnIds: state.hiddenColumnIds,
     })));
     const { mutate: updateResult } = resultsQueries.useUpdate();
     const [selected, setSelected] = useState(null);
@@ -44,7 +45,7 @@ export const useTableController = () => {
 
     const unfavoriteAll = useCallback(() => {
         favoriteResults.forEach((result) => updateResult(
-            { id: result.id, data: { isFavorite: false } },
+            { data: { isFavorite: false }, id: result.id },
             { onError: () => openErrorToast(NOTIFICATION_LABELS.FAVORITE_SAVE_ERROR) },
         ));
 
@@ -60,17 +61,17 @@ export const useTableController = () => {
         }
 
         updateResult(prepared.variables, {
-            onSuccess: () => openSuccessToast(NOTIFICATION_LABELS.RESULT_SAVED),
             onError: () => openErrorToast(NOTIFICATION_LABELS.RESULT_SAVE_ERROR),
+            onSuccess: () => openSuccessToast(NOTIFICATION_LABELS.RESULT_SAVED),
         });
     }, [updateResult]);
 
     const showDetectionHelp = useCallback(({ column }) => {
         if (column.getColId() !== 'objects') return;
         openInfoToast(DETECTION_FORMAT_MESSAGE, {
+            duration: Infinity,
             id: DETECTION_HELP_TOAST_ID,
             position: 'top-center',
-            duration: Infinity,
         });
     }, []);
 
@@ -133,23 +134,23 @@ export const useTableController = () => {
     useEffect(() => () => dismissToast(DETECTION_HELP_TOAST_ID), []);
 
     return {
-        selected,
-        dismissSelected: () => setSelected(null),
-        favoriteCount: favoriteResults.length,
-        unfavoriteAll,
-        exportCsv,
         detectionFilterActive: (filterModel.objects?.values?.length ?? 0) > 0,
+        dismissSelected: () => setSelected(null),
+        exportCsv,
+        favoriteCount: favoriteResults.length,
         gridProps: {
-            gridRef,
-            rowData: results ?? [],
             columnDefs,
             getRowClass,
-            readOnlyEdit: true,
-            onCellEditRequest: saveResult,
+            gridRef,
             onCellEditingStarted: showDetectionHelp,
             onCellEditingStopped: hideDetectionHelp,
-            onGridReady,
+            onCellEditRequest: saveResult,
             onFilterChanged: syncFilterModel,
+            onGridReady,
+            readOnlyEdit: true,
+            rowData: results ?? [],
         },
+        selected,
+        unfavoriteAll,
     };
 };

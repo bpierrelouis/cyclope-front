@@ -1,4 +1,5 @@
 import { Outlet } from 'react-router';
+
 import { SelectionProvider } from '../../contexts';
 import { SideBar } from '../sidebar';
 

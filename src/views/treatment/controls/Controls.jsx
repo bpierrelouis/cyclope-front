@@ -1,6 +1,7 @@
 import { PauseIcon, PlayIcon, SkipBackIcon, SkipForwardIcon, SnowflakeIcon, SquareBottomDashedScissors } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
+
 import { iconSizes } from '../../../constants';
 import { useSelectionContext } from '../../../contexts';
 import { playerService } from '../../../services';
@@ -17,9 +18,9 @@ export function Controls() {
         currentTime,
         duration,
     } = usePlayerStore(useShallow((state) => ({
-        playing: state.playing,
         currentTime: state.currentTime,
         duration: state.duration,
+        playing: state.playing,
     })));
 
     const [skipFreezing, setSkipFreezing] = useState(false);

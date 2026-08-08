@@ -1,6 +1,7 @@
+import { useShallow } from 'zustand/react/shallow';
+
 import { ConfigurationCard, ProcessConfidenceField, ProcessLevelField, ProcessObjectDetectionField, ProcessStepField } from '../../../components';
 import { useMissionCreationStore } from '../../../stores';
-import { useShallow } from 'zustand/react/shallow';
 
 export function FileConfig(props) {
     const { file } = props;

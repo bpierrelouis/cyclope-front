@@ -1,9 +1,12 @@
 import { useEffect, useRef } from 'react';
-import { preventDefault } from '../utils';
 import { createPortal } from 'react-dom';
 
+import { preventDefault } from '../utils';
+
 export function DeletePopup(props) {
-    const { title, children, onDelete, openState } = props;
+    const {
+        title, children, onDelete, openState,
+    } = props;
     const [isModalOpen, setIsModalOpen] = openState;
 
     const dialogRef = useRef(null);

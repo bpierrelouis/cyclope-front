@@ -1,5 +1,6 @@
 import { ExternalLinkIcon, MapIcon, TableIcon } from 'lucide-react';
 import { useShallow } from 'zustand/react/shallow';
+
 import { MediaIcon } from '../../components';
 import { ERoute } from '../../constants';
 import { useSelectionContext } from '../../contexts';
@@ -11,12 +12,14 @@ export function TreatmentHeader(props) {
     const { state } = props;
     const [selected, setSelected] = state;
     const { mission } = useSelectionContext();
-    const { currentTime, results, isMediaOpen, isTableOpen, isPlanOpen } = usePlayerStore(useShallow((store) => ({
+    const {
+        currentTime, results, isMediaOpen, isTableOpen, isPlanOpen,
+    } = usePlayerStore(useShallow((store) => ({
         currentTime: store.currentTime,
-        results: store.results,
         isMediaOpen: store.isMediaOpen,
-        isTableOpen: store.isTableOpen,
         isPlanOpen: store.isPlanOpen,
+        isTableOpen: store.isTableOpen,
+        results: store.results,
     })));
 
     const current = getCurrentResult(results, currentTime);

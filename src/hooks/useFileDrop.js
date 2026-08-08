@@ -1,8 +1,11 @@
 import { useState } from 'react';
+
 import { useMissionCreationStore } from '../stores';
 import { parseDroppedItems } from '../utils';
 
-export const useFileDrop = ({ path, onDropToFolder, onDropFolder, onDropStart }) => {
+export const useFileDrop = ({
+    path, onDropToFolder, onDropFolder, onDropStart,
+}) => {
     const setUploadFolder = useMissionCreationStore((state) => state.setUploadFolder);
     const [isDragOver, setIsDragOver] = useState(false);
 
@@ -47,11 +50,11 @@ export const useFileDrop = ({ path, onDropToFolder, onDropFolder, onDropStart })
     };
 
     return {
-        isDragOver,
         dropProps: {
-            onDragOver: handleDragOver,
             onDragLeave: handleDragLeave,
+            onDragOver: handleDragOver,
             onDrop: handleDrop,
         },
+        isDragOver,
     };
 };

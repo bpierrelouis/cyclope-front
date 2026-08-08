@@ -19,10 +19,10 @@ const getUploadPath = (url) => {
 };
 
 const uploadFile = async (url, file) =>
-    await fetch(url, {
-        method: 'PUT',
-        headers: { 'Content-Type': file.type },
+    fetch(url, {
         body: file,
+        headers: { 'Content-Type': file.type },
+        method: 'PUT',
     });
 
 const saveFile = async (file, folder) => {
@@ -44,11 +44,11 @@ const saveFile = async (file, folder) => {
     }
 
     return service.create({
-        name,
-        url,
-        size,
-        extension,
         duration,
+        extension,
+        name,
+        size,
+        url,
     });
 };
 

@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+
 import { includesIgnoreCase } from '../utils';
 
 export const useFilter = (list, key) => {

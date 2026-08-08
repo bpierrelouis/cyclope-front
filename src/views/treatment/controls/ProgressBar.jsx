@@ -2,7 +2,9 @@ import { usePlayerStore } from '../../../stores';
 import { formatTime } from '../../../utils';
 
 export function ProgressBar(props) {
-    const { detections, zonesFreezing, safeDuration, seek } = props;
+    const {
+        detections, zonesFreezing, safeDuration, seek,
+    } = props;
 
     const currentTime = usePlayerStore((state) => state.currentTime);
 

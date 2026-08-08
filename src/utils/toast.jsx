@@ -1,4 +1,5 @@
 import toast from 'react-hot-toast';
+
 import { Toast } from '../components';
 
 const openToast = (message, type, options) =>

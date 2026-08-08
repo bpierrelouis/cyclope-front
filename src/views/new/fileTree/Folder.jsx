@@ -1,29 +1,32 @@
 import { FolderIcon, ListPlusIcon } from 'lucide-react';
 import { useRef } from 'react';
 import { useShallow } from 'zustand/react/shallow';
+
 import { useFileDrop } from '../../../hooks';
 import { useMissionCreationStore } from '../../../stores';
 import { cn, flatTree } from '../../../utils';
 import { FileTreeNode } from './FileTreeNode';
 
 export function Folder(props) {
-    const { folder, path, onDropToFolder, onDropFolder } = props;
+    const {
+        folder, path, onDropToFolder, onDropFolder,
+    } = props;
     const { name, children } = folder;
 
     const { uploadFolder, selectMany } = useMissionCreationStore(useShallow((state) => ({
-        uploadFolder: state.uploadFolder,
         selectMany: state.selectMany,
+        uploadFolder: state.uploadFolder,
     })));
 
     const detailsRef = useRef(null);
 
     const { isDragOver, dropProps } = useFileDrop({
-        path,
-        onDropToFolder,
         onDropFolder,
         onDropStart: () => {
             if (detailsRef.current) detailsRef.current.open = true;
         },
+        onDropToFolder,
+        path,
     });
 
     const isSelected = uploadFolder === path;

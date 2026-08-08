@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+
 import { filesResourceName, filesService } from '../services';
 import { createCrudQueries } from './crud.factory';
 
@@ -8,16 +9,16 @@ const service = filesService;
 const queries = createCrudQueries(resource, service);
 
 const useGetContent = (url) => useQuery({
-    queryKey: [resource, url],
-    queryFn: () => service.getContent(url),
     enabled: !!url,
+    queryFn: () => service.getContent(url),
+    queryKey: [resource, url],
 });
 
 const useCarto = () => useGetContent('carto/world_10.pmtiles');
 
 const useGetTree = () => useQuery({
-    queryKey: [resource],
     queryFn: () => service.getTree(),
+    queryKey: [resource],
 });
 
 const useGetUploadLink = () => useMutation({
@@ -35,8 +36,8 @@ const useUploadFiles = () => {
 
 export const filesQueries = {
     ...queries,
-    useGetContent,
     useCarto,
+    useGetContent,
     useGetTree,
     useGetUploadLink,
     useUploadFiles,

@@ -1,10 +1,11 @@
 import { http, HttpResponse, sse } from 'msw';
+
 import { events, health, mockMedias, mockMissions, mockResults, mocksFilesTree, mockTreatments } from './data';
 
-let missions = [...mockMissions];
-let medias = [...mockMedias];
-let treatments = [...mockTreatments];
-let results = [...mockResults];
+const missions = [...mockMissions];
+const medias = [...mockMedias];
+const treatments = [...mockTreatments];
+const results = [...mockResults];
 
 // --- Helpers arbre de fichiers ---
 
@@ -19,7 +20,7 @@ let nextMediaId = Math.max(0, ...medias.map((media) => media.id)) + 1;
 const parseFilePath = (url) => {
     const segments = url.replace(/^files\//, '').split('/').filter(Boolean);
     const fileName = segments.pop();
-    return { folders: segments, fileName };
+    return { fileName, folders: segments };
 };
 
 // Descend dans l'arbre en créant les dossiers manquants, renvoie le tableau d'enfants cible.
@@ -28,7 +29,7 @@ const resolveFolderChildren = (folders) => {
     for (const name of folders) {
         let folder = children.find((node) => node.children && node.name === name);
         if (!folder) {
-            folder = { name, children: [] };
+            folder = { children: [], name };
             children.push(folder);
         }
         children = folder.children;
@@ -38,7 +39,7 @@ const resolveFolderChildren = (folders) => {
 
 // Supprime un fichier n'importe où dans l'arbre (recherche récursive).
 const removeFileFromTree = (nodes, id) => {
-    const index = nodes.findIndex((node) => !node.children && node.id == id);
+    const index = nodes.findIndex((node) => !node.children && String(node.id) === String(id));
     if (index !== -1) {
         nodes.splice(index, 1);
         return true;
@@ -47,7 +48,7 @@ const removeFileFromTree = (nodes, id) => {
 };
 
 const findFileInTree = (id) =>
-    flattenTree(mocksFilesTree).find((file) => file.id == id);
+    flattenTree(mocksFilesTree).find((file) => String(file.id) === String(id));
 
 const isPlainObject = (value) =>
     value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -69,12 +70,12 @@ const createMedias = (missionId, items = []) =>
         const fileId = Number(item.file_id);
         const file = findFileInTree(fileId);
         const media = {
-            id: nextMediaId++,
             display_name: item.display_name,
-            mission_id: Number(missionId),
             file_id: fileId,
-            parent_file: file ?? null,
+            id: nextMediaId++,
             last_treatment_status: 'PENDING',
+            mission_id: Number(missionId),
+            parent_file: file ?? null,
         };
         medias.push(media);
         return media;
@@ -114,7 +115,7 @@ const getHandlers = (resource, data) => [
 
     // GET BY ID
     http.get(`/api/${resource}/:id`, ({ params }) => {
-        const target = data.find(item => item.id == params.id);
+        const target = data.find(item => String(item.id) === String(params.id));
 
         if (!target) {
             return HttpResponse.json(
@@ -129,7 +130,7 @@ const getHandlers = (resource, data) => [
     // UPDATE
     http.patch(`/api/${resource}/:id`, async ({ params, request }) => {
         const changes = await request.json();
-        const index = data.findIndex(({ id }) => id == params.id);
+        const index = data.findIndex(({ id }) => String(id) === String(params.id));
 
         if (index === -1) {
             return HttpResponse.json(
@@ -144,7 +145,7 @@ const getHandlers = (resource, data) => [
 
     // DELETE
     http.delete(`/api/${resource}/:id`, ({ params }) => {
-        const index = data.findIndex(item => item.id == params.id);
+        const index = data.findIndex(item => String(item.id) === String(params.id));
 
         if (index === -1) {
             return HttpResponse.json(
@@ -231,8 +232,8 @@ export const handlers = [
         const searchParams = url.searchParams;
         const target = searchParams.get('url');
         return HttpResponse.json({
-            url: target,
             download_url: target,
+            url: target,
         });
     }),
 
@@ -242,8 +243,8 @@ export const handlers = [
     http.get('/api/files/upload', ({ request }) => {
         const url = new URL(request.url).searchParams.get('url');
         return HttpResponse.json({
-            url,
             upload_url: `/api/s3-upload?url=${encodeURIComponent(url)}`,
+            url,
         });
     }),
 
@@ -257,12 +258,12 @@ export const handlers = [
         const children = resolveFolderChildren(folders);
 
         const file = {
+            duration: body.duration,
+            extension: body.extension,
             id: nextFileId++,
             name: body.name ?? fileName,
-            url: body.url,
             size: body.size,
-            extension: body.extension,
-            duration: body.duration,
+            url: body.url,
         };
         children.push(file);
 
@@ -290,10 +291,10 @@ export const handlers = [
         const createdMedias = createMedias(id, body.medias);
 
         const mission = {
-            id,
-            name: body.name,
             creation_date: new Date().toISOString(),
+            id,
             medias_status: { PENDING: createdMedias.length },
+            name: body.name,
         };
         missions.push(mission);
 
@@ -303,7 +304,7 @@ export const handlers = [
     // Ajout de médias à une mission existante.
     http.post('/api/missions/:id/medias', async ({ params, request }) => {
         const body = await request.json();
-        const mission = missions.find((item) => item.id == params.id);
+        const mission = missions.find((item) => String(item.id) === String(params.id));
 
         if (!mission) {
             return HttpResponse.json(
@@ -330,11 +331,13 @@ export const handlers = [
     }),
 
     sse('/api/treatments/:id/results/stream', async ({ client, params }) => {
-        const items = results.filter(item => item.treatment_id == params.id);
-        const events = items.map((data) => ({
-            event: 'treatment_result',
+        const items = results.filter(
+            (item) => String(item.treatment_id) === String(params.id),
+        );
+        const resultEvents = items.map((data) => ({
             data,
+            event: 'treatment_result',
         }));
-        eventsSender(client, 10, events);
+        eventsSender(client, 10, resultEvents);
     }),
 ];

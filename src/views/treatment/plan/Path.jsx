@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { Layer, Source } from 'react-map-gl/dist/esm/exports-maplibre';
 import { useShallow } from 'zustand/react/shallow';
+
 import { usePlayerStore, useTableStore, useThemeStore } from '../../../stores';
 import { filterResultsLikeTable } from '../../../utils';
 import { Point } from './Point';
@@ -18,12 +19,12 @@ export function Path(props) {
     const filterModel = useTableStore((state) => state.filterModel);
 
     const routeGeoJson = useMemo(() => ({
-        type: 'Feature',
-        properties: {},
         geometry: {
-            type: 'LineString',
             coordinates: track.map((p) => [p.longitude, p.latitude]),
+            type: 'LineString',
         },
+        properties: {},
+        type: 'Feature',
     }), [track]);
 
 
@@ -40,9 +41,9 @@ export function Path(props) {
                 type='line'
                 paint={{
                     'line-color': lineColor,
-                    'line-width': 4,
-                    'line-opacity': 0.75,
                     'line-dasharray': [2, 1.5],
+                    'line-opacity': 0.75,
+                    'line-width': 4,
                 }}
                 layout={{
                     'line-cap': 'butt',

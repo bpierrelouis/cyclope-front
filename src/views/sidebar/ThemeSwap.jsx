@@ -1,5 +1,6 @@
 import { SunMoonIcon } from 'lucide-react';
 import { useShallow } from 'zustand/react/shallow';
+
 import { useThemeStore } from '../../stores';
 
 export function ThemeSwap() {

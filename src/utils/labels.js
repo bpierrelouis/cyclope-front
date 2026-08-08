@@ -19,7 +19,9 @@ export const includesIgnoreCase = (str, search) =>
     str.toLowerCase().includes(search.toLowerCase());
 
 export const getConfigDescription = (config) => {
-    const { processingLevel, frameStep, objectDetectionEnabled, confidenceThreshold } = config;
+    const {
+        processingLevel, frameStep, objectDetectionEnabled, confidenceThreshold,
+    } = config;
     return [
         ELevelLabel[processingLevel],
         frameStep && `${frameStep}s`,

@@ -5,10 +5,10 @@ export const buildLowConfidenceZones = (results, safeDuration) => {
 
     return sorted
         .map((r, i) => ({
+            end: sorted[i + 1]?.seconds ?? safeDuration,
             id: r.id,
             isFreezing: r.isFreezing,
             start: r.seconds,
-            end: sorted[i + 1]?.seconds ?? safeDuration,
         }))
         .filter((z) => z.isFreezing);
 };
@@ -37,7 +37,7 @@ export const fromText = (text) => {
         .map((entry) => {
             const [type, percent] = entry.split('/').map((part) => part.trim());
             // Confiance absente ou vide ("personne" ou "personne/") → 100 par défaut.
-            return { type, confidence: Number(percent || '100') / 100 };
+            return { confidence: Number(percent || '100') / 100, type };
         });
 
     const isValid = objects.every(

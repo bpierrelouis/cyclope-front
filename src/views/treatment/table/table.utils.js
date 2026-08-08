@@ -6,10 +6,10 @@ const HIDEABLE_COLUMN_IDS = getColumnOptions().map(({ field }) => field);
 
 export const DEFAULT_COL_DEF = {
     flex: 1,
-    sortable: true,
     resizable: true,
-    suppressMovable: true,
+    sortable: true,
     suppressHeaderMenuButton: true,
+    suppressMovable: true,
 };
 
 export const applyColumnVisibility = (api, hiddenColumnIds) => {
@@ -25,12 +25,12 @@ export const applyColumnVisibility = (api, hiddenColumnIds) => {
 };
 
 export const getExportParams = (api, mediaName) => ({
-    fileName: `${suppressExtension(mediaName ?? EXPORT_FALLBACK_NAME)}_${getTimestamp()}.csv`,
-    skipColumnHeaders: false,
     columnKeys: api
         .getAllDisplayedColumns()
         .map((column) => column.getColId())
         .filter((colId) => colId !== 'isFavorite'),
+    fileName: `${suppressExtension(mediaName ?? EXPORT_FALLBACK_NAME)}_${getTimestamp()}.csv`,
+    skipColumnHeaders: false,
 });
 
 export const getChangedRowNodes = (api, ids) => ids
@@ -49,8 +49,8 @@ export const prepareResultPatch = (event) => {
 
     return {
         variables: {
-            id: result.id,
             data: { responseJson: edit.createPatch(result, value) },
+            id: result.id,
         },
     };
 };

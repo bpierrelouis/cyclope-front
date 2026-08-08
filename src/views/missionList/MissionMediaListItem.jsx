@@ -1,4 +1,5 @@
 import { Link } from 'react-router';
+
 import { MediaIcon } from '../../components';
 import { ERoute } from '../../constants';
 
@@ -7,9 +8,9 @@ export function MissionMediaListItem(props) {
 
     const color = {
         'DONE': 'text-success',
-        'RUNNING': 'text-info',
-        'PENDING': 'text-warning',
         'ERROR': 'text-error',
+        'PENDING': 'text-warning',
+        'RUNNING': 'text-info',
     }[media.status];
 
     return (

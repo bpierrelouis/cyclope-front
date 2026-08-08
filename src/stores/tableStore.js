@@ -9,20 +9,20 @@ const toggleIn = (list, value) =>
 
 export const useTableStore = create(persist(
     (set, get) => ({
-        hiddenColumnIds: [],
         filterModel: {},
+        hiddenColumnIds: [],
 
-        toggleColumn: (colId) =>
-            set({ hiddenColumnIds: toggleIn(get().hiddenColumnIds, colId) }),
+        setFilterModel: (filterModel) => set({ filterModel }),
 
         showAllColumns: () => set({ hiddenColumnIds: [] }),
 
-        setFilterModel: (filterModel) => set({ filterModel }),
+        toggleColumn: (colId) =>
+            set({ hiddenColumnIds: toggleIn(get().hiddenColumnIds, colId) }),
     }),
     {
         name: KEY,
         partialize: ({ hiddenColumnIds, filterModel }) =>
-            ({ hiddenColumnIds, filterModel }),
+            ({ filterModel, hiddenColumnIds }),
     },
 ));
 

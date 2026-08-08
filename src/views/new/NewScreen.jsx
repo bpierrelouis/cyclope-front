@@ -1,7 +1,8 @@
+import { LoaderCircleIcon } from 'lucide-react';
 import { useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router';
-import { LoaderCircleIcon } from 'lucide-react';
 import { useShallow } from 'zustand/react/shallow';
+
 import { ERoute } from '../../constants';
 import { filesQueries, missionsQueries } from '../../hooks';
 import { useMissionCreationStore } from '../../stores';
@@ -17,15 +18,17 @@ export function NewScreen() {
     const { mutateAsync: addMedias, isPending: isAdding } = missionsQueries.useAddMedias();
     const { mutateAsync: uploadFiles, isPending: isUploading } = filesQueries.useUploadFiles();
 
-    const { fileIds, configs, missionId, missionName, setMissionName, selectMany, reset } =
+    const {
+        fileIds, configs, missionId, missionName, setMissionName, selectMany, reset,
+    } =
         useMissionCreationStore(useShallow((state) => ({
-            fileIds: state.fileIds,
             configs: state.configs,
+            fileIds: state.fileIds,
             missionId: state.missionId,
             missionName: state.missionName,
-            setMissionName: state.setMissionName,
-            selectMany: state.selectMany,
             reset: state.reset,
+            selectMany: state.selectMany,
+            setMissionName: state.setMissionName,
         })));
 
     useEffect(() => reset, [reset]);
@@ -49,16 +52,16 @@ export function NewScreen() {
 
     const handleValidate = async () => {
         const medias = files.map((file) => ({
-            fileId: file.id,
-            displayName: file.name,
             config: configs[file.id],
+            displayName: file.name,
+            fileId: file.id,
         }));
 
         try {
             if (isAddingMode) {
                 await addMedias({ id: missionId, medias });
             } else {
-                await createMission({ name: missionName.trim(), medias });
+                await createMission({ medias, name: missionName.trim() });
             }
         } catch {
             openErrorToast('La validation a échoué. Veuillez réessayer.');
@@ -81,11 +84,13 @@ export function NewScreen() {
         selectMany(createdFiles);
     };
 
-    if (isLoading) return (
-        <main className='place-items-center grid size-full'>
-            <LoaderCircleIcon className='size-8 animate-spin' />
-        </main>
-    );
+    if (isLoading) {
+        return (
+            <main className='place-items-center grid size-full'>
+                <LoaderCircleIcon className='size-8 animate-spin' />
+            </main>
+        );
+    }
 
     return (
         <main className='flex flex-col gap-4 p-4 min-h-0 size-full'>

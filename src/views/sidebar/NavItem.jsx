@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router';
+
 import { cn } from '../../utils';
 
 export function NavItem(props) {

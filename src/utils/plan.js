@@ -1,4 +1,5 @@
 import { layers, namedFlavor } from '@protomaps/basemaps';
+
 import { Plan } from '../constants';
 import { sortByKeyPath } from './others';
 
@@ -7,39 +8,41 @@ export const buildMapStyle = (url, isDark) => {
     const theme = namedFlavor(isDark ? 'dark' : 'light');
 
     return {
-        version: 8,
         glyphs: Plan.GLYPHS_URL,
-        sprite: Plan.SPRITE_URL,
+        layers: layers('protomaps', theme, { lang: 'fr' }),
         sources: {
             protomaps: {
+                minzoom: Plan.MIN_ZOOM,
                 type: 'vector',
                 url: `pmtiles://${url}`,
-                minzoom: Plan.MIN_ZOOM,
             },
         },
-        layers: layers('protomaps', theme, { lang: 'fr' }),
+        sprite: Plan.SPRITE_URL,
+        version: 8,
     };
 };
 
 export const getMarkerClass = (point) => {
     if (point.isStart) {
         return 'marker-start';
-    } else if (point.isEnd) {
+    }
+    if (point.isEnd) {
         return 'marker-end';
-    } else if (point.hasDetection) {
+    }
+    if (point.hasDetection) {
         return 'marker-step marker-detection';
     }
     return 'marker-step';
 };
 
 const pointMapper = (result, index, array) => ({
+    frame: result.index,
+    hasDetection: (result.objects?.length ?? 0) > 0,
     id: result.id,
     index,
-    frame: result.index,
-    isStart: index === 0,
     isEnd: index === array.length - 1,
-    hasDetection: (result.objects?.length ?? 0) > 0,
     isFavorite: result.isFavorite,
+    isStart: index === 0,
     seconds: result.seconds,
     ...result.coordinates,
 });
@@ -67,16 +70,16 @@ export const interpolatePosition = (track, time) => {
 
     if (time <= track[0].seconds) {
         return {
-            longitude: track[0].longitude,
-            latitude: track[0].latitude,
             bearing: bearing(track[0], track[1]),
+            latitude: track[0].latitude,
+            longitude: track[0].longitude,
         };
     }
     if (time >= track[n - 1].seconds) {
         return {
-            longitude: track[n - 1].longitude,
-            latitude: track[n - 1].latitude,
             bearing: bearing(track[n - 2], track[n - 1]),
+            latitude: track[n - 1].latitude,
+            longitude: track[n - 1].longitude,
         };
     }
 
@@ -88,8 +91,8 @@ export const interpolatePosition = (track, time) => {
     const t = span > 0 ? (time - a.seconds) / span : 0;
 
     return {
-        longitude: a.longitude + (b.longitude - a.longitude) * t,
-        latitude: a.latitude + (b.latitude - a.latitude) * t,
         bearing: bearing(a, b),
+        latitude: a.latitude + (b.latitude - a.latitude) * t,
+        longitude: a.longitude + (b.longitude - a.longitude) * t,
     };
 };

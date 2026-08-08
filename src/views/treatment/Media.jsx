@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useShallow } from 'zustand/react/shallow';
+
 import { filesQueries, useOpenState } from '../../hooks';
 import { playerService } from '../../services';
 import { usePlayerStore } from '../../stores';
@@ -14,10 +15,10 @@ export function Media(props) {
         media,
         isMaster,
     } = usePlayerStore(useShallow((state) => ({
-        playing: state.playing,
         currentTime: state.currentTime,
-        media: state.media,
         isMaster: state.isMaster,
+        media: state.media,
+        playing: state.playing,
     })));
 
     const { data: url } = filesQueries.useGetContent(media?.url);
@@ -60,11 +61,11 @@ export function Media(props) {
 
         const video = videoRef.current;
         const duration = video?.duration ?? 0;
-        const currentTime = video?.currentTime ?? 0;
+        const loadedCurrentTime = video?.currentTime ?? 0;
 
         playerService.sync({
+            currentTime: loadedCurrentTime,
             duration,
-            currentTime,
             media,
         });
     };

@@ -1,43 +1,44 @@
 import { createBrowserRouter, Navigate } from 'react-router';
+
 import { ERoute } from './constants';
 import { Drawer, Media, MissionListScreen, NewScreen, Plan, SettingsScreen, Table, TreatmentScreen } from './views';
 
 export const BROWSER_ROUTER = createBrowserRouter([
     {
-        Component: Drawer,
         children: [
             {
-                path: ERoute.SETTINGS,
                 Component: SettingsScreen,
+                path: ERoute.SETTINGS,
             },
             {
-                path: ERoute.NEW,
                 Component: NewScreen,
+                path: ERoute.NEW,
             },
             {
-                path: ERoute.MISSION_LIST,
                 Component: MissionListScreen,
+                path: ERoute.MISSION_LIST,
             },
             {
-                path: ERoute.TREATMENT,
                 Component: TreatmentScreen,
+                path: ERoute.TREATMENT,
             },
         ],
+        Component: Drawer,
     },
     {
-        path: ERoute.MEDIA,
         Component: Media,
+        path: ERoute.MEDIA,
     },
     {
-        path: ERoute.TABLE,
         Component: Table,
+        path: ERoute.TABLE,
     },
     {
-        path: ERoute.PLAN,
         Component: Plan,
+        path: ERoute.PLAN,
     },
     {
-        path: '*',
         element: (<Navigate to={ERoute.MISSION_LIST} replace />),
+        path: '*',
     },
 ]);

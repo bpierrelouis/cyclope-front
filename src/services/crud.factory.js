@@ -15,15 +15,15 @@ export const createCrudService = (
 
     const create = (payload) =>
         httpRequest(endPoint, {
-            method: 'POST',
             body: payload,
+            method: 'POST',
         })
             .then(mapper);
 
     const update = ({ id, data }) =>
         httpRequest(`${endPoint}/${id}`, {
-            method: 'PATCH',
             body: data,
+            method: 'PATCH',
         })
             .then(mapper);
 
@@ -32,5 +32,7 @@ export const createCrudService = (
             method: 'DELETE',
         });
 
-    return { getAll, getById, create, update, remove };
+    return {
+        create, getAll, getById, remove, update,
+    };
 };

@@ -23,6 +23,9 @@ const applyPatch = (result, data) => Result.mapper({
 
 const queries = createCrudQueries(resource, service, {
     update: {
+        onError: (_error, { id }, context) => {
+            if (context?.previous) replaceResult(id, context.previous);
+        },
         onMutate: ({ id, data }) => {
             const previous = usePlayerStore.getState().results.find(
                 (result) => result.id === id,
@@ -33,9 +36,6 @@ const queries = createCrudQueries(resource, service, {
             return { previous };
         },
         onSuccess: (updated) => replaceResult(updated.id, updated),
-        onError: (_error, { id }, context) => {
-            if (context?.previous) replaceResult(id, context.previous);
-        },
     },
 });
 

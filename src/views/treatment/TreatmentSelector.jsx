@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router';
+
 import { useSelectionContext } from '../../contexts';
 import { treatmentsQueries } from '../../hooks';
 import { getConfigDescription } from '../../utils';
@@ -17,9 +18,11 @@ export function TreatmentSelector() {
 
     if (!treatment || !treatments) return null;
 
-    if (treatments.length === 1) return (<>
-        {getConfigDescription(treatment.config)}
-    </>);
+    if (treatments.length === 1) {
+        return (<>
+            {getConfigDescription(treatment.config)}
+        </>);
+    }
 
     return (
         <select

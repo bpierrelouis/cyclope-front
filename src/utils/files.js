@@ -85,7 +85,7 @@ export const parseDroppedItems = async (dataTransfer) => {
         .filter(Boolean);
 
     if (!entries.length) {
-        return { rootFiles: Array.from(dataTransfer.files), folders: [] };
+        return { folders: [], rootFiles: Array.from(dataTransfer.files) };
     }
 
     const rootFiles = [];
@@ -93,11 +93,11 @@ export const parseDroppedItems = async (dataTransfer) => {
 
     for (const entry of entries) {
         if (entry.isDirectory) {
-            folders.push({ name: entry.name, files: await readEntry(entry) });
+            folders.push({ files: await readEntry(entry), name: entry.name });
         } else {
             rootFiles.push(...(await readEntry(entry)));
         }
     }
 
-    return { rootFiles, folders };
+    return { folders, rootFiles };
 };

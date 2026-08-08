@@ -1,10 +1,13 @@
 import { StarIcon } from 'lucide-react';
 import { Marker } from 'react-map-gl/maplibre';
+
 import { cn, getMarkerClass } from '../../../utils';
 
 export function Point(props) {
     const { point, onSelect } = props;
-    const { frame, isStart, isEnd, isFavorite } = point;
+    const {
+        frame, isStart, isEnd, isFavorite,
+    } = point;
 
     const markerClass = getMarkerClass(point);
     const isWaypoint = !isStart && !isEnd;

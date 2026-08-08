@@ -1,5 +1,6 @@
 import { Marker } from 'react-map-gl/maplibre';
 import { useShallow } from 'zustand/react/shallow';
+
 import { usePlayerStore } from '../../../stores';
 import { getCurrentResult } from '../../../utils';
 

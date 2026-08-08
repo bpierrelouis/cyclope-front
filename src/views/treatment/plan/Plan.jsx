@@ -1,9 +1,11 @@
-import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
+
+import maplibregl from 'maplibre-gl';
 import { Protocol } from 'pmtiles';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Map, NavigationControl } from 'react-map-gl/maplibre';
 import { useShallow } from 'zustand/react/shallow';
+
 import { Plan as Constants } from '../../../constants';
 import { filesQueries, useOpenState } from '../../../hooks';
 import { usePlayerStore, useThemeStore } from '../../../stores';
@@ -63,7 +65,7 @@ export function Plan() {
         if (!pathBounds) return;
         mapRef.current?.fitBounds(
             pathBounds,
-            { padding: 50, duration: 0 },
+            { duration: 0, padding: 50 },
         );
     }, [pathBounds]);
 
@@ -76,7 +78,9 @@ export function Plan() {
                 minZoom={Constants.MIN_ZOOM}
                 maxZoom={Constants.MAX_ZOOM}
                 mapStyle={mapStyle}
-                style={{ width: '100%', height: '100%', flex: 1, minHeight: 0 }}
+                style={{
+                    flex: 1, height: '100%', minHeight: 0, width: '100%',
+                }}
             >
                 <NavigationControl position='top-right' />
                 <LocateButton onClick={centerMapToPath} />

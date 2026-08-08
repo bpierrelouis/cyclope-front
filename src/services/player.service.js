@@ -37,20 +37,20 @@ class PlayerService {
         this.setLocalState(payload);
 
         this.stateUpdate({
-            playing: state.playing,
             currentTime: state.currentTime,
             duration: state.duration,
-
             media: state.media,
-            treatment: state.treatment,
+
+            playing: state.playing,
             results: state.results,
+            treatment: state.treatment,
         });
     }
 
     requestState(payload) {
         playerChannel.postMessage({
-            type: MESSAGE_TYPES.REQUEST_STATE,
             payload,
+            type: MESSAGE_TYPES.REQUEST_STATE,
         });
     }
 
@@ -61,8 +61,8 @@ class PlayerService {
 
     stateUpdate(payload) {
         playerChannel.postMessage({
-            type: MESSAGE_TYPES.STATE_UPDATE,
             payload,
+            type: MESSAGE_TYPES.STATE_UPDATE,
         });
     }
 

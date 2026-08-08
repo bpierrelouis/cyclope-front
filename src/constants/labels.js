@@ -1,7 +1,7 @@
 export const NOTIFICATION_LABELS = {
-    RESULT_SAVED: 'Résultat enregistré',
-    RESULT_SAVE_ERROR: 'Échec de l\'enregistrement du résultat',
     FAVORITE_SAVE_ERROR: 'Échec de la mise en favori',
+    RESULT_SAVE_ERROR: 'Échec de l\'enregistrement du résultat',
+    RESULT_SAVED: 'Résultat enregistré',
 };
 
 export const DETECTION_FORMAT_MESSAGE =

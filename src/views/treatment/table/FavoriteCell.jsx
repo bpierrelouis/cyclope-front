@@ -1,4 +1,5 @@
 import { StarIcon } from 'lucide-react';
+
 import { iconSizes, NOTIFICATION_LABELS } from '../../../constants';
 import { resultsQueries } from '../../../hooks';
 import { cn, openErrorToast, preventDefault } from '../../../utils';
@@ -15,7 +16,7 @@ export function FavoriteCell(props) {
     const { mutate: updateResult, isPending } = resultsQueries.useUpdate();
 
     const handleClick = () => updateResult(
-        { id: props.data.id, data: { isFavorite: !isFavorite } },
+        { data: { isFavorite: !isFavorite }, id: props.data.id },
         { onError: () => openErrorToast(NOTIFICATION_LABELS.FAVORITE_SAVE_ERROR) },
     );
 

@@ -1,18 +1,18 @@
 export const ERoute = Object.freeze({
-    SETTINGS: '/settings',
-    NEW: '/new',
-    MISSION_LIST: '/missions',
-    TREATMENT: '/treatment',
     MEDIA: '/media',
-    TABLE: '/table',
+    MISSION_LIST: '/missions',
+    NEW: '/new',
     PLAN: '/plan',
+    SETTINGS: '/settings',
+    TABLE: '/table',
+    TREATMENT: '/treatment',
 });
 
 export const EStatusLabel = Object.freeze({
     DONE: 'Terminées',
-    RUNNING: 'En cours',
-    PENDING: 'En attente',
     ERROR: 'En erreur',
+    PENDING: 'En attente',
+    RUNNING: 'En cours',
 });
 
 export const ELevelLabel = Object.freeze({

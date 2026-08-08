@@ -9,7 +9,10 @@ export const preventDefault = (fn) => (event) => {
 
 const compilePath = (path) => {
     const keys = path.split('.');
-    return new Function('obj', `return obj?.${keys.join('?.')}`);
+    return (object) => keys.reduce(
+        (value, key) => value?.[key],
+        object,
+    );
 };
 
 export const sortByKeyPath = (arr, path, dir = 'asc') => {

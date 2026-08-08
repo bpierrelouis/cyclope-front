@@ -2,6 +2,7 @@ import { FolderIcon, FolderOpenIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { useShallow } from 'zustand/react/shallow';
+
 import { EditableText } from '../../components';
 import { ERoute } from '../../constants';
 import { missionsQueries } from '../../hooks';
@@ -26,8 +27,8 @@ export function MissionHeader(props) {
     const handleChangeName = (name) => {
         if (name === mission.name) return;
         updateMutation.mutate({
-            id: mission.id,
             data: { name },
+            id: mission.id,
         });
     };
 

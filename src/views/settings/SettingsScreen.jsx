@@ -1,12 +1,13 @@
+import { useShallow } from 'zustand/react/shallow';
+
 import { ConfigurationCard, ProcessConfidenceField, ProcessLevelField, ProcessObjectDetectionField, ProcessStepField } from '../../components';
 import { useDefaultConfigStore } from '../../stores';
-import { useShallow } from 'zustand/react/shallow';
 
 export function SettingsScreen() {
     const { setPartialState, ...config } = useDefaultConfigStore(useShallow((state) => ({
+        confidenceThreshold: state.confidenceThreshold,
         frameStep: state.frameStep,
         objectDetectionEnabled: state.objectDetectionEnabled,
-        confidenceThreshold: state.confidenceThreshold,
         processingLevel: state.processingLevel,
         setPartialState: state.setPartialState,
     })));

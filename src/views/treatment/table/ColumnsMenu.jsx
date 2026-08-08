@@ -1,21 +1,22 @@
 import { Columns3Icon } from 'lucide-react';
 import { useShallow } from 'zustand/react/shallow';
+
 import { iconSizes } from '../../../constants';
 import { useTableStore } from '../../../stores';
 import { getColumnOptions } from './columnDefs';
 import { SelectionMenu } from './SelectionMenu';
 
 const COLUMN_OPTIONS = getColumnOptions().map(({ field, headerName }) => ({
-    value: field,
     label: headerName,
+    value: field,
 }));
 
 // Menu de visibilité des colonnes.
 export function ColumnsMenu() {
     const { hiddenColumnIds, toggleColumn, showAllColumns } = useTableStore(useShallow((state) => ({
         hiddenColumnIds: state.hiddenColumnIds,
-        toggleColumn: state.toggleColumn,
         showAllColumns: state.showAllColumns,
+        toggleColumn: state.toggleColumn,
     })));
 
     return (

@@ -1,5 +1,6 @@
 import { CogIcon, XIcon } from 'lucide-react';
 import { useState } from 'react';
+
 import { useMissionCreationStore } from '../../../stores';
 import { formatFileSize } from '../../../utils';
 import { FileConfig } from './FileConfig';

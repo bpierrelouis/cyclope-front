@@ -2,6 +2,7 @@ import { Navigation2Icon } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Marker, useMap } from 'react-map-gl/maplibre';
 import { useShallow } from 'zustand/react/shallow';
+
 import { Plan } from '../../../constants';
 import { usePlayerStore } from '../../../stores';
 import { interpolatePosition } from '../../../utils';

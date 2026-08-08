@@ -9,8 +9,8 @@ const service = createCrudService(missionsResourceName, Mission.mapper);
 
 const addMedias = (id, medias) =>
     httpRequest(`${missionsResourceName}/${id}/${mediasResourceName}`, {
-        method: 'POST',
         body: { medias },
+        method: 'POST',
     })
         .then(Mission.mapper);
 
