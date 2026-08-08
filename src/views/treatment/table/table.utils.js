@@ -46,6 +46,8 @@ export const prepareResultPatch = (event) => {
 
     const value = edit.parse(event.newValue);
     if (value == null) return { errorMessage: edit.errorMessage };
+    const previousValue = edit.parse(event.oldValue);
+    if (previousValue != null && edit.isEqual(value, previousValue)) return null;
 
     return {
         variables: {

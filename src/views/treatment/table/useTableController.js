@@ -1,15 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
-import { DETECTION_FORMAT_MESSAGE, NOTIFICATION_LABELS } from '../../../constants';
+import { NOTIFICATION_LABELS } from '../../../constants';
 import { resultsQueries, useOpenState } from '../../../hooks';
 import { tableService } from '../../../services';
 import { usePlayerStore, useTableStore } from '../../../stores';
-import { dismissToast, getCurrentResult, openErrorToast, openInfoToast, openSuccessToast } from '../../../utils';
+import { getCurrentResult, openErrorToast, openSuccessToast } from '../../../utils';
 import { getColumnDefs } from './columnDefs';
 import { applyColumnVisibility, getChangedRowNodes, getExportParams, prepareResultPatch } from './table.utils';
-
-const DETECTION_HELP_TOAST_ID = 'detection-format-help';
 
 export const useTableController = () => {
     const { media, results, currentTime } = usePlayerStore(useShallow((state) => ({
@@ -66,19 +64,6 @@ export const useTableController = () => {
         });
     }, [updateResult]);
 
-    const showDetectionHelp = useCallback(({ column }) => {
-        if (column.getColId() !== 'objects') return;
-        openInfoToast(DETECTION_FORMAT_MESSAGE, {
-            duration: Infinity,
-            id: DETECTION_HELP_TOAST_ID,
-            position: 'top-center',
-        });
-    }, []);
-
-    const hideDetectionHelp = useCallback(({ column }) => {
-        if (column.getColId() === 'objects') dismissToast(DETECTION_HELP_TOAST_ID);
-    }, []);
-
     const syncFilterModel = useCallback(({ api }) => {
         tableService.syncFilterModel(api.getFilterModel());
     }, []);
@@ -131,8 +116,6 @@ export const useTableController = () => {
 
     useOpenState('isTableOpen');
 
-    useEffect(() => () => dismissToast(DETECTION_HELP_TOAST_ID), []);
-
     return {
         detectionFilterActive: (filterModel.objects?.values?.length ?? 0) > 0,
         dismissSelected: () => setSelected(null),
@@ -142,8 +125,6 @@ export const useTableController = () => {
             columnDefs,
             getRowClass,
             gridRef,
-            onCellEditingStarted: showDetectionHelp,
-            onCellEditingStopped: hideDetectionHelp,
             onCellEditRequest: saveResult,
             onFilterChanged: syncFilterModel,
             onGridReady,

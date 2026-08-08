@@ -461,9 +461,11 @@ html {
     --ag-header-font-family: ui-monospace, monospace;
 }
 
-.ag-cell[col-id='isFavorite'] {
+.cyc-results-grid .ag-cell {
     display: flex;
     align-items: center;
-    justify-content: center;
+}
+
+.cyc-results-grid .ag-cell[col-id='isFavorite'] {
     padding: 0;
 }
