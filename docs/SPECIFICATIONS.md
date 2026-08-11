@@ -49,6 +49,7 @@ Les mots **doit**, **devrait** et **peut** indiquent respectivement une exigence
 - Les valeurs par défaut doivent persister dans le navigateur et s’appliquer aux nouveaux médias.
 - Pour une vidéo, le pas configuré ne doit pas dépasser sa durée connue.
 - Les niveaux pris en charge par l’interface sont 2 « Léger », 3 « Moyen » et 5 « Lourd ».
+- L’écran des paramètres doit distinguer la configuration de traitement par défaut de la gestion du catalogue de détections.
 
 ### EF-06 — Missions et états
 
@@ -76,12 +77,26 @@ Les mots **doit**, **devrait** et **peut** indiquent respectivement une exigence
 - Un résultat reçu avec un identifiant existant doit remplacer sa version précédente.
 - L’opérateur doit pouvoir consulter une capture avec son index, ses coordonnées, son altitude, sa vitesse et ses détections.
 - Il doit pouvoir modifier les informations éditables et marquer un résultat comme favori ; un échec d’enregistrement doit être signalé.
+- Les types rencontrés dans les résultats doivent être découverts automatiquement et ajoutés au catalogue local sans doublon de nom.
+- Les badges de détection associés à une catégorie doivent reprendre la couleur de cette catégorie.
 
 ### EF-10 — Plan et tableau
 
 - Le plan doit afficher la trace et les résultats géolocalisés, suivre la position courante et permettre une resynchronisation avec le lecteur.
 - Le tableau doit présenter les résultats, permettre la sélection, le filtrage des détections et le choix des colonnes visibles.
+- L’opérateur doit pouvoir éditer les détections d’un résultat en les sélectionnant dans le catalogue, regroupées visuellement par catégorie.
+- Une détection ajoutée depuis l’éditeur doit recevoir une confiance initiale de 100 %, tandis qu’une détection déjà présente doit conserver sa confiance.
+- Une édition qui ne change pas la liste des types et confiances ne doit pas déclencher d’enregistrement.
 - Les préférences de colonnes et filtres doivent persister ou se synchroniser entre fenêtres selon leur nature.
+
+### EF-11 — Catalogue et catégories de détection
+
+- L’opérateur doit pouvoir créer, renommer et supprimer une catégorie, ainsi que choisir sa couleur.
+- La suppression d’une catégorie doit conserver ses détections en les replaçant dans l’état « non catégorisée ».
+- L’opérateur doit pouvoir ajouter ou retirer manuellement un type de détection et l’affecter à une catégorie.
+- Les noms de détection vides ou déjà présents, après normalisation et comparaison insensible à la casse, doivent être refusés.
+- L’interface doit afficher le nombre de détections restant à catégoriser et le nombre associé à chaque catégorie.
+- Le catalogue et ses affectations doivent persister dans le navigateur et se resynchroniser entre les onglets.
 
 ## 4. Exigences d’interface et d’accessibilité
 
@@ -96,7 +111,8 @@ Les mots **doit**, **devrait** et **peut** indiquent respectivement une exigence
 - ET-02 : les échanges HTTP doivent convertir les clés camelCase/snake_case aux frontières de l’API.
 - ET-03 : les réponses non réussies doivent produire une erreur exploitable par la couche appelante ; une réponse vide doit être acceptée.
 - ET-04 : les événements temps réel doivent être fermés lors du démontage ou du changement de traitement.
-- ET-05 : les données persistantes locales doivent rester limitées aux préférences et valeurs par défaut.
+- ET-05 : les données persistantes locales doivent rester limitées aux préférences, valeurs par défaut et au catalogue de détections.
+- ET-06 : une couleur de catégorie persistée doit respecter le format hexadécimal `#RRGGBB` ; une valeur invalide doit être remplacée ou ignorée au profit d’une couleur valide.
 - EQ-01 : `npm run lint` et `npm run build` doivent réussir avant intégration.
 - EQ-02 : aucun `console.log`, `eval`, appel dynamique au constructeur `Function`, code inutilisé ou comparaison à coercition implicite n’est admis.
 - EQ-03 : une exception ESLint doit être locale, motivée et réévaluée lorsque l’architecture concernée évolue.

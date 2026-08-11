@@ -2,6 +2,15 @@
 
 Interface React de préparation, lancement et exploitation de traitements de médias. L’application permet d’organiser les fichiers, créer des missions, suivre leur état puis consulter les résultats dans un lecteur, un plan et un tableau synchronisés.
 
+## Fonctionnalités principales
+
+- exploration et téléversement de fichiers, puis création ou enrichissement de missions ;
+- configuration par défaut et par média des traitements ;
+- suivi temps réel des traitements et de leurs résultats ;
+- consultation synchronisée dans un lecteur, un plan et un tableau ;
+- catalogue local des types de détection, avec catégories et couleurs personnalisables ;
+- édition des détections d’un résultat depuis le tableau à partir de ce catalogue.
+
 ## Prérequis
 
 - Node.js 20 ou supérieur
@@ -56,7 +65,7 @@ src/
 └── views/        écrans et vues métier
 ```
 
-Les composants restent fonctionnels. Les accès réseau résident dans `services`, leur orchestration React Query dans `hooks`, et l’état global dans les stores ou contextes. Le style utilise en priorité DaisyUI, puis Tailwind ; `src/style.css` contient les styles globaux indispensables.
+Les composants restent fonctionnels. Les accès réseau résident dans `services`, leur orchestration React Query dans `hooks`, et l’état global dans les stores ou contextes. Les préférences de traitement et le catalogue de détections sont persistés localement avec Zustand. Le style utilise en priorité DaisyUI, puis Tailwind ; `src/style.css` contient les styles globaux indispensables.
 
 ## Documentation
 

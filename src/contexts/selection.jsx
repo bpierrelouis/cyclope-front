@@ -5,6 +5,7 @@ import { useSearchParams } from 'react-router';
 
 import { mediasQueries, missionsQueries, treatmentsQueries } from '../hooks';
 import { resultsStream } from '../services';
+import { useDetectionCatalogStore } from '../stores';
 import { sortByKeyPath } from '../utils';
 import { SelectionContext } from './selectionContext';
 
@@ -71,6 +72,10 @@ export function SelectionProvider({ children }) {
         );
         return () => resultsStream.disconnect();
     }, [treatment?.id]);
+
+    useEffect(() => {
+        useDetectionCatalogStore.getState().discoverDetections(results);
+    }, [results]);
 
     const value = useMemo(() => ({
         media,

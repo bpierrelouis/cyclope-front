@@ -1,5 +1,5 @@
-import { DETECTION_FORMAT_MESSAGE } from '../../../constants';
-import { fromText, isValidLatitude, isValidLongitude, toText } from '../../../utils';
+import { isValidLatitude, isValidLongitude, toText } from '../../../utils';
+import { DetectionCellEditor } from './DetectionCellEditor';
 import { DetectionFilter } from './DetectionFilter';
 import { DetectionCell } from './DetectionsCell';
 import { FavoriteCell } from './FavoriteCell';
@@ -14,10 +14,27 @@ const parseNumber = (validate = () => true) => (raw) => {
     return Number.isFinite(value) && validate(value) ? value : null;
 };
 
-const editableColumn = (parse, createPatch, errorMessage, isEditable = true) => ({
-    context: { edit: { createPatch, errorMessage, parse } },
+const editableColumn = (
+    parse,
+    createPatch,
+    errorMessage,
+    isEditable = true,
+    isEqual = (left, right) => left === right,
+) => ({
+    context: {
+        edit: {
+            createPatch, errorMessage, isEqual, parse,
+        },
+    },
     editable: isEditable,
 });
+
+const areSameDetections = (left = [], right = []) => {
+    const signature = (objects) => objects
+        .map(({ type, confidence }) => `${type}\u0000${confidence}`)
+        .sort();
+    return JSON.stringify(signature(left)) === JSON.stringify(signature(right));
+};
 
 const measurementColumn = ({
     field, key, headerName, validate, errorMessage,
@@ -109,13 +126,19 @@ export const getColumnDefs = (onImageClick) => [
         validate: (value) => value >= 0,
     }),
     {
+        autoHeight: true,
+        cellEditor: DetectionCellEditor,
+        cellEditorPopup: true,
+        cellEditorPopupPosition: 'under',
         cellRenderer: DetectionCell,
         field: 'objects',
         headerName: 'Détection',
         ...editableColumn(
-            fromText,
+            (objects) => objects,
             (_result, objects) => ({ objects }),
-            DETECTION_FORMAT_MESSAGE,
+            'Sélection invalide',
+            true,
+            areSameDetections,
         ),
         filter: {
             component: DetectionFilter,
@@ -126,8 +149,7 @@ export const getColumnDefs = (onImageClick) => [
             },
         },
         suppressHeaderFilterButton: false,
-        suppressHeaderMenuButton: false,
-        valueGetter: ({ data: result }) => toText(result.objects),
+        valueFormatter: ({ value }) => toText(value),
     },
 ];
 
