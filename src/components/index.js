@@ -1,3 +1,4 @@
+export * from './CaptureDialog';
 export * from './ConfidenceBadge';
 export * from './ConfigurationCard';
 export * from './DeletePopup';

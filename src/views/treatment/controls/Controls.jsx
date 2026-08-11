@@ -2,6 +2,7 @@ import { PauseIcon, PlayIcon, SkipBackIcon, SkipForwardIcon, SnowflakeIcon, Squa
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
+import { CaptureDialog } from '../../../components';
 import { iconSizes } from '../../../constants';
 import { useSelectionContext } from '../../../contexts';
 import { playerService } from '../../../services';
@@ -24,6 +25,7 @@ export function Controls() {
     })));
 
     const [skipFreezing, setSkipFreezing] = useState(false);
+    const [capture, setCapture] = useState(null);
 
     const safeDuration = Math.max(duration, 0);
     const zonesFreezing = buildLowConfidenceZones(results, duration);
@@ -77,10 +79,10 @@ export function Controls() {
         canvas.height = video.videoHeight;
         canvas.getContext('2d').drawImage(video, 0, 0);
 
-        const link = document.createElement('a');
-        link.href = canvas.toDataURL('image/png');
-        link.download = `capture-${formatTime(currentTime).replaceAll(':', '-')}.png`;
-        link.click();
+        setCapture({
+            dataUrl: canvas.toDataURL('image/png'),
+            filename: `capture-${formatTime(currentTime).replaceAll(':', '-')}.png`,
+        });
     };
 
     useEffect(() => {
@@ -117,6 +119,12 @@ export function Controls() {
                 >
                     <SquareBottomDashedScissors size={iconSizes.sm} />
                 </button>
+                {capture && (
+                    <CaptureDialog
+                        capture={capture}
+                        onClose={()  => setCapture(null)}
+                    />
+                )}
             </div>
 
             <span className='min-w-10 font-semibold tabular-nums'>{formatTime(currentTime)}</span>
