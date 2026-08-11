@@ -81,6 +81,7 @@ export default defineConfig([
                     multiline: true,
                 },
             }],
+            'object-curly-spacing': ['error', 'always'],
             'object-shorthand': ['error', 'always'],
             'prefer-const': ['error', { destructuring: 'all' }],
             'prefer-object-spread': 'error',
