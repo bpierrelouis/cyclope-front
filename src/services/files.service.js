@@ -1,4 +1,4 @@
-import { ACCEPTED_FILES_EXTENSIONS, getExtension, getVideoDuration, isAcceptedFileExtension, isVideoExtension, joinPath, openErrorToast, openSuccessToast } from '../utils';
+import { ACCEPTED_FILES_EXTENSIONS, computeChecksum, getExtension, getVideoDuration, isAcceptedFileExtension, isVideoExtension, joinPath, openErrorToast, openSuccessToast } from '../utils';
 import { createCrudService } from './crud.factory';
 import { httpRequest } from './httpClient';
 
@@ -18,6 +18,9 @@ const getUploadPath = (url) => {
     return httpRequest(`${filesResourceName}/upload?url=${encodeURIComponent(fullPath)}`);
 };
 
+const checkFileExists = (name, checksum) =>
+    httpRequest(`${filesResourceName}/exists?name=${encodeURIComponent(name)}&checksum=${checksum}`);
+
 const uploadFile = async (url, file) =>
     fetch(url, {
         body: file,
@@ -29,12 +32,19 @@ const saveFile = async (file, folder) => {
     const { name, size } = file;
     const targetPath = joinPath(folder, name);
     const extension = getExtension(name);
-    const isVideo = isVideoExtension(extension);
-    const duration = isVideo ? await getVideoDuration(file) : null;
 
     if (!isAcceptedFileExtension(extension)) {
         throw new Error(`"${name}" refusé. Formats autorisés : ${ACCEPTED_FILES_EXTENSIONS.join(', ')}.`);
     }
+
+    const checksum = await computeChecksum(file);
+    const { exists } = await checkFileExists(name, checksum);
+    if (exists) {
+        throw new Error(`"${name}" est déjà présent sur le serveur.`);
+    }
+
+    const isVideo = isVideoExtension(extension);
+    const duration = isVideo ? await getVideoDuration(file) : null;
 
     const { uploadUrl, url } = await getUploadPath(targetPath);
     const { ok, status } = await uploadFile(uploadUrl, file);
@@ -44,6 +54,7 @@ const saveFile = async (file, folder) => {
     }
 
     return service.create({
+        checksum,
         duration,
         extension,
         name,

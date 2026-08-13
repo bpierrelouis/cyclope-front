@@ -239,6 +239,19 @@ export const handlers = [
 
     // --- Partie "new" : upload, fichiers, missions ---
 
+    // Un fichier "existe" si son nom ou son contenu est déjà dans l'arbre.
+    http.get('/api/files/exists', ({ request }) => {
+        const searchParams = new URL(request.url).searchParams;
+        const checksum = searchParams.get('checksum');
+        const name = searchParams.get('name');
+        const exists = flattenTree(mocksFilesTree)
+            .some((file) =>
+                file.name === name
+                || (file.checksum != null && file.checksum === checksum),
+            );
+        return HttpResponse.json({ exists });
+    }),
+
     // Lien d'upload présigné : renvoie une URL de PUT factice interceptée juste en dessous.
     http.get('/api/files/upload', ({ request }) => {
         const url = new URL(request.url).searchParams.get('url');
@@ -258,6 +271,7 @@ export const handlers = [
         const children = resolveFolderChildren(folders);
 
         const file = {
+            checksum: body.checksum,
             duration: body.duration,
             extension: body.extension,
             id: nextFileId++,

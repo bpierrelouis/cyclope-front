@@ -32,6 +32,8 @@ Les mots **doit**, **devrait** et **peut** indiquent respectivement une exigence
 - L’opérateur doit pouvoir parcourir une arborescence de fichiers et dossiers.
 - Il doit pouvoir téléverser des fichiers ou déposer un dossier dans une destination choisie.
 - Chaque fichier doit être contrôlé par extension avant téléversement ; un fichier refusé doit produire un message explicite.
+- Avant son téléversement, chaque fichier doit recevoir une empreinte SHA-256 calculée par morceaux afin de limiter la mémoire utilisée.
+- Un fichier doit être refusé si son nom est déjà utilisé ou si un contenu portant la même empreinte est présent sur le serveur ; l’échec doit être signalé explicitement.
 - Les téléversements partiellement réussis doivent conserver les succès et signaler individuellement les échecs.
 - L’opérateur doit pouvoir supprimer un fichier après confirmation.
 
@@ -123,6 +125,7 @@ Les mots **doit**, **devrait** et **peut** indiquent respectivement une exigence
 | --- | --- |
 | `/api/health` | lecture de l’état des services |
 | `/api/files`, `/api/files/tree` | création, suppression et lecture de l’arborescence |
+| `/api/files/exists?name={name}&checksum={checksum}` | détection d’un nom déjà utilisé ou d’un contenu identique avant téléversement |
 | `/api/files/upload`, `/api/files/download` | obtention d’URL présignées |
 | `/api/missions` | liste, lecture, création, modification et suppression |
 | `/api/missions/{id}/medias` | ajout de médias |
