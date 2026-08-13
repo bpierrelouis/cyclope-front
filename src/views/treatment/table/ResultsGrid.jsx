@@ -1,3 +1,4 @@
+import { AG_GRID_LOCALE_FR } from '@ag-grid-community/locale';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
@@ -17,6 +18,7 @@ export function ResultsGrid(props) {
             )}
         >
             <AgGridReact
+                localeText={AG_GRID_LOCALE_FR}
                 ref={gridRef}
                 defaultColDef={DEFAULT_COL_DEF}
                 enableFilterHandlers={true}

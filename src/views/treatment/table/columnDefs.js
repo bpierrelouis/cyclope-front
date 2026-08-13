@@ -1,4 +1,11 @@
-import { isValidLatitude, isValidLongitude, toText } from '../../../utils';
+import { NUMBER_FILTER_OPTIONS, TEXT_FILTER_OPTIONS } from '../../../constants';
+import {
+    getFieldValue,
+    isValidLatitude,
+    isValidLongitude,
+    normalizeNumericFilterValue,
+    toText,
+} from '../../../utils';
 import { DetectionCellEditor } from './DetectionCellEditor';
 import { DetectionFilter } from './DetectionFilter';
 import { DetectionCell } from './DetectionsCell';
@@ -7,6 +14,24 @@ import { FavoriteHeader } from './FavoriteHeader';
 import { FrameCell } from './FrameCell';
 
 const EmptyFilter = () => null;
+
+const numberFilter = (field) => ({
+    filter: 'agNumberColumnFilter',
+    filterParams: {
+        filterOptions: NUMBER_FILTER_OPTIONS,
+        maxNumConditions: 1,
+    },
+    filterValueGetter: ({ data }) =>
+        normalizeNumericFilterValue(getFieldValue(data, field)),
+});
+
+const TEXT_FILTER = {
+    filter: 'agTextColumnFilter',
+    filterParams: {
+        filterOptions: TEXT_FILTER_OPTIONS,
+        maxNumConditions: 1,
+    },
+};
 
 const parseNumber = (validate = () => true) => (raw) => {
     if (typeof raw === 'string' && raw.trim() === '') return null;
@@ -40,6 +65,7 @@ const measurementColumn = ({
     field, key, headerName, validate, errorMessage,
 }) => ({
     field,
+    ...numberFilter(field),
     headerName,
     valueFormatter: ({ data: result }) => result[`${key}Label`] ?? '—',
     ...editableColumn(
@@ -87,15 +113,18 @@ export const getColumnDefs = (onImageClick) => [
     {
         editable: false,
         field: 'index',
+        ...numberFilter('index'),
         headerName: 'Frame',
     },
     {
         editable: false,
         field: 'timecode',
+        ...TEXT_FILTER,
         headerName: 'Timecode',
     },
     {
         field: 'coordinates.latitude',
+        ...numberFilter('coordinates.latitude'),
         headerName: 'Latitude',
         ...editableColumn(
             parseNumber(isValidLatitude),
@@ -105,6 +134,7 @@ export const getColumnDefs = (onImageClick) => [
     },
     {
         field: 'coordinates.longitude',
+        ...numberFilter('coordinates.longitude'),
         headerName: 'Longitude',
         ...editableColumn(
             parseNumber(isValidLongitude),
