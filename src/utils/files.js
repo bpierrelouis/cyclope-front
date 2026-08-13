@@ -1,5 +1,18 @@
+import { createSHA256 } from 'hash-wasm';
+
 export const joinPath = (parentPath, name) =>
     parentPath ? `${parentPath}/${name}` : name;
+
+const HASH_CHUNK_SIZE = 64 * 1024 * 1024;
+
+export const computeChecksum = async (file) => {
+    const hasher = await createSHA256();
+    for (let offset = 0; offset < file.size; offset += HASH_CHUNK_SIZE) {
+        const chunk = await file.slice(offset, offset + HASH_CHUNK_SIZE).arrayBuffer();
+        hasher.update(new Uint8Array(chunk));
+    }
+    return hasher.digest('hex');
+};
 
 export const formatFileSize = (bytes) => {
     if (bytes < 1024) return `${bytes} o`;

@@ -4,7 +4,7 @@ Interface React de préparation, lancement et exploitation de traitements de mé
 
 ## Fonctionnalités principales
 
-- exploration et téléversement de fichiers, puis création ou enrichissement de missions ;
+- exploration et téléversement de fichiers avec détection des doublons, puis création ou enrichissement de missions ;
 - configuration par défaut et par média des traitements ;
 - suivi temps réel des traitements et de leurs résultats ;
 - consultation synchronisée dans un lecteur, un plan et un tableau ;
