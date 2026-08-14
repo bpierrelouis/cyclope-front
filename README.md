@@ -26,6 +26,22 @@ npm run dev
 
 Vite démarre l’interface et transmet les requêtes `/api` au backend. En développement, MSW fournit également les scénarios simulés déclarés dans `src/mocks`.
 
+## Image Docker
+
+L’image de production compile l’application puis la sert avec Nginx :
+
+```bash
+docker build -t cyclope-front .
+cp docker/.env.example .env
+docker run --rm -p 8080:80 --env-file .env cyclope-front
+```
+
+L’interface est alors accessible sur `http://localhost:8080`. `API_URL` désigne l’origine du backend, sans suffixe `/api` ni `/` final. Nginx lui transmet les appels same-origin reçus sur `/api`, ce qui évite d’exposer l’adresse du backend dans le bundle JavaScript et les problèmes CORS associés.
+
+La variable est évaluée au démarrage du conteneur : une même image peut donc être déployée dans plusieurs environnements. Adapter le fichier `.env` à chaque environnement sans le versionner. Si les deux services partagent un réseau Docker, utiliser le nom du service, par exemple `API_URL=http://api:8000`.
+
+Au démarrage, le conteneur interroge `/api/health` à travers Nginx pendant au maximum 30 secondes. La première réponse reçue est affichée dans `docker logs cyclope-front`. Si l’API reste indisponible, une erreur est journalisée sans arrêter Nginx.
+
 ## Commandes
 
 | Commande | Usage |
