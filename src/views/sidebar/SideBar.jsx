@@ -30,7 +30,7 @@ export function SideBar(props) {
                 </NavItem>
             </ul>
             <div className='divider'></div>
-            <ul className='flex-nowrap px-2 w-full overflow-auto menu grow'>
+            <ul className='flex-nowrap px-2 w-full overflow-auto is-drawer-close:overflow-visible menu grow'>
                 <MediaList />
             </ul>
             <div className='divider'></div>
