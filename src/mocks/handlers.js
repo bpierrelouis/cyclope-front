@@ -7,6 +7,9 @@ const medias = [...mockMedias];
 const treatments = [...mockTreatments];
 const results = [...mockResults];
 
+const MOCK_CARTO_PATH = 'carto/world_10.pmtiles';
+const MOCK_CARTO_URL = 'https://data.source.coop/protomaps/openstreetmap/v4.pmtiles';
+
 // --- Helpers arbre de fichiers ---
 
 const flattenTree = (nodes) =>
@@ -231,8 +234,11 @@ export const handlers = [
         const url = new URL(request.url);
         const searchParams = url.searchParams;
         const target = searchParams.get('url');
+        const downloadUrl = target === MOCK_CARTO_PATH
+            ? MOCK_CARTO_URL
+            : target;
         return HttpResponse.json({
-            download_url: target,
+            download_url: downloadUrl,
             url: target,
         });
     }),
