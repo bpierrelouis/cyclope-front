@@ -27,9 +27,10 @@ class LocateControl {
             if (!this._navGroup) return;
 
             this._button = document.createElement('button');
-            this._button.className = 'maplibregl-ctrl-icon';
+            this._button.className = 'maplibregl-ctrl-locate';
             this._button.type = 'button';
             this._button.title = 'Recentrer';
+            this._button.setAttribute('aria-label', 'Recentrer la carte');
             this._button.onclick = this._onClick;
 
             this._root = createRoot(this._button);

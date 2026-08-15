@@ -372,6 +372,7 @@ html {
 .maplibregl-ctrl-group button {
     width: 30px;
     height: 30px;
+    padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -381,6 +382,18 @@ html {
     border-bottom: 1px solid var(--color-base-300);
     cursor: pointer;
     transition: background 0.12s ease;
+}
+
+.maplibregl-ctrl-group button.maplibregl-ctrl-locate {
+    display: flex;
+    width: 30px;
+    height: 30px;
+    align-items: center;
+    justify-content: center;
+}
+
+.maplibregl-ctrl-group button + button {
+    border-top: 0;
 }
 
 .maplibregl-ctrl-group button:last-child {
@@ -397,7 +410,9 @@ html {
 }
 
 /* le bouton "Recentrer" rend une icône lucide (stroke=currentColor) */
-.maplibregl-ctrl-group button .lucide {
+.maplibregl-ctrl-locate .lucide {
+    display: block;
+    flex: none;
     width: 16px;
     height: 16px;
 }
