@@ -23,7 +23,11 @@ const LazyTreatmentScreen = lazyNamedExport(
 
 const NewScreen = () => <AsyncView><LazyNewScreen /></AsyncView>;
 const SettingsScreen = () => <AsyncView><LazySettingsScreen /></AsyncView>;
-const TreatmentScreen = () => <AsyncView><LazyTreatmentScreen /></AsyncView>;
+const TreatmentScreen = () => (
+    <div className='flex h-screen'>
+        <AsyncView><LazyTreatmentScreen /></AsyncView>
+    </div>
+);
 
 const PlanScreen = () => (
     <DetachedViewer>

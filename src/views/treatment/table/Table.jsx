@@ -15,7 +15,7 @@ export function Table() {
     } = useTableController();
 
     return (
-        <div className='relative flex flex-col h-full min-h-0'>
+        <div className='relative flex flex-col flex-1 h-full'>
             <TableToolbar
                 favoriteCount={favoriteCount}
                 onClearFavorites={unfavoriteAll}
