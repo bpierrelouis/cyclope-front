@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { RouterProvider } from 'react-router';
 
@@ -7,9 +7,7 @@ import { BROWSER_ROUTER } from './router';
 import { eventsManager } from './services';
 
 export default function App() {
-    const queryClient = useMemo(() => {
-        return new QueryClient();
-    }, []);
+    const [queryClient] = useState(() => new QueryClient());
 
     useEffect(() => {
         eventsManager.connect(queryClient);

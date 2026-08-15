@@ -1,7 +1,51 @@
 import { createBrowserRouter, Navigate } from 'react-router';
 
+import { AsyncView } from './components';
 import { ERoute } from './constants';
-import { Drawer, Media, MissionListScreen, NewScreen, Plan, SettingsScreen, Table, TreatmentScreen } from './views';
+import { lazyNamedExport } from './utils';
+import { Drawer } from './views/layouts';
+import { MissionListScreen } from './views/missionList';
+import { LazyPlan, LazyTable } from './views/treatment/LazyViewerViews';
+import { Media } from './views/treatment/Media';
+
+const LazyNewScreen = lazyNamedExport(
+    () => import('./views/new/NewScreen'),
+    'NewScreen',
+);
+const LazySettingsScreen = lazyNamedExport(
+    () => import('./views/settings/SettingsScreen'),
+    'SettingsScreen',
+);
+const LazyTreatmentScreen = lazyNamedExport(
+    () => import('./views/treatment/TreatmentScreen'),
+    'TreatmentScreen',
+);
+
+const NewScreen = () => <AsyncView><LazyNewScreen /></AsyncView>;
+const SettingsScreen = () => <AsyncView><LazySettingsScreen /></AsyncView>;
+const TreatmentScreen = () => <AsyncView><LazyTreatmentScreen /></AsyncView>;
+
+const PlanScreen = () => (
+    <DetachedViewer>
+        <AsyncView>
+            <LazyPlan />
+        </AsyncView>
+    </DetachedViewer>
+);
+
+const TableScreen = () => (
+    <DetachedViewer>
+        <AsyncView>
+            <LazyTable />
+        </AsyncView>
+    </DetachedViewer>
+);
+
+const DetachedViewer = ({ children }) => (
+    <main className='flex bg-base-300 w-full h-screen'>
+        {children}
+    </main>
+);
 
 export const BROWSER_ROUTER = createBrowserRouter([
     {
@@ -30,11 +74,11 @@ export const BROWSER_ROUTER = createBrowserRouter([
         path: ERoute.MEDIA,
     },
     {
-        Component: Table,
+        Component: TableScreen,
         path: ERoute.TABLE,
     },
     {
-        Component: Plan,
+        Component: PlanScreen,
         path: ERoute.PLAN,
     },
     {

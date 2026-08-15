@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 
+import { AsyncView } from '../../components';
 import { ERoute } from '../../constants';
 import { useSelectionContext } from '../../contexts';
 import { playerService } from '../../services';
 import { Controls } from './controls';
+import { LazyPlan, LazyTable } from './LazyViewerViews';
 import { Media } from './Media';
-import { Plan } from './plan';
-import { Table } from './table';
 import { TreatmentHeader } from './TreatmentHeader';
 
 export function TreatmentScreen() {
@@ -42,8 +42,10 @@ export function TreatmentScreen() {
 
             <main className='relative flex flex-col flex-1 bg-base-300 min-w-0 min-h-0 overflow-hidden'>
                 <Media hidden={selected !== ERoute.MEDIA} />
-                {selected === ERoute.PLAN && <Plan />}
-                {selected === ERoute.TABLE && <Table />}
+                <AsyncView>
+                    {selected === ERoute.PLAN && <LazyPlan />}
+                    {selected === ERoute.TABLE && <LazyTable />}
+                </AsyncView>
             </main>
 
             {media.isVideo && (
