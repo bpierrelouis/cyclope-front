@@ -1,3 +1,11 @@
+import { sortByKeyPath } from './others';
+
+export const mergeResults = (...collections) => {
+    const byId = new Map();
+    collections.flat().forEach((result) => byId.set(result.id, result));
+    return sortByKeyPath([...byId.values()], 'index');
+};
+
 export const buildLowConfidenceZones = (results, safeDuration) => {
     const sorted = [...(results ?? [])]
         .filter((r) => r.seconds !== null)

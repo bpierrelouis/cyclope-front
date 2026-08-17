@@ -2,12 +2,11 @@ import maplibregl from 'maplibre-gl';
 import { Protocol } from 'pmtiles';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Map, NavigationControl } from 'react-map-gl/maplibre';
-import { useShallow } from 'zustand/react/shallow';
 
 import { Plan as Constants } from '../../../constants';
-import { filesQueries, useOpenState } from '../../../hooks';
-import { usePlayerStore, useThemeStore } from '../../../stores';
-import { buildMapStyle } from '../../../utils';
+import { filesQueries, useOpenState, useResults } from '../../../hooks';
+import { useThemeStore } from '../../../stores';
+import { buildMapStyle, hasValidCoordinates } from '../../../utils';
 import { ResultPopup } from '../ResultPopup';
 import { DroneMarker } from './DroneMarker';
 import { LocateButton } from './LocateButton';
@@ -15,19 +14,19 @@ import { Path } from './Path';
 import { TargetMarker } from './TargetMarker';
 
 export function Plan() {
-    const { results, track } = usePlayerStore(useShallow((state) => ({
-        results: state.results,
-        track: state.track,
-    })));
+    const results = useResults();
     const { data: carto } = filesQueries.useCarto();
     const mapRef = useRef(null);
     const isDark = useThemeStore((state) => state.isDark);
-    const [selectedResult, setSelectedResult] = useState(null);
+    const [selectedResultId, setSelectedResultId] = useState(null);
+    const selectedResult = useMemo(
+        () => results.find((result) => result.id === selectedResultId) ?? null,
+        [results, selectedResultId],
+    );
 
     const handleSelectPoint = useCallback((pointId) => {
-        const result = (results ?? []).find((r) => r.id === pointId);
-        if (result) setSelectedResult(result);
-    }, [results]);
+        setSelectedResultId(pointId);
+    }, []);
 
     useOpenState('isPlanOpen');
 
@@ -45,10 +44,9 @@ export function Plan() {
     }, [carto, isDark]);
 
     const pathBounds = useMemo(() => {
-        const coordinates = (track ?? []).filter(
-            ({ longitude, latitude }) =>
-                Number.isFinite(longitude) && Number.isFinite(latitude),
-        );
+        const coordinates = results
+            .filter(hasValidCoordinates)
+            .map((result) => result.coordinates);
         if (coordinates.length === 0) return null;
 
         const longitudes = coordinates.map(({ longitude }) => longitude);
@@ -57,7 +55,7 @@ export function Plan() {
             [Math.min(...longitudes), Math.min(...latitudes)],
             [Math.max(...longitudes), Math.max(...latitudes)],
         ];
-    }, [track]);
+    }, [results]);
 
     const centerMapToPath = useCallback(() => {
         if (!pathBounds) return;
@@ -89,7 +87,7 @@ export function Plan() {
             {selectedResult && (
                 <ResultPopup
                     result={selectedResult}
-                    dismiss={() => setSelectedResult(null)}
+                    dismiss={() => setSelectedResultId(null)}
                 />
             )}
         </>

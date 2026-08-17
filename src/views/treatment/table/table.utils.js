@@ -2,7 +2,7 @@ import { getTimestamp, suppressExtension } from '../../../utils';
 import { getColumnOptions } from './columnDefs';
 
 const EXPORT_FALLBACK_NAME = 'export';
-const HIDEABLE_COLUMN_IDS = getColumnOptions().map(({ field }) => field);
+const HIDEABLE_COLUMN_IDS = getColumnOptions(true).map(({ id }) => id);
 
 export const DEFAULT_COL_DEF = {
     flex: 1,

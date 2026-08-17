@@ -7,5 +7,6 @@ export * from './plan';
 export * from './react';
 export * from './request';
 export * from './results';
+export * from './timeline';
 export * from './toast';
 export * from './treatment';

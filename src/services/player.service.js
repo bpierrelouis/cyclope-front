@@ -1,7 +1,7 @@
-import { Media, Result, Treatment } from '../models';
 import { usePlayerStore } from '../stores';
 
 const MESSAGE_TYPES = {
+    MASTER_READY: 'MASTER_READY',
     REQUEST_STATE: 'REQUEST_STATE',
     STATE_UPDATE: 'STATE_UPDATE',
 };
@@ -26,8 +26,28 @@ class PlayerService {
                 case MESSAGE_TYPES.STATE_UPDATE:
                     this.setLocalState(message.payload);
                     break;
+
+                case MESSAGE_TYPES.MASTER_READY:
+                    this.handleMasterReady();
+                    break;
             }
         };
+    }
+
+    announceMaster() {
+        playerChannel.postMessage({ type: MESSAGE_TYPES.MASTER_READY });
+    }
+
+    handleMasterReady() {
+        const state = usePlayerStore.getState();
+        if (state.isMaster) return;
+
+        const openViews = {
+            ...(state.isMediaOpen && { isMediaOpen: true }),
+            ...(state.isPlanOpen && { isPlanOpen: true }),
+            ...(state.isTableOpen && { isTableOpen: true }),
+        };
+        if (Object.keys(openViews).length > 0) this.requestState(openViews);
     }
 
     handleRequestState(payload) {
@@ -39,15 +59,16 @@ class PlayerService {
         this.stateUpdate({
             currentTime: state.currentTime,
             duration: state.duration,
-            media: state.media,
-
+            mediaId: state.mediaId,
+            missionId: state.missionId,
             playing: state.playing,
-            results: state.results,
-            treatment: state.treatment,
+            segmentOffset: state.segmentOffset,
+            treatmentId: state.treatmentId,
         });
     }
 
     requestState(payload) {
+        this.setLocalState(payload);
         playerChannel.postMessage({
             payload,
             type: MESSAGE_TYPES.REQUEST_STATE,
@@ -67,27 +88,7 @@ class PlayerService {
     }
 
     setLocalState(payload) {
-        const state = this.mapObjects(payload);
-
-        usePlayerStore
-            .getState()
-            .setStatePartial(state);
-    }
-
-    mapObjects(payload) {
-        const state = { ...payload };
-
-        if (state.media) {
-            state.media = Media.mapper(state.media.meta);
-        }
-        if (state.treatment) {
-            state.treatment = Treatment.mapper(state.treatment.meta);
-        }
-        if (state.results) {
-            state.results = state.results.map((r) => Result.mapper(r.meta));
-        }
-
-        return state;
+        usePlayerStore.setState(payload);
     }
 }
 

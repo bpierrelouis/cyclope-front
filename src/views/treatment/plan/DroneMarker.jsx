@@ -1,21 +1,28 @@
 import { Navigation2Icon } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import {
+    useEffect, useMemo, useRef, useState,
+} from 'react';
 import { Marker, useMap } from 'react-map-gl/maplibre';
 import { useShallow } from 'zustand/react/shallow';
 
 import { Plan } from '../../../constants';
+import { useSelectionContext } from '../../../contexts';
 import { usePlayerStore } from '../../../stores';
-import { interpolatePosition } from '../../../utils';
+import { getTimelinePositions, interpolatePosition } from '../../../utils';
 
 export function DroneMarker() {
-    const { currentTime, playing, track } = usePlayerStore(useShallow((state) => ({
+    const { source } = useSelectionContext();
+    const results = useMemo(
+        () => getTimelinePositions(source),
+        [source],
+    );
+    const { currentTime, playing } = usePlayerStore(useShallow((state) => ({
         currentTime: state.currentTime,
         playing: state.playing,
-        track: state.track,
     })));
     const { current: map } = useMap();
 
-    const [animatedPos, setAnimatedPos] = useState(() => interpolatePosition(track, currentTime));
+    const [animatedPos, setAnimatedPos] = useState(() => interpolatePosition(results, currentTime));
     const [mapBearing, setMapBearing] = useState(0);
 
     const animTimeRef = useRef(currentTime);
@@ -47,16 +54,16 @@ export function DroneMarker() {
             const dt = (now - lastWallRef.current) / 1000;
             lastWallRef.current = now;
             animTimeRef.current += dt;
-            setAnimatedPos(interpolatePosition(track, animTimeRef.current));
+            setAnimatedPos(interpolatePosition(results, animTimeRef.current));
             rafRef.current = requestAnimationFrame(tick);
         };
         rafRef.current = requestAnimationFrame(tick);
         return () => cancelAnimationFrame(rafRef.current);
-    }, [playing, track]);
+    }, [playing, results]);
 
     const pos = playing
         ? animatedPos
-        : interpolatePosition(track, currentTime);
+        : interpolatePosition(results, currentTime);
 
     if (!pos) return null;
 
@@ -68,7 +75,7 @@ export function DroneMarker() {
             style={Plan.MARKER_STYLE}
         >
             <div
-                className='flex justify-center items-center text-primary transition-transform duration-75 pointer-events-none drop-shadow-[0_0_6px_color-mix(in_oklch,var(--color-primary)_55%,transparent)]'
+                className='flex justify-center items-center drop-shadow-[0_0_6px_color-mix(in_oklch,var(--color-primary)_55%,transparent)] text-primary transition-transform duration-75 pointer-events-none'
                 style={{ transform: `rotate(${pos.bearing - mapBearing}deg)` }}
             >
                 <Navigation2Icon color='white' fill='currentColor' />

@@ -63,22 +63,31 @@ Les mots **doit**, **devrait** et **peut** indiquent respectivement une exigence
 ### EF-07 — Sélection et traitement courant
 
 - Les paramètres d’URL `mission`, `media` et `treatment` doivent initialiser la sélection.
-- Si une sélection est incomplète, l’application doit déduire la mission du média, le média du traitement ou sélectionner le premier média disponible.
+- Si une sélection est incomplète, l’application doit déduire la mission du média, le média du traitement ou sélectionner la première vidéo d’une mission.
 - Le dernier traitement connu d’un média doit devenir le traitement courant lorsqu’aucun autre n’est sélectionné.
 
 ### EF-08 — Lecture et synchronisation
 
-- La vue traitement doit synchroniser le média, la lecture, le temps courant, la durée, le traitement et les résultats.
-- La fenêtre principale doit être la source maîtresse ; les fenêtres secondaires doivent demander puis recevoir son état.
-- La synchronisation inter-fenêtres doit utiliser des canaux dédiés et mettre fin aux abonnements lorsqu’une vue se ferme.
+- La fenêtre principale doit être la source maîtresse de la sélection et de l’état de lecture.
+- Une fenêtre secondaire doit demander une seule fois l’état du lecteur à son ouverture.
+- L’état partagé du lecteur doit être limité au contexte de mission, à l’identité et à l’offset du segment courant, à la lecture, au temps global, à la durée et à l’état d’ouverture des vues secondaires.
+- Le média courant doit être résolu depuis le traitement reçu ou, sans traitement, depuis l’identifiant du média de secours, puis chargé par React Query ; les objets média, traitement et les collections de résultats ne doivent pas transiter dans le canal du lecteur.
+- Un changement de mission ou de traitement dans la fenêtre principale doit être poussé aux fenêtres secondaires, qui doivent actualiser leur média, leur tableau et leur plan.
+- Lorsqu’une fenêtre principale est recréée, elle doit annoncer sa disponibilité afin que les fenêtres secondaires encore ouvertes lui retransmettent leur présence.
+- La synchronisation inter-fenêtres doit utiliser des canaux dédiés et signaler la fermeture ou le démontage d’une vue.
 - La vue média doit prendre en charge les images et les vidéos ; la vidéo doit permettre lecture, pause et navigation temporelle.
 
 ### EF-09 — Résultats
 
-- Les résultats du traitement courant doivent arriver par flux et être ordonnés par index.
+- Les caches React Query des traitements consultés doivent être l’unique source des collections de résultats exposées aux vues.
+- Le chargement initial des résultats doit utiliser l’API. Pour la consultation d’un traitement unique, le flux SSE doit ensuite insérer ou remplacer les résultats dans ce même cache.
+- Un résultat reçu pendant le chargement initial ne doit pas être écrasé par un instantané HTTP plus ancien.
+- Les résultats doivent être ordonnés par index.
 - Un résultat reçu avec un identifiant existant doit remplacer sa version précédente.
+- L’échec du chargement d’un traitement doit être signalé sans masquer les résultats des autres segments disponibles.
+- Une modification confirmée par l’API ou reçue par SSE doit être propagée sous forme de résultat unitaire aux caches React Query des autres fenêtres ; la collection complète ne doit pas être diffusée.
 - L’opérateur doit pouvoir consulter une capture avec son index, ses coordonnées, son altitude, sa vitesse et ses détections.
-- Il doit pouvoir modifier les informations éditables et marquer un résultat comme favori ; un échec d’enregistrement doit être signalé.
+- Il doit pouvoir modifier les informations éditables et marquer un résultat comme favori avec une mise à jour optimiste du cache ; un échec d’enregistrement doit restaurer l’état précédent et être signalé.
 - Les types rencontrés dans les résultats doivent être découverts automatiquement et ajoutés au catalogue local sans doublon de nom.
 - Les badges de détection associés à une catégorie doivent reprendre la couleur de cette catégorie.
 
@@ -110,6 +119,9 @@ Les mots **doit**, **devrait** et **peut** indiquent respectivement une exigence
 ## 5. Exigences techniques et qualité
 
 - ET-01 : l’application doit utiliser des composants React fonctionnels et React Query pour l’état serveur.
+- ET-01a : les composants média, plan, tableau et contrôles doivent obtenir les objets serveur depuis React Query et non depuis le store du lecteur.
+- ET-01b : chaque fenêtre possède son propre `QueryClient` ; la synchronisation inter-fenêtres doit alimenter ces caches sans créer une seconde source d’état applicatif.
+- ET-01c : une abstraction de consultation doit porter une règle métier ou agréger plusieurs sources ; un simple alias de propriété du contexte reste local au composant.
 - ET-02 : les échanges HTTP doivent convertir les clés camelCase/snake_case aux frontières de l’API.
 - ET-03 : les réponses non réussies doivent produire une erreur exploitable par la couche appelante ; une réponse vide doit être acceptée.
 - ET-04 : les événements temps réel doivent être fermés lors du démontage ou du changement de traitement.
@@ -130,5 +142,6 @@ Les mots **doit**, **devrait** et **peut** indiquent respectivement une exigence
 | `/api/missions` | liste, lecture, création, modification et suppression |
 | `/api/missions/{id}/medias` | ajout de médias |
 | `/api/medias`, `/api/treatments`, `/api/results` | lecture et opérations CRUD selon les écrans |
+| `/api/results?treatment_id={id}` | instantané initial des résultats d’un traitement |
 | `/api/event` | événements SSE d’état et de progression |
 | `/api/treatments/{id}/results/stream` | résultats SSE d’un traitement |

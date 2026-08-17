@@ -4,42 +4,42 @@ import { Marker } from 'react-map-gl/maplibre';
 import { cn, getMarkerClass } from '../../../utils';
 
 export function Point(props) {
-    const { point, onSelect } = props;
     const {
-        frame, isStart, isEnd, isFavorite,
-    } = point;
+        isEnd, isStart, number, onSelect, result,
+    } = props;
+    const { latitude, longitude } = result.coordinates;
 
-    const markerClass = getMarkerClass(point);
+    const markerClass = getMarkerClass(result, { isEnd, isStart });
     const isWaypoint = !isStart && !isEnd;
-    const baseTitle = isStart ? 'Depart' : isEnd ? 'Arrivee' : `Frame ${frame}`;
-    const title = isFavorite ? `${baseTitle} — Favori` : baseTitle;
+    const baseTitle = isStart ? 'Depart' : isEnd ? 'Arrivee' : `Point ${number}`;
+    const title = result.isFavorite ? `${baseTitle} — Favori` : baseTitle;
 
     return (
         <Marker
-            longitude={point.longitude}
-            latitude={point.latitude}
+            longitude={longitude}
+            latitude={latitude}
             anchor='center'
         >
             <button
                 type='button'
-                className={cn('marker-pin', markerClass, isFavorite && 'is-favorite')}
+                className={cn('marker-pin', markerClass, result.isFavorite && 'is-favorite')}
                 title={title}
                 onClick={(e) => {
                     e.stopPropagation();
-                    onSelect?.(point.id);
+                    onSelect?.(result.id);
                 }}
             >
                 {isWaypoint ? (
                     <>
-                        {isFavorite && (
+                        {result.isFavorite && (
                             <StarIcon className='marker-fav-shape' fill='currentColor' aria-hidden='true' />
                         )}
-                        <span className='marker-label'>{frame}</span>
+                        <span className='marker-label'>{number}</span>
                     </>
                 ) : (
                     <>
                         <span className='marker-core' aria-hidden='true' />
-                        {isFavorite && (
+                        {result.isFavorite && (
                             <span className='marker-fav' aria-hidden='true'>
                                 <StarIcon fill='currentColor' />
                             </span>

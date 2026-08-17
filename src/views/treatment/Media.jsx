@@ -1,23 +1,29 @@
 import { useEffect, useRef } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
-import { filesQueries, useOpenState } from '../../hooks';
+import { useSelectionContext } from '../../contexts';
+import {
+    filesQueries,
+    useCurrentTime,
+    useOpenState,
+} from '../../hooks';
+import { getGlobalTimelineTime } from '../../models';
 import { playerService } from '../../services';
 import { usePlayerStore } from '../../stores';
 import { cn } from '../../utils';
 
 export function Media(props) {
-    const videoRef = useRef();
+    const localVideoRef = useRef(null);
+    const videoRef = props.videoRef ?? localVideoRef;
+    const { activeItem, source } = useSelectionContext();
+    const media = activeItem?.media;
+    const currentTime = useCurrentTime();
 
     const {
         playing,
-        currentTime,
-        media,
         isMaster,
     } = usePlayerStore(useShallow((state) => ({
-        currentTime: state.currentTime,
         isMaster: state.isMaster,
-        media: state.media,
         playing: state.playing,
     })));
 
@@ -34,7 +40,7 @@ export function Media(props) {
         } else {
             video.pause();
         }
-    }, [playing]);
+    }, [media?.id, playing, url, videoRef]);
 
     useEffect(() => {
         const video = videoRef.current;
@@ -43,31 +49,33 @@ export function Media(props) {
         if (Math.abs(video.currentTime - currentTime) > 0.3) {
             video.currentTime = currentTime;
         }
-    }, [currentTime]);
+    }, [currentTime, media?.id, url, videoRef]);
 
-    const handleTimeUpdate = () => {
+    const handleVideoUpdate = (event) => {
         if (!isMaster) return;
 
-        const video = videoRef.current;
+        const video = event.currentTarget;
         playerService.sync({
-            currentTime: video.currentTime,
-            duration: video.duration,
-            media,
+            currentTime: getGlobalTimelineTime(activeItem, video.currentTime),
+            ...(event.type === 'loadedmetadata' && {
+                duration: source.items.length === 1
+                    ? video.duration
+                    : source.duration,
+            }),
         });
     };
 
-    const handleLoadedMetadata = () => {
+    const handleEnded = () => {
         if (!isMaster) return;
 
-        const video = videoRef.current;
-        const duration = video?.duration ?? 0;
-        const loadedCurrentTime = video?.currentTime ?? 0;
+        const nextTime = activeItem.offset + activeItem.duration;
+        if (nextTime < source.duration) {
+            playerService.sync({ currentTime: nextTime });
+            return;
+        }
 
-        playerService.sync({
-            currentTime: loadedCurrentTime,
-            duration,
-            media,
-        });
+        playerService.sync({ currentTime: 0 });
+        if (playing) videoRef.current?.play();
     };
 
     if (!media) return null;
@@ -75,15 +83,15 @@ export function Media(props) {
     return media.isVideo ? (
         <video
             ref={videoRef}
-            // key force le remontage si l'URL change, sinon impossible de capturer l'écran (non secure).
-            key={url}
+            // Force le remontage entre deux segments utilisant éventuellement le même fichier.
+            key={media.id}
             crossOrigin='anonymous'
             className={cn('flex-1 min-h-0 size-full object-contain', props.hidden && 'hidden')}
-            onTimeUpdate={handleTimeUpdate}
-            onLoadedMetadata={handleLoadedMetadata}
+            onEnded={handleEnded}
+            onLoadedMetadata={handleVideoUpdate}
+            onTimeUpdate={handleVideoUpdate}
             src={url}
             muted
-            loop
         />
     ) : (
         <img

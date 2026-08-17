@@ -1,10 +1,14 @@
+import {
+    mediasQueryKeys,
+    missionsQueryKeys,
+    treatmentsQueryKeys,
+} from '../constants';
 import { Media } from '../models';
-import { mediasResourceName, missionsResourceName, treatmentsResourceName } from '../services';
 import { convertKeysFromSnakeToCamelCase } from './request';
 
 const updateMedia = (queryClient, lastTreatmentId, partial) =>
     queryClient.setQueriesData(
-        { queryKey: [mediasResourceName, 'mission'] },
+        { queryKey: mediasQueryKeys.missionLists },
         (old) => old?.map((m) =>
             m.lastTreatmentId === lastTreatmentId ? new Media({ ...m.meta, ...partial }) : m),
     );
@@ -21,8 +25,8 @@ export const handleStatusUpdate = (event, queryClient) => {
         data.treatmentId,
         { lastTreatmentStatus: data.status },
     );
-    queryClient.invalidateQueries({ queryKey: [missionsResourceName] });
-    queryClient.invalidateQueries({ queryKey: [treatmentsResourceName, data.treatmentId] });
+    queryClient.invalidateQueries({ queryKey: missionsQueryKeys.all });
+    queryClient.invalidateQueries({ queryKey: treatmentsQueryKeys.all });
 };
 
 export const handlePercentageUpdate = (event, queryClient) => {
