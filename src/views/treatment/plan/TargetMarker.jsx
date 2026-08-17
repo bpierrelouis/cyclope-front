@@ -1,16 +1,9 @@
 import { Marker } from 'react-map-gl/maplibre';
-import { useShallow } from 'zustand/react/shallow';
 
-import { usePlayerStore } from '../../../stores';
-import { getCurrentResult } from '../../../utils';
+import { useCurrentResult } from '../../../hooks';
 
 export function TargetMarker() {
-    const { currentTime, results } = usePlayerStore(useShallow((state) => ({
-        currentTime: state.currentTime,
-        results: state.results,
-    })));
-
-    const target = getCurrentResult(results, currentTime)?.target;
+    const target = useCurrentResult()?.target;
 
     if (!target) return null;
 

@@ -1,7 +1,6 @@
 import { layers, namedFlavor } from '@protomaps/basemaps';
 
 import { Plan } from '../constants';
-import { sortByKeyPath } from './others';
 
 export const buildMapStyle = (url, isDark) => {
     //'light', 'dark', 'white', 'grayscale', 'black'
@@ -22,33 +21,26 @@ export const buildMapStyle = (url, isDark) => {
     };
 };
 
-export const getMarkerClass = (point) => {
-    if (point.isStart) {
+export const getMarkerClass = (result, { isEnd, isStart }) => {
+    if (isStart) {
         return 'marker-start';
     }
-    if (point.isEnd) {
+    if (isEnd) {
         return 'marker-end';
     }
-    if (point.hasDetection) {
+    if ((result.objects?.length ?? 0) > 0) {
         return 'marker-step marker-detection';
     }
     return 'marker-step';
 };
 
-const pointMapper = (result, index, array) => ({
-    frame: result.index,
-    hasDetection: (result.objects?.length ?? 0) > 0,
-    id: result.id,
-    index,
-    isEnd: index === array.length - 1,
-    isFavorite: result.isFavorite,
-    isStart: index === 0,
-    seconds: result.seconds,
-    ...result.coordinates,
-});
+export const getSequentiallyNumberedResults = (results) => results.map(
+    (result, number) => ({ number, result }),
+);
 
-export const sortAndMapPoints = (results) =>
-    sortByKeyPath(results, 'index').map(pointMapper);
+export const hasValidCoordinates = (result) =>
+    Number.isFinite(result.coordinates?.longitude)
+    && Number.isFinite(result.coordinates?.latitude);
 
 const toRad = (d) => (d * Math.PI) / 180;
 const toDeg = (r) => (r * 180) / Math.PI;
@@ -63,36 +55,39 @@ const bearing = (a, b) => {
     return (toDeg(Math.atan2(y, x)) + 360) % 360;
 };
 
-export const interpolatePosition = (track, time) => {
-    const n = track.length;
+export const interpolatePosition = (results, time) => {
+    const n = results.length;
     if (n === 0) return null;
-    if (n === 1) return { ...track[0], bearing: 0 };
+    if (n === 1) return { ...results[0].coordinates, bearing: 0 };
 
-    if (time <= track[0].seconds) {
+    if (time <= results[0].seconds) {
         return {
-            bearing: bearing(track[0], track[1]),
-            latitude: track[0].latitude,
-            longitude: track[0].longitude,
+            bearing: bearing(results[0].coordinates, results[1].coordinates),
+            ...results[0].coordinates,
         };
     }
-    if (time >= track[n - 1].seconds) {
+    if (time >= results[n - 1].seconds) {
         return {
-            bearing: bearing(track[n - 2], track[n - 1]),
-            latitude: track[n - 1].latitude,
-            longitude: track[n - 1].longitude,
+            bearing: bearing(
+                results[n - 2].coordinates,
+                results[n - 1].coordinates,
+            ),
+            ...results[n - 1].coordinates,
         };
     }
 
     let i = 0;
-    while (i < n - 1 && track[i + 1].seconds <= time) i++;
-    const a = track[i];
-    const b = track[i + 1];
+    while (i < n - 1 && results[i + 1].seconds <= time) i++;
+    const a = results[i];
+    const b = results[i + 1];
     const span = b.seconds - a.seconds;
     const t = span > 0 ? (time - a.seconds) / span : 0;
 
     return {
-        bearing: bearing(a, b),
-        latitude: a.latitude + (b.latitude - a.latitude) * t,
-        longitude: a.longitude + (b.longitude - a.longitude) * t,
+        bearing: bearing(a.coordinates, b.coordinates),
+        latitude: a.coordinates.latitude
+            + (b.coordinates.latitude - a.coordinates.latitude) * t,
+        longitude: a.coordinates.longitude
+            + (b.coordinates.longitude - a.coordinates.longitude) * t,
     };
 };

@@ -12,6 +12,7 @@ export function ProgressBar(props) {
     const ticks = safeDuration > 0
         ? detections.filter((d) => d.seconds <= safeDuration)
         : [];
+    const visibleFreezingZones = safeDuration > 0 ? zonesFreezing : [];
 
     const onRangeChange = (e) => seek(Number(e.target.value));
 
@@ -34,7 +35,7 @@ export function ProgressBar(props) {
                 aria-label='Position de lecture'
                 className='z-10 w-full range range-primary range-xs'
             />
-            {zonesFreezing.map((zone) => (
+            {visibleFreezingZones.map((zone) => (
                 <div
                     key={zone.id}
                     className='cyc-scrub-dead'

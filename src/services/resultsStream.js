@@ -3,25 +3,18 @@ import { parseEvent } from '../utils';
 import { resultsResourceName } from './results.service';
 import { treatmentsResourceName } from './treatments.service';
 
-class ResultsStream {
-    es = null;
-
+export const resultsStream = {
     connect(treatmentId, add) {
-        if (!Number.isInteger(treatmentId)) return;
+        if (!Number.isInteger(treatmentId)) return () => {};
 
         const endpoint = `/api/${treatmentsResourceName}/${treatmentId}/${resultsResourceName}/stream`;
+        const eventSource = new EventSource(endpoint);
 
-        this.es = new EventSource(endpoint);
-
-        this.es.addEventListener(
+        eventSource.addEventListener(
             'treatment_result',
             (event) => add(Result.mapper(parseEvent(event))),
         );
-    }
 
-    disconnect() {
-        this.es?.close();
-    }
-}
-
-export const resultsStream = new ResultsStream();
+        return () => eventSource.close();
+    },
+};

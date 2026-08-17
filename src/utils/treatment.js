@@ -35,3 +35,11 @@ export const getCurrentResult = (results, currentTime) => {
 
     return current ?? results[0];
 };
+
+export const getLatestCompletedTreatment = (treatments = []) => treatments.reduce(
+    (latest, treatment) => treatment.status === 'DONE'
+        && (!latest || treatment.id > latest.id)
+        ? treatment
+        : latest,
+    null,
+);

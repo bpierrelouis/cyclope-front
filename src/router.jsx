@@ -1,11 +1,13 @@
-import { createBrowserRouter, Navigate } from 'react-router';
+import { Navigate, useRoutes } from 'react-router';
 
 import { AsyncView } from './components';
 import { ERoute } from './constants';
 import { lazyNamedExport } from './utils';
 import { Drawer } from './views/layouts';
 import { MissionListScreen } from './views/missionList';
-import { LazyPlan, LazyTable } from './views/treatment/LazyViewerViews';
+import { DetachedViewer } from './views/treatment/DetachedViewer';
+import { LazyPlan } from './views/treatment/LazyPlan';
+import { LazyTable } from './views/treatment/LazyTable';
 import { Media } from './views/treatment/Media';
 
 const LazyNewScreen = lazyNamedExport(
@@ -21,45 +23,15 @@ const LazyTreatmentScreen = lazyNamedExport(
     'TreatmentScreen',
 );
 
-const NewScreen = () => <AsyncView><LazyNewScreen /></AsyncView>;
-const SettingsScreen = () => <AsyncView><LazySettingsScreen /></AsyncView>;
-const TreatmentScreen = () => (
-    <div className='flex h-screen'>
-        <AsyncView><LazyTreatmentScreen /></AsyncView>
-    </div>
-);
-
-const PlanScreen = () => (
-    <DetachedViewer>
-        <AsyncView>
-            <LazyPlan />
-        </AsyncView>
-    </DetachedViewer>
-);
-
-const TableScreen = () => (
-    <DetachedViewer>
-        <AsyncView>
-            <LazyTable />
-        </AsyncView>
-    </DetachedViewer>
-);
-
-const DetachedViewer = ({ children }) => (
-    <main className='flex bg-base-300 w-full h-screen'>
-        {children}
-    </main>
-);
-
-export const BROWSER_ROUTER = createBrowserRouter([
+const routes = [
     {
         children: [
             {
-                Component: SettingsScreen,
+                element: <AsyncView><LazySettingsScreen /></AsyncView>,
                 path: ERoute.SETTINGS,
             },
             {
-                Component: NewScreen,
+                element: <AsyncView><LazyNewScreen /></AsyncView>,
                 path: ERoute.NEW,
             },
             {
@@ -67,7 +39,11 @@ export const BROWSER_ROUTER = createBrowserRouter([
                 path: ERoute.MISSION_LIST,
             },
             {
-                Component: TreatmentScreen,
+                element: (
+                    <div className='flex h-screen'>
+                        <AsyncView><LazyTreatmentScreen /></AsyncView>
+                    </div>
+                ),
                 path: ERoute.TREATMENT,
             },
         ],
@@ -78,15 +54,27 @@ export const BROWSER_ROUTER = createBrowserRouter([
         path: ERoute.MEDIA,
     },
     {
-        Component: TableScreen,
+        element: (
+            <DetachedViewer>
+                <AsyncView><LazyTable /></AsyncView>
+            </DetachedViewer>
+        ),
         path: ERoute.TABLE,
     },
     {
-        Component: PlanScreen,
+        element: (
+            <DetachedViewer>
+                <AsyncView><LazyPlan /></AsyncView>
+            </DetachedViewer>
+        ),
         path: ERoute.PLAN,
     },
     {
         element: (<Navigate to={ERoute.MISSION_LIST} replace />),
         path: '*',
     },
-]);
+];
+
+export function AppRouter() {
+    return useRoutes(routes);
+}

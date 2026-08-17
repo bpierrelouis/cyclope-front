@@ -7,13 +7,18 @@ import { iconSizes } from '../../../constants';
 import { useSelectionContext } from '../../../contexts';
 import { playerService } from '../../../services';
 import { usePlayerStore } from '../../../stores';
-import { buildLowConfidenceZones, cn, formatTime } from '../../../utils';
+import {
+    cn,
+    formatTime,
+    getTimelineDetections,
+    getTimelineFreezingZones,
+} from '../../../utils';
 import { ProgressBar } from './ProgressBar';
 
 const EPSILON = 0.05; // secondes, pour ne pas rester bloqué sur le pipe courant
 
-export function Controls() {
-    const { results } = useSelectionContext();
+export function Controls({ videoRef }) {
+    const { source } = useSelectionContext();
     const {
         playing,
         currentTime,
@@ -28,16 +33,14 @@ export function Controls() {
     const [capture, setCapture] = useState(null);
 
     const safeDuration = Math.max(duration, 0);
-    const zonesFreezing = buildLowConfidenceZones(results, duration);
-
-    // Frames porteuses de détections (objects non vide), avec leur instant en
-    // secondes. Calculées dès que les résultats sont là (au montage), sans
-    // dépendre de la lecture ni de la durée.
-    const detections = useMemo(() => (
-        (results ?? [])
-            .filter((r) => (r.objects?.length ?? 0) > 0 && r.seconds !== null)
-            .sort((a, b) => a.seconds - b.seconds)
-    ), [results]);
+    const detections = useMemo(
+        () => getTimelineDetections(source),
+        [source],
+    );
+    const freezingZones = useMemo(
+        () => getTimelineFreezingZones(source),
+        [source],
+    );
 
     const togglePlaying = () => {
         playerService.sync({ playing: !playing });
@@ -71,7 +74,7 @@ export function Controls() {
 
     // Capture la frame courante de la vidéo.
     const handleCapture = () => {
-        const video = document.querySelector('video');
+        const video = videoRef?.current;
         if (!video?.videoWidth) return;
 
         const canvas = document.createElement('canvas');
@@ -88,24 +91,44 @@ export function Controls() {
     useEffect(() => {
         if (!skipFreezing || !playing) return;
         const t = currentTime;
-        const zone = zonesFreezing.find((z) => t >= z.start && t < z.end);
+        const zone = freezingZones.find((z) => t >= z.start && t < z.end);
         if (!zone) return;
         seek(zone.end);
-    }, [currentTime, playing, seek, skipFreezing, zonesFreezing]);
+    }, [currentTime, freezingZones, playing, seek, skipFreezing]);
 
     return (
         <footer className='flex items-center gap-4 col-span-full bg-base-100 p-4 border-base-300 border-t'>
             <div className='flex items-center gap-2'>
-                <button className='btn btn-square' onClick={goToPrevDetection} disabled={!previousDetection}>
+                <button
+                    type='button'
+                    aria-label='Détection précédente'
+                    className='btn btn-square'
+                    disabled={!previousDetection}
+                    onClick={goToPrevDetection}
+                >
                     <SkipBackIcon size={iconSizes.sm} />
                 </button>
-                <button className='btn btn-square btn-primary' onClick={togglePlaying}>
+                <button
+                    type='button'
+                    aria-label={playing ? 'Mettre en pause' : 'Lire'}
+                    className='btn btn-square btn-primary'
+                    onClick={togglePlaying}
+                >
                     {playing ? <PauseIcon /> : <PlayIcon />}
                 </button>
-                <button className='btn btn-square' onClick={goToNextDetection} disabled={!nextDetection}>
+                <button
+                    type='button'
+                    aria-label='Détection suivante'
+                    className='btn btn-square'
+                    disabled={!nextDetection}
+                    onClick={goToNextDetection}
+                >
                     <SkipForwardIcon size={iconSizes.sm} />
                 </button>
                 <button
+                    type='button'
+                    aria-label='Activer ou désactiver le saut des frames figées'
+                    aria-pressed={skipFreezing}
                     className={cn('tooltip-top btn btn-square tooltip', skipFreezing && 'btn-primary')}
                     onClick={() => setSkipFreezing((enabled) => !enabled)}
                     data-tip='Sauter les frames figées'
@@ -113,6 +136,8 @@ export function Controls() {
                     <SnowflakeIcon size={iconSizes.sm} />
                 </button>
                 <button
+                    type='button'
+                    aria-label='Capturer la frame courante'
                     className='tooltip-top btn btn-square tooltip'
                     onClick={handleCapture}
                     data-tip='Capturer l&#39;écran'
@@ -131,7 +156,7 @@ export function Controls() {
 
             <ProgressBar
                 detections={detections}
-                zonesFreezing={zonesFreezing}
+                zonesFreezing={freezingZones}
                 safeDuration={safeDuration}
                 seek={seek}
             />

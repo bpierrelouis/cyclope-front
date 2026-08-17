@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { usePlayerStore } from '../../../stores';
+import { useResults } from '../../../hooks';
 import { SelectionMenu } from './SelectionMenu';
 
 /**
@@ -10,11 +10,11 @@ import { SelectionMenu } from './SelectionMenu';
 export function DetectionFilter(props) {
     const { model, onModelChange } = props;
 
-    const results = usePlayerStore((state) => state.results);
+    const results = useResults();
     const selectedTypes = useMemo(() => model?.values ?? [], [model]);
 
     const availableTypes = useMemo(() => {
-        const types = (results ?? []).flatMap(
+        const types = results.flatMap(
             (result) => result.objects?.map(({ type }) => type) ?? [],
         );
         return [...new Set(types)].sort();

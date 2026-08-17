@@ -1,20 +1,22 @@
-import { useNavigate } from 'react-router';
+import { useSearchParams } from 'react-router';
 
 import { useSelectionContext } from '../../contexts';
 import { treatmentsQueries } from '../../hooks';
 import { getConfigDescription } from '../../utils';
 
 export function TreatmentSelector() {
-    const { media, treatment } = useSelectionContext();
-    const navigate = useNavigate();
+    const { activeItem } = useSelectionContext();
+    const media = activeItem?.media;
+    const treatment = activeItem?.treatment;
+    const [searchParams, setSearchParams] = useSearchParams();
 
-    const { data: treatments } = treatmentsQueries.useGetAll(
-        new URLSearchParams({ media_id: media?.id }),
-        { enabled: Boolean(media) },
-    );
+    const { data: treatments } = treatmentsQueries.useGetAllByMediaId(media?.id);
 
-    const handleTreatmentChange = (event) =>
-        navigate(`?treatment=${event.target.value}`);
+    const handleTreatmentChange = (event) => {
+        const nextSearchParams = new URLSearchParams(searchParams);
+        nextSearchParams.set('treatment', event.target.value);
+        setSearchParams(nextSearchParams);
+    };
 
     if (!treatment || !treatments) return null;
 
@@ -38,12 +40,6 @@ export function TreatmentSelector() {
                     {getConfigDescription(t.config)}
                 </option>
             ))}
-
-            <option
-                value={1}
-            >
-                autre
-            </option>
         </select>
     );
 }

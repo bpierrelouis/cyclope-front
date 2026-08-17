@@ -1,25 +1,19 @@
 import { handlePercentageUpdate, handleStatusUpdate } from '../utils';
 
-class EventsManager {
-    es = null;
-
+export const eventsManager = {
     connect(queryClient) {
-        this.es = new EventSource('/api/event');
+        const eventSource = new EventSource('/api/event');
 
-        this.es.addEventListener(
+        eventSource.addEventListener(
             'treatment_status',
             (event) => handleStatusUpdate(event, queryClient),
         );
 
-        this.es.addEventListener(
+        eventSource.addEventListener(
             'treatment_percentage',
             (event) => handlePercentageUpdate(event, queryClient),
         );
-    }
 
-    disconnect() {
-        this.es?.close();
-    }
-}
-
-export const eventsManager = new EventsManager();
+        return () => eventSource.close();
+    },
+};

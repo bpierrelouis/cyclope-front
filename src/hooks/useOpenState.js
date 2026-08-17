@@ -10,14 +10,17 @@ export const useOpenState = (property) => {
         if (isMaster) return;
         playerService.requestState({ [property]: true });
 
-        const handleBeforeUnload = () => {
+        const closeView = () => {
             playerService.requestState({ [property]: false });
         };
 
-        window.addEventListener('beforeunload', handleBeforeUnload);
+        window.addEventListener('beforeunload', closeView);
+        window.addEventListener('pagehide', closeView);
 
         return () => {
-            window.removeEventListener('beforeunload', handleBeforeUnload);
+            window.removeEventListener('beforeunload', closeView);
+            window.removeEventListener('pagehide', closeView);
+            closeView();
         };
     }, [isMaster, property]);
 };

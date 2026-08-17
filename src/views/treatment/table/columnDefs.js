@@ -1,5 +1,6 @@
 import { NUMBER_FILTER_OPTIONS, TEXT_FILTER_OPTIONS } from '../../../constants';
 import {
+    formatTimecode,
     getFieldValue,
     isValidLatitude,
     isValidLongitude,
@@ -81,7 +82,7 @@ const measurementColumn = ({
  */
 const FAVORITE_COLUMN = {
     cellRenderer: FavoriteCell,
-    context: { isControlColumn: true },
+    context: { isControlColumn: true, suppressRowNavigation: true },
     editable: false,
     field: 'isFavorite',
     filter: {
@@ -100,11 +101,22 @@ const FAVORITE_COLUMN = {
 };
 
 
-export const getColumnDefs = (onImageClick) => [
+export const getColumnDefs = (
+    onImageClick,
+    timelineResultsById = new Map(),
+    isMission = false,
+) => [
     FAVORITE_COLUMN,
+    ...(isMission ? [{
+        editable: false,
+        field: 'mediaName',
+        headerName: 'Vidéo',
+        valueGetter: ({ data }) => timelineResultsById.get(data.id)?.media.name,
+    }] : []),
     {
         cellRenderer: FrameCell,
         cellRendererParams: { onClick: onImageClick },
+        context: { suppressRowNavigation: true },
         editable: false,
         field: 'url',
         headerName: 'Image',
@@ -117,10 +129,16 @@ export const getColumnDefs = (onImageClick) => [
         headerName: 'Frame',
     },
     {
+        colId: 'timecode',
         editable: false,
-        field: 'timecode',
         ...TEXT_FILTER,
+        filterValueGetter: ({ data }) => {
+            const globalTime = timelineResultsById.get(data.id)?.globalTime;
+            return globalTime == null ? null : formatTimecode(globalTime);
+        },
         headerName: 'Timecode',
+        valueFormatter: ({ value }) => value === null ? '—' : formatTimecode(value),
+        valueGetter: ({ data }) => timelineResultsById.get(data.id)?.globalTime ?? null,
     },
     {
         field: 'coordinates.latitude',
@@ -184,7 +202,7 @@ export const getColumnDefs = (onImageClick) => [
 ];
 
 
-export const getColumnOptions = () =>
-    getColumnDefs()
+export const getColumnOptions = (isMission = false) =>
+    getColumnDefs(undefined, undefined, isMission)
         .filter(({ context }) => !context?.isControlColumn)
-        .map(({ field, headerName }) => ({ field, headerName }));
+        .map(({ colId, field, headerName }) => ({ headerName, id: colId ?? field }));

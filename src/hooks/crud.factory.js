@@ -1,16 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-export const createCrudQueries = (resource, service, options = {}) => {
+export const createCrudQueries = (service, queryKeys, options = {}) => {
     const useGetAll = (urlSearchParams, queryOptions) => useQuery({
         queryFn: () => service.getAll(urlSearchParams),
-        queryKey: urlSearchParams ? [resource, urlSearchParams.toString()] : [resource],
+        queryKey: queryKeys.list(urlSearchParams?.toString()),
         ...queryOptions,
     });
 
     const useGetById = (id) => useQuery({
         enabled: !!Number(id),
         queryFn: () => service.getById(id),
-        queryKey: [resource, id],
+        queryKey: queryKeys.detail(id),
     });
 
     const useCreate = () => {
@@ -18,7 +18,7 @@ export const createCrudQueries = (resource, service, options = {}) => {
 
         return useMutation({
             mutationFn: service.create,
-            onSuccess: () => qc.invalidateQueries({ queryKey: [resource] }),
+            onSuccess: () => qc.invalidateQueries({ queryKey: queryKeys.lists }),
         });
     };
 
@@ -32,8 +32,8 @@ export const createCrudQueries = (resource, service, options = {}) => {
             onMutate: options.update?.onMutate,
             onSuccess: (updated, variables, context) => {
                 const { id } = variables;
-                qc.invalidateQueries({ queryKey: [resource] });
-                qc.invalidateQueries({ queryKey: [resource, id] });
+                qc.invalidateQueries({ queryKey: queryKeys.lists });
+                qc.invalidateQueries({ queryKey: queryKeys.detail(id) });
                 options.update?.onSuccess?.(updated, variables, context);
             },
         });
@@ -44,7 +44,10 @@ export const createCrudQueries = (resource, service, options = {}) => {
 
         return useMutation({
             mutationFn: service.remove,
-            onSuccess: () => qc.invalidateQueries({ queryKey: [resource] }),
+            onSuccess: (_data, id) => {
+                qc.removeQueries({ queryKey: queryKeys.detail(id) });
+                qc.invalidateQueries({ queryKey: queryKeys.lists });
+            },
         });
     };
 

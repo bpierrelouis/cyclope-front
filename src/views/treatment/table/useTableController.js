@@ -2,19 +2,34 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
 import { NOTIFICATION_LABELS } from '../../../constants';
-import { resultsQueries, useOpenState } from '../../../hooks';
-import { tableService } from '../../../services';
-import { usePlayerStore, useTableStore } from '../../../stores';
-import { getCurrentResult, openErrorToast, openSuccessToast } from '../../../utils';
+import { useSelectionContext } from '../../../contexts';
+import {
+    resultsQueries,
+    useCurrentResult,
+    useOpenState,
+    useResults,
+} from '../../../hooks';
+import { playerService, tableService } from '../../../services';
+import { useTableStore } from '../../../stores';
+import {
+    getTimelineResultsById,
+    openErrorToast,
+    openSuccessToast,
+} from '../../../utils';
 import { getColumnDefs } from './columnDefs';
 import { applyColumnVisibility, getChangedRowNodes, getExportParams, prepareResultPatch } from './table.utils';
 
 export const useTableController = () => {
-    const { media, results, currentTime } = usePlayerStore(useShallow((state) => ({
-        currentTime: state.currentTime,
-        media: state.media,
-        results: state.results,
-    })));
+    const {
+        activeItem, isMission, mission, source,
+    } = useSelectionContext();
+    const media = activeItem?.media;
+    const currentResult = useCurrentResult();
+    const results = useResults();
+    const timelineResultsById = useMemo(
+        () => getTimelineResultsById(source),
+        [source],
+    );
     const { hiddenColumnIds, filterModel } = useTableStore(useShallow((state) => ({
         filterModel: state.filterModel,
         hiddenColumnIds: state.hiddenColumnIds,
@@ -25,14 +40,14 @@ export const useTableController = () => {
     const currentResultIdRef = useRef(null);
 
     const favoriteResults = useMemo(
-        () => (results ?? []).filter((result) => result.isFavorite),
+        () => results.filter((result) => result.isFavorite),
         [results],
     );
-    const currentResultId = useMemo(
-        () => getCurrentResult(results, currentTime)?.id ?? null,
-        [results, currentTime],
+    const currentResultId = currentResult?.id ?? null;
+    const columnDefs = useMemo(
+        () => getColumnDefs(setSelected, timelineResultsById, isMission),
+        [isMission, timelineResultsById],
     );
-    const columnDefs = useMemo(() => getColumnDefs(setSelected), []);
 
     const clearFavoriteFilter = useCallback(async () => {
         const api = gridRef.current?.api;
@@ -80,10 +95,19 @@ export const useTableController = () => {
         [],
     );
 
+    const navigateToResult = useCallback(({ column, data }) => {
+        const suppressNavigation = column
+            ?.getColDef().context?.suppressRowNavigation;
+        const timelineResult = timelineResultsById.get(data.id);
+        if (suppressNavigation || timelineResult?.globalTime == null) return;
+        playerService.sync({ currentTime: timelineResult.globalTime, playing: false });
+    }, [timelineResultsById]);
+
     const exportCsv = useCallback(() => {
         const api = gridRef.current?.api;
-        if (api) api.exportDataAsCsv(getExportParams(api, media?.name));
-    }, [media?.name]);
+        const sourceName = isMission ? mission?.name : media?.name;
+        if (api) api.exportDataAsCsv(getExportParams(api, sourceName));
+    }, [isMission, media?.name, mission?.name]);
 
     useEffect(() => {
         const api = gridRef.current?.api;
@@ -125,11 +149,12 @@ export const useTableController = () => {
             columnDefs,
             getRowClass,
             gridRef,
+            onCellClicked: navigateToResult,
             onCellEditRequest: saveResult,
             onFilterChanged: syncFilterModel,
             onGridReady,
             readOnlyEdit: true,
-            rowData: results ?? [],
+            rowData: results,
         },
         selected,
         unfavoriteAll,

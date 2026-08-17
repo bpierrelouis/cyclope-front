@@ -2,22 +2,26 @@ import { Columns3Icon } from 'lucide-react';
 import { useShallow } from 'zustand/react/shallow';
 
 import { iconSizes } from '../../../constants';
+import { useSelectionContext } from '../../../contexts';
 import { useTableStore } from '../../../stores';
 import { getColumnOptions } from './columnDefs';
 import { SelectionMenu } from './SelectionMenu';
 
-const COLUMN_OPTIONS = getColumnOptions().map(({ field, headerName }) => ({
-    label: headerName,
-    value: field,
-}));
-
 // Menu de visibilité des colonnes.
 export function ColumnsMenu() {
+    const { isMission } = useSelectionContext();
     const { hiddenColumnIds, toggleColumn, showAllColumns } = useTableStore(useShallow((state) => ({
         hiddenColumnIds: state.hiddenColumnIds,
         showAllColumns: state.showAllColumns,
         toggleColumn: state.toggleColumn,
     })));
+    const columnOptions = getColumnOptions(isMission).map(({ id, headerName }) => ({
+        label: headerName,
+        value: id,
+    }));
+    const hiddenColumnCount = columnOptions.filter(
+        ({ value }) => hiddenColumnIds.includes(value),
+    ).length;
 
     return (
         <div className='dropdown-bottom dropdown'>
@@ -28,8 +32,8 @@ export function ColumnsMenu() {
             >
                 <Columns3Icon size={iconSizes.sm} />
                 Colonnes
-                {hiddenColumnIds.length > 0 && (
-                    <span className='badge badge-sm'>{hiddenColumnIds.length}</span>
+                {hiddenColumnCount > 0 && (
+                    <span className='badge badge-sm'>{hiddenColumnCount}</span>
                 )}
             </button>
 
@@ -38,8 +42,8 @@ export function ColumnsMenu() {
                 className='z-30 shadow-lg mt-2 border border-base-300 rounded-box w-52 dropdown-content'
             >
                 <SelectionMenu
-                    options={COLUMN_OPTIONS}
-                    selectedValues={COLUMN_OPTIONS
+                    options={columnOptions}
+                    selectedValues={columnOptions
                         .map(({ value }) => value)
                         .filter((value) => !hiddenColumnIds.includes(value))}
                     onToggle={toggleColumn}

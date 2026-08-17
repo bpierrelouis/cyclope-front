@@ -1,47 +1,63 @@
-import { useEffect, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { AsyncView } from '../../components';
 import { ERoute } from '../../constants';
 import { useSelectionContext } from '../../contexts';
-import { playerService } from '../../services';
+import { usePlayerSource } from '../../hooks';
 import { Controls } from './controls';
-import { LazyPlan, LazyTable } from './LazyViewerViews';
+import { LazyPlan } from './LazyPlan';
+import { LazyTable } from './LazyTable';
 import { Media } from './Media';
 import { TreatmentHeader } from './TreatmentHeader';
+import { ViewerMessage } from './ViewerMessage';
 
 export function TreatmentScreen() {
-    const { media, treatment, results } = useSelectionContext();
+    const {
+        activeItem, error, isLoading, isMission, source,
+    } = useSelectionContext();
+    const media = activeItem?.media;
+    const videoRef = useRef(null);
     const [selected, setSelected] = useState(ERoute.MEDIA);
 
-    useEffect(() => {
-        playerService.setLocalState({
-            isMaster: true,
-        });
-    }, []);
+    usePlayerSource();
 
-    useEffect(() => {
-        playerService.sync({
-            media,
-            playing: false,
-        });
-    }, [media]);
+    if (error) {
+        return (
+            <ViewerMessage
+                role='alert'
+                title='Impossible de charger la consultation'
+            >
+                {error.message}
+            </ViewerMessage>
+        );
+    }
 
-    useEffect(() => {
-        playerService.sync({ treatment });
-    }, [treatment]);
+    if (isLoading) {
+        return (
+            <ViewerMessage title='Chargement de la consultation…' />
+        );
+    }
 
-    useEffect(() => {
-        playerService.sync({ results });
-    }, [results]);
-
-    if (!media) return null;
+    if (!media) {
+        return (
+            <ViewerMessage title={isMission
+                ? 'Cette mission ne contient aucune vidéo consultable.'
+                : 'Aucun média sélectionné.'} />
+        );
+    }
 
     return (
         <div className='flex flex-col bg-base-200 w-full h-screen'>
             <TreatmentHeader state={[selected, setSelected]} />
 
+            {source.errors.length > 0 && (
+                <div className='rounded-none alert alert-warning' role='status'>
+                    Certains résultats n’ont pas pu être chargés. Les segments disponibles restent consultables.
+                </div>
+            )}
+
             <main className='relative flex flex-col flex-1 bg-base-300 min-w-0 min-h-0 overflow-hidden'>
-                <Media hidden={selected !== ERoute.MEDIA} />
+                <Media hidden={selected !== ERoute.MEDIA} videoRef={videoRef} />
                 <AsyncView>
                     {selected === ERoute.PLAN && <LazyPlan />}
                     {selected === ERoute.TABLE && <LazyTable />}
@@ -49,7 +65,7 @@ export function TreatmentScreen() {
             </main>
 
             {media.isVideo && (
-                <Controls />
+                <Controls videoRef={videoRef} />
             )}
 
         </div>

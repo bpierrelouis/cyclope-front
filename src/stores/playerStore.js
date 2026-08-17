@@ -1,8 +1,6 @@
 import { create } from 'zustand';
 
-import { sortAndMapPoints } from '../utils';
-
-export const usePlayerStore = create((set) => ({
+export const usePlayerStore = create(() => ({
     currentTime: 0,
     duration: 0,
     isMaster: false,
@@ -10,21 +8,11 @@ export const usePlayerStore = create((set) => ({
     isMediaOpen: false,
     isPlanOpen: false,
     isTableOpen: false,
-    media: null,
 
+    mediaId: null,
+    missionId: null,
     playing: false,
+    segmentOffset: 0,
 
-    results: [],
-    setStatePartial: (data) =>
-        set((state) => {
-            const newState = {
-                ...state,
-                ...data,
-            };
-            newState.track = sortAndMapPoints(newState.results);
-            return newState;
-        }),
-    track: [],
-
-    treatment: null,
+    treatmentId: null,
 }));

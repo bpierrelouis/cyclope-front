@@ -1,16 +1,38 @@
+import {
+    useMutation,
+    useQueries,
+    useQuery,
+    useQueryClient,
+} from '@tanstack/react-query';
+
+import { resultsQueryKeys } from '../constants';
 import { Result } from '../models';
-import { playerService, resultsResourceName, resultsService } from '../services';
-import { usePlayerStore } from '../stores';
+import { resultsService, resultsSyncService } from '../services';
+import { mergeResults } from '../utils';
 import { createCrudQueries } from './crud.factory';
 
-const resource = resultsResourceName;
 const service = resultsService;
 
-const replaceResult = (id, replacement) => {
-    const results = usePlayerStore.getState().results.map(
-        (result) => result.id === id ? replacement : result,
-    );
-    playerService.sync({ results });
+const getTreatmentResultsQueryOptions = (
+    treatmentId,
+    queryClient,
+    disabledQueryId,
+) => {
+    const queryKey = Number.isInteger(treatmentId)
+        ? resultsQueryKeys.byTreatment(treatmentId)
+        : resultsQueryKeys.disabledTreatment(disabledQueryId);
+
+    return {
+        enabled: Number.isInteger(treatmentId),
+        queryFn: async () => {
+            const snapshot = await service.getAll(
+                new URLSearchParams({ treatment_id: treatmentId }),
+            );
+            const streamed = queryClient.getQueryData(queryKey) ?? [];
+            return mergeResults(snapshot, streamed);
+        },
+        queryKey,
+    };
 };
 
 const applyPatch = (result, data) => Result.mapper({
@@ -21,22 +43,70 @@ const applyPatch = (result, data) => Result.mapper({
         : result.data,
 });
 
-const queries = createCrudQueries(resource, service, {
-    update: {
-        onError: (_error, { id }, context) => {
-            if (context?.previous) replaceResult(id, context.previous);
-        },
-        onMutate: ({ id, data }) => {
-            const previous = usePlayerStore.getState().results.find(
-                (result) => result.id === id,
-            );
-            if (!previous) return;
+const replaceResult = (queryClient, id, replacement) => {
+    queryClient.setQueriesData({ queryKey: resultsQueryKeys.all }, (data) => {
+        if (Array.isArray(data)) {
+            return data.map((result) => result.id === id ? replacement : result);
+        }
+        return data?.id === id ? replacement : data;
+    });
+};
 
-            replaceResult(id, applyPatch(previous, data));
-            return { previous };
-        },
-        onSuccess: (updated) => replaceResult(updated.id, updated),
-    },
-});
+const findCachedResult = (queryClient, id) => {
+    const entries = queryClient.getQueriesData({ queryKey: resultsQueryKeys.all });
+    for (const [, data] of entries) {
+        if (Array.isArray(data)) {
+            const result = data.find((item) => item.id === id);
+            if (result) return result;
+        } else if (data?.id === id) {
+            return data;
+        }
+    }
+};
 
-export const resultsQueries = queries;
+const useGetAllByTreatmentId = (treatmentId) => {
+    const queryClient = useQueryClient();
+
+    return useQuery(getTreatmentResultsQueryOptions(treatmentId, queryClient));
+};
+
+const useGetAllByTreatmentIds = (treatmentIds) => {
+    const queryClient = useQueryClient();
+
+    return useQueries({
+        queries: treatmentIds.map((treatmentId, index) =>
+            getTreatmentResultsQueryOptions(treatmentId, queryClient, index)),
+    });
+};
+
+const useUpdate = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: ({ data, id }) => service.update({ data, id }),
+        onError: (_error, _variables, context) => {
+            context?.snapshots.forEach(([queryKey, data]) => {
+                queryClient.setQueryData(queryKey, data);
+            });
+        },
+        onMutate: async ({ data, id }) => {
+            await queryClient.cancelQueries({ queryKey: resultsQueryKeys.all });
+            const snapshots = queryClient.getQueriesData({ queryKey: resultsQueryKeys.all });
+            const previous = findCachedResult(queryClient, id);
+
+            if (previous) replaceResult(queryClient, id, applyPatch(previous, data));
+            return { snapshots };
+        },
+        onSuccess: (updated) => {
+            replaceResult(queryClient, updated.id, updated);
+            resultsSyncService.publish(updated);
+        },
+    });
+};
+
+export const resultsQueries = {
+    ...createCrudQueries(service, resultsQueryKeys),
+    useGetAllByTreatmentId,
+    useGetAllByTreatmentIds,
+    useUpdate,
+};

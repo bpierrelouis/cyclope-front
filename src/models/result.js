@@ -3,7 +3,6 @@ import { parseTimecode } from '../utils';
 export class Result {
     constructor(data) {
         this.meta = data;
-        this.seconds = parseTimecode(data.responseJson.timestamp);
     }
 
     static mapper(data) {
@@ -12,6 +11,10 @@ export class Result {
 
     get id() {
         return this.meta.id;
+    }
+
+    get treatmentId() {
+        return this.meta.treatmentId;
     }
 
     get url() {
@@ -23,7 +26,7 @@ export class Result {
     }
 
     get data() {
-        return this.meta.responseJson;
+        return this.meta.responseJson ?? {};
     }
 
     get isFavorite() {
@@ -36,8 +39,8 @@ export class Result {
         return `${altitude.value} ${altitude.unit}`;
     }
 
-    get timecode() {
-        return this.data.timestamp?.split('.')[0];
+    get seconds() {
+        return parseTimecode(this.data.timestamp);
     }
 
     get speedLabel() {
@@ -48,17 +51,21 @@ export class Result {
 
 
     get objects() {
-        return this.data.objects;
+        return this.data.objects ?? [];
     }
 
     get coordinates() {
-        const { longitude, latitude } = this.data.acft;
-        return { latitude, longitude };
+        const { latitude, longitude } = this.data.acft ?? {};
+        return Number.isFinite(latitude) && Number.isFinite(longitude)
+            ? { latitude, longitude }
+            : null;
     }
 
     get target() {
-        const { longitude, latitude } = this.data.tgt;
-        return { latitude, longitude };
+        const { latitude, longitude } = this.data.tgt ?? {};
+        return Number.isFinite(latitude) && Number.isFinite(longitude)
+            ? { latitude, longitude }
+            : null;
     }
 
     get isFreezing() {
