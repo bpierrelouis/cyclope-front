@@ -4,6 +4,7 @@ import { useShallow } from 'zustand/react/shallow';
 
 import { ConfigurationCard } from '../../components';
 import { useDetectionCatalogStore } from '../../stores';
+import { getDetectionBackgroundStyle, getDetectionColor } from '../../utils';
 import { SettingsCardHeader } from './SettingsCardHeader';
 
 const DEFAULT_COLOR = '#3b82f6';
@@ -139,12 +140,13 @@ export function DetectionCategoriesSettings() {
                     </p>
                 )}
                 {sortedDetections.map((detection) => {
-                    const category = categories.find((item) => item.id === detection.categoryId);
                     return (
                         <div key={detection.name} className='flex items-center gap-2 hover:bg-base-200 p-2 rounded-box'>
                             <span
                                 className='rounded-full w-3 h-3 shrink-0'
-                                style={{ backgroundColor: category?.color ?? 'var(--color-base-300)' }}
+                                style={getDetectionBackgroundStyle(
+                                    getDetectionColor(detection.name, detections, categories),
+                                )}
                             />
                             <span className='flex-1 min-w-0 font-medium truncate'>{detection.name}</span>
                             <select

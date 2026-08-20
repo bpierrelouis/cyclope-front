@@ -3,11 +3,11 @@ import { Protocol } from 'pmtiles';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Map, NavigationControl } from 'react-map-gl/maplibre';
 
+import { ResultPopup } from '../../../components';
 import { Plan as Constants } from '../../../constants';
 import { filesQueries, useOpenState, useResults } from '../../../hooks';
 import { useThemeStore } from '../../../stores';
 import { buildMapStyle, hasValidCoordinates } from '../../../utils';
-import { ResultPopup } from '../ResultPopup';
 import { DroneMarker } from './DroneMarker';
 import { LocateButton } from './LocateButton';
 import { Path } from './Path';

@@ -115,7 +115,7 @@ export const getColumnDefs = (
     }] : []),
     {
         cellRenderer: FrameCell,
-        cellRendererParams: { onClick: onImageClick },
+        cellRendererParams: { onClick: onImageClick, timelineResultsById },
         context: { suppressRowNavigation: true },
         editable: false,
         field: 'url',
