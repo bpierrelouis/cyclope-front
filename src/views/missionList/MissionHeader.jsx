@@ -77,10 +77,12 @@ export function MissionHeader(props) {
                 </div>
             </Link>
 
-            <DeleteMissionPopup
-                mission={mission}
-                openState={[isModalOpen, setIsModalOpen]}
-            />
+            {isModalOpen && (
+                <DeleteMissionPopup
+                    mission={mission}
+                    onClose={() => setIsModalOpen(false)}
+                />
+            )}
         </>
     );
 }

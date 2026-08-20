@@ -7,19 +7,23 @@ import { ERoute } from '../../constants';
 import { filesQueries, missionsQueries } from '../../hooks';
 import { useMissionCreationStore } from '../../stores';
 import { flatTree, openErrorToast } from '../../utils';
-import { FileTree } from './fileTree';
+import { MediaFileTree } from './MediaFileTree';
 import { WaitingZone } from './waitingZone';
 
 export function NewScreen() {
     const navigate = useNavigate();
 
-    const { data: fileNodes, isLoading } = filesQueries.useGetTree();
+    const { data: fileNodes = [], isLoading } = filesQueries.useGetTreeMedia();
     const { mutateAsync: createMission, isPending: isCreating } = missionsQueries.useCreate();
     const { mutateAsync: addMedias, isPending: isAdding } = missionsQueries.useAddMedias();
-    const { mutateAsync: uploadFiles, isPending: isUploading } = filesQueries.useUploadFiles();
+    const isUploading = filesQueries.useIsUploadingMedias();
 
     const {
-        fileIds, configs, missionId, missionName, setMissionName, selectMany, reset,
+        configs,
+        fileIds,
+        missionId,
+        missionName,
+        reset,
     } =
         useMissionCreationStore(useShallow((state) => ({
             configs: state.configs,
@@ -27,20 +31,13 @@ export function NewScreen() {
             missionId: state.missionId,
             missionName: state.missionName,
             reset: state.reset,
-            selectMany: state.selectMany,
-            setMissionName: state.setMissionName,
         })));
 
     useEffect(() => reset, [reset]);
 
     const isAddingMode = Number.isInteger(missionId);
 
-    const safeFileNodes = useMemo(
-        () => (Array.isArray(fileNodes) ? fileNodes : []),
-        [fileNodes],
-    );
-
-    const flattenedFileNodes = useMemo(() => flatTree(safeFileNodes), [safeFileNodes]);
+    const flattenedFileNodes = useMemo(() => flatTree(fileNodes), [fileNodes]);
     const files = useMemo(() => {
         return flattenedFileNodes.filter((file) => fileIds.has(file.id));
     }, [flattenedFileNodes, fileIds]);
@@ -48,7 +45,7 @@ export function NewScreen() {
     const isPending = isCreating || isAdding;
     const canValidate = isAddingMode
         ? Number.isInteger(missionId) && files.length > 0
-        : !!missionName.trim();
+        : !!missionName.trim() && files.length > 0;
 
     const handleValidate = async () => {
         const medias = files.map((file) => ({
@@ -72,18 +69,6 @@ export function NewScreen() {
         navigate(ERoute.MISSION_LIST);
     };
 
-    // Dossier déposé sur l'explorateur : upload des fichiers dans le S3 puis pré-remplissage de la zone de création
-    const handleDropFolder = async (droppedFolder, targetPath) => {
-        const createdFiles = await uploadFiles({
-            files: droppedFolder.files,
-            folder: targetPath ? `${targetPath}/${droppedFolder.name}` : droppedFolder.name,
-        });
-        if (!createdFiles.length) return;
-
-        if (!missionName.trim()) setMissionName(droppedFolder.name);
-        selectMany(createdFiles);
-    };
-
     if (isLoading) {
         return (
             <main className='place-items-center grid size-full'>
@@ -100,21 +85,20 @@ export function NewScreen() {
                     l'explorateur.
                 </p>
                 <button
+                    type='button'
                     className='btn btn-primary'
                     disabled={!canValidate || isPending || isUploading}
                     onClick={handleValidate}
                 >
-                    {isPending && <LoaderCircleIcon className='size-4 animate-spin' />}
+                    {(isPending || isUploading) && (
+                        <LoaderCircleIcon className='size-4 animate-spin' />
+                    )}
                     Lancer le traitement
                 </button>
             </div>
 
             <div className='flex-1 gap-4 grid grid-cols-1 md:grid-cols-2 min-h-0'>
-                <FileTree
-                    nodes={safeFileNodes}
-                    onDropToFolder={uploadFiles}
-                    onDropFolder={handleDropFolder}
-                />
+                <MediaFileTree />
                 <WaitingZone files={files} />
             </div>
         </main>

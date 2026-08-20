@@ -1,12 +1,10 @@
 import { useState } from 'react';
 
-import { useMissionCreationStore } from '../stores';
 import { parseDroppedItems } from '../utils';
 
 export const useFileDrop = ({
-    path, onDropToFolder, onDropFolder, onDropStart,
+    path, onDropError, onDropToFolder, onDropFolder, onDropStart, onTargetPathChange,
 }) => {
-    const setUploadFolder = useMissionCreationStore((state) => state.setUploadFolder);
     const [isDragOver, setIsDragOver] = useState(false);
 
     const hasFiles = (event) =>
@@ -31,21 +29,28 @@ export const useFileDrop = ({
         event.stopPropagation();
         setIsDragOver(false);
 
-        const { rootFiles, folders } = await parseDroppedItems(event.dataTransfer);
-        if (!rootFiles.length && !folders.length) return;
+        try {
+            const { rootFiles, folders } = await parseDroppedItems(event.dataTransfer);
+            if (!rootFiles.length && !folders.length) return;
 
-        setUploadFolder(path);
-        onDropStart?.();
+            onTargetPathChange?.(path);
+            onDropStart?.();
 
-        if (rootFiles.length) {
-            await onDropToFolder?.({
-                files: rootFiles,
-                folder: path,
-            });
-        }
+            if (rootFiles.length) {
+                await onDropToFolder?.({
+                    files: rootFiles,
+                    folder: path,
+                });
+            }
 
-        for (const droppedFolder of folders) {
-            await onDropFolder?.(droppedFolder, path);
+            for (const droppedFolder of folders) {
+                await onDropFolder?.({
+                    ...droppedFolder,
+                    folder: path,
+                });
+            }
+        } catch (error) {
+            onDropError?.(error);
         }
     };
 

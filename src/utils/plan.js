@@ -2,8 +2,7 @@ import { layers, namedFlavor } from '@protomaps/basemaps';
 
 import { Plan } from '../constants';
 
-export const buildMapStyle = (url, isDark) => {
-    //'light', 'dark', 'white', 'grayscale', 'black'
+export const buildPmtilesStyle = (cartoPath, isDark) => {
     const theme = namedFlavor(isDark ? 'dark' : 'light');
 
     return {
@@ -13,13 +12,76 @@ export const buildMapStyle = (url, isDark) => {
             protomaps: {
                 minzoom: Plan.MIN_ZOOM,
                 type: 'vector',
-                url: `pmtiles://${url}`,
+                url: `pmtiles://${cartoPath}`,
             },
         },
         sprite: Plan.SPRITE_URL,
         version: 8,
     };
 };
+
+export const buildGeoJsonStyle = (cartoPath) => ({
+    layers: [
+        {
+            id: 'geojson-fill',
+            paint: {
+                'fill-color': '#3388ff',
+                'fill-opacity': 0.4,
+            },
+            source: 'geojson',
+            type: 'fill',
+        },
+        {
+            id: 'geojson-line',
+            paint: {
+                'line-color': '#0000ff',
+                'line-width': 2,
+            },
+            source: 'geojson',
+            type: 'line',
+        },
+        {
+            id: 'geojson-points',
+            paint: {
+                'circle-color': '#3388ff',
+                'circle-radius': 5,
+                'circle-stroke-color': '#ffffff',
+                'circle-stroke-width': 1,
+            },
+            source: 'geojson',
+            type: 'circle',
+        },
+    ],
+    sources: {
+        geojson: {
+            data: cartoPath,
+            type: 'geojson',
+        },
+    },
+    version: 8,
+});
+
+export const buildXyzStyle = (url) => ({
+    layers: [
+        {
+            id: 'background',
+            source: 'raster',
+            type: 'raster',
+        },
+    ],
+
+    sources: {
+        raster: {
+            tiles: [
+                `${url}/{z}/{x}/{y}.png`,
+            ],
+            tileSize: 256,
+            type: 'raster',
+        },
+    },
+
+    version: 8,
+});
 
 export const getMarkerClass = (result, { isEnd, isStart }) => {
     if (isStart) {

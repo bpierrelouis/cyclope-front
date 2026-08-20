@@ -2,6 +2,7 @@ import { Link } from 'react-router';
 
 import { MediaIcon } from '../../components';
 import { ERoute } from '../../constants';
+import { cn } from '../../utils';
 
 export function MissionMediaListItem(props) {
     const { media } = props;
@@ -20,7 +21,10 @@ export function MissionMediaListItem(props) {
                     pathname: ERoute.TREATMENT,
                     search: `?media=${media.id}`,
                 }}
-                className={`flex items-center gap-3 p-3 min-w-0 w-full hover:bg-base-200 ${color}`}
+                className={cn(
+                    'flex items-center gap-3 p-3 min-w-0 w-full hover:bg-base-200',
+                    color,
+                )}
             >
                 <MediaIcon isVideo={media.isVideo} className='shrink-0' />
                 <span className='min-w-0 truncate'>{media.name}</span>

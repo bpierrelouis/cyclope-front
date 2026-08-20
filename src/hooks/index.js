@@ -10,6 +10,7 @@ export * from './useCurrentTime';
 export * from './useDiscoverDetections';
 export * from './useFileDrop';
 export * from './useFilter';
+export * from './useMapStyle';
 export * from './useMediaViewerSource';
 export * from './useMissionViewerSource';
 export * from './useOpenState';

@@ -11,6 +11,10 @@ export const filesQueryKeys = {
     tree: ['files', 'tree'],
 };
 
+export const filesMutationKeys = {
+    upload: (folder) => ['files', 'upload', folder],
+};
+
 export const healthQueryKeys = createResourceKeys('health');
 
 export const mediasQueryKeys = {
