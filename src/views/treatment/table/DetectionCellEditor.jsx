@@ -33,7 +33,7 @@ export function DetectionCellEditor(props) {
             onValueChange(currentValue.filter((object) => !sameType(object.type, name)));
             return;
         }
-        const restored = removedByTypeRef.current.get(name) ?? [{ confidence: 1, type: name }];
+        const restored = removedByTypeRef.current.get(name) ?? [{ confidence: 100, type: name }];
         onValueChange([...currentValue, ...restored]);
     };
 

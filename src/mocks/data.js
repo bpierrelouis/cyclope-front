@@ -191,343 +191,229 @@ const createMockVideoResult = ({
     id,
     index,
     response_json: {
-        acft: { latitude, longitude },
-        altitude: {
-            unit: 'm',
-            value: altitude,
+        aircraft: {
+            altitude: {
+                confiance: 100,
+                unite: 'm',
+                valeur: altitude,
+            },
+            coord: {
+                latitude: { confiance: 100, valeur: latitude },
+                longitude: { confiance: 100, valeur: longitude },
+            },
+            vitesse: {
+                confiance: 100,
+                unite: 'km/h',
+                valeur: speed,
+            },
         },
-        deg: { confidence: 1 },
-        frame_number: index * 60,
-        is_freezing: isFreezing,
+        frame_index: index,
+        meta_data: {
+            degradation_image: 0,
+            is_freezing: isFreezing,
+        },
         objects,
-        speed: {
-            unit: 'km/h',
-            value: speed,
-        },
-        tgt: {
-            latitude: targetLatitude,
-            longitude: targetLongitude,
+        target: {
+            coord: {
+                latitude: { confiance: 100, valeur: targetLatitude },
+                longitude: { confiance: 100, valeur: targetLongitude },
+            },
         },
         timestamp,
+        timestamp_seconds: null,
     },
     treatment_id: treatmentId,
+});
+
+const MOCK_RESULT_INTERVAL_SECONDS = 1.5;
+const MOCK_AIRPLANE_DETECTIONS = [
+    {
+        bbox: {
+            height: 706,
+            width: 523,
+            x1: 0,
+            x2: 523,
+            y1: 8,
+            y2: 714,
+        },
+        box_index: 0,
+        class_id: 4,
+        confidence: 70.3,
+        type: 'avion',
+    },
+    {
+        bbox: {
+            height: 1038,
+            width: 527,
+            x1: 0,
+            x2: 527,
+            y1: 33,
+            y2: 1071,
+        },
+        box_index: 1,
+        class_id: 4,
+        confidence: 17.75,
+        type: 'avion',
+    },
+];
+const MOCK_RESPONSE_VARIANTS = [
+    ...Array.from({ length: 4 }, () => ({
+        meta_data: { degradation_image: 42, is_freezing: true },
+        objects: MOCK_AIRPLANE_DETECTIONS,
+    })),
+    { meta_data: { degradation_image: 8, is_freezing: false }, objects: [] },
+    { meta_data: { degradation_image: 20, is_freezing: false }, objects: [] },
+    { meta_data: { degradation_image: 20, is_freezing: false }, objects: [] },
+];
+const MOCK_TRAJECTORY = [
+    {
+        altitude: 120, latitude: 48.8566, longitude: 2.3522, speed: 72,
+    },
+    {
+        altitude: 124, latitude: 48.8573, longitude: 2.3526, speed: 76,
+    },
+    {
+        altitude: 129, latitude: 48.8578, longitude: 2.3533, speed: 81,
+    },
+    {
+        altitude: 127, latitude: 48.8580, longitude: 2.3543, speed: 78,
+    },
+    {
+        altitude: 133, latitude: 48.8579, longitude: 2.3554, speed: 84,
+    },
+    {
+        altitude: 138, latitude: 48.8575, longitude: 2.3564, speed: 88,
+    },
+    {
+        altitude: 135, latitude: 48.8569, longitude: 2.3572, speed: 83,
+    },
+];
+const MOCK_TARGET_COORDINATES = { latitude: 48.8620, longitude: 2.3630 };
+
+const toMockTimestamp = (seconds) =>
+    `00:00:${seconds.toFixed(3).padStart(6, '0')}`;
+
+const mockTrajectoryResults = MOCK_RESPONSE_VARIANTS.map((responseJson, position) => {
+    const coordinates = MOCK_TRAJECTORY[position];
+    const seconds = position * MOCK_RESULT_INTERVAL_SECONDS;
+
+    return {
+        id: position + 2,
+        index: position,
+        response_json: {
+            ...responseJson,
+            aircraft: {
+                ...responseJson.aircraft,
+                altitude: {
+                    confiance: 100,
+                    unite: 'm',
+                    valeur: coordinates.altitude,
+                },
+                coord: {
+                    latitude: { confiance: 100, valeur: coordinates.latitude },
+                    longitude: { confiance: 100, valeur: coordinates.longitude },
+                },
+                vitesse: {
+                    confiance: 100,
+                    unite: 'km/h',
+                    valeur: coordinates.speed,
+                },
+            },
+            objects: responseJson.objects,
+            target: {
+                ...responseJson.target,
+                coord: {
+                    latitude: { confiance: 100, valeur: MOCK_TARGET_COORDINATES.latitude },
+                    longitude: { confiance: 100, valeur: MOCK_TARGET_COORDINATES.longitude },
+                },
+            },
+            timestamp: toMockTimestamp(seconds),
+            timestamp_seconds: seconds,
+        },
+        treatment_id: 2,
+    };
 });
 
 export const mockResults = [
     {
         id: 1,
         index: 0,
-        response_json: {
-            acft: {
-                latitude: 48,
-                longitude: 2,
-            },
-            altitude: {
-                unit: 'm',
-                value: 300.5,
-            },
-            deg: {
-                confidence: 1,
-            },
-            frame_number: 0,
-            is_freezing: false,
-            objects: [
-                {
-                    confidence: 0.2,
-                    type: 'helicoptere',
-                },
-                {
-                    confidence: 0.4,
-                    type: 'skis',
-                },
-            ],
-            speed: {
-                unit: 'km/h',
-                value: 53.2,
-            },
-            tgt: {
-                latitude: 47.5,
-                longitude: 2.8,
-            },
-            timestamp: '00:00:00.000',
-        },
+        response_json: mockTrajectoryResults[0].response_json,
         treatment_id: 1,
         url: 'https://picsum.photos/300/200',
     },
-    {
-        id: 2,
-        index: 0,
-        response_json: {
-            acft: {
-                latitude: 48,
-                longitude: 2,
-            },
-            altitude: {
-                unit: 'm',
-                value: 300.5,
-            },
-            deg: {
-                confidence: 1,
-            },
-            frame_number: 0,
-            is_freezing: false,
-            objects: [
-                {
-                    box: {
-                        height: 0.25,
-                        width: 0.3,
-                        x: 0.1,
-                        y: 0.15,
-                    },
-                    confidence: 0.2,
-                    type: 'helicoptere',
-                },
-                {
-                    box: {
-                        height: 0.18,
-                        width: 0.12,
-                        x: 0.55,
-                        y: 0.6,
-                    },
-                    confidence: 0.4,
-                    type: 'skis',
-                },
-            ],
-            speed: {
-                unit: 'km/h',
-                value: 53.2,
-            },
-            tgt: {
-                latitude: 47.5,
-                longitude: 2.8,
-            },
-            timestamp: '00:00:00.000',
-        },
-        treatment_id: 2,
-    },
-    {
-        id: 3,
-        index: 1,
-        response_json: {
-            acft: {
-                latitude: 49,
-                longitude: 3,
-            },
-            altitude: {
-                unit: 'm',
-                value: 310.2,
-            },
-            deg: {
-                confidence: 0.5,
-            },
-            frame_number: 60,
-            is_freezing: true,
-            objects: [
-                {
-                    box: {
-                        height: 0.2,
-                        width: 0.25,
-                        x: 0.35,
-                        y: 0.05,
-                    },
-                    confidence: 0.55,
-                    type: 'avion',
-                },
-                {
-                    box: {
-                        height: 0.15,
-                        width: 0.1,
-                        x: 0.7,
-                        y: 0.55,
-                    },
-                    confidence: 0.1,
-                    type: 'skis',
-                },
-            ],
-            speed: {
-                unit: 'km/h',
-                value: 52.1,
-            },
-            tgt: {
-                latitude: 47.5,
-                longitude: 2.8,
-            },
-            timestamp: '00:00:03.000',
-        },
-        treatment_id: 2,
-    },
-    {
-        id: 4,
-        index: 2,
-        response_json: {
-            acft: {
-                latitude: 50,
-                longitude: 3.5,
-            },
-            altitude: {
-                unit: 'm',
-                value: 311.5,
-            },
-            deg: {
-                confidence: 1,
-            },
-            frame_number: 120,
-            is_freezing: false,
-            objects: [],
-            speed: {
-                unit: 'km/h',
-                value: 51.2,
-            },
-            tgt: {
-                latitude: 47.5,
-                longitude: 2.8,
-            },
-            timestamp: '00:00:06.000',
-        },
-        treatment_id: 2,
-    },
-    {
-        id: 5,
-        index: 3,
-        response_json: {
-            acft: {
-                latitude: 51,
-                longitude: 5,
-            },
-            altitude: {
-                unit: 'm',
-                value: 311.5,
-            },
-            deg: {
-                confidence: 1,
-            },
-            frame_number: 180,
-            is_freezing: false,
-            objects: [],
-            speed: {
-                unit: 'km/h',
-                value: 51.2,
-            },
-            tgt: {
-                latitude: 47.5,
-                longitude: 2.8,
-            },
-            timestamp: '00:00:09.000',
-        },
-        treatment_id: 2,
-    },
+    ...mockTrajectoryResults,
     createMockVideoResult({
         altitude: 82,
-        id: 6,
+        id: 20,
         index: 0,
-        latitude: 48.8566,
-        longitude: 2.3522,
+        latitude: 48.8564,
+        longitude: 2.358,
         objects: [
-            { confidence: 0.96, type: 'personne' },
-            { confidence: 0.81, type: 'velo' },
+            { confidence: 96, type: 'personne' },
+            { confidence: 81, type: 'velo' },
         ],
         speed: 18,
-        targetLatitude: 48.8571,
-        targetLongitude: 2.354,
+        targetLatitude: MOCK_TARGET_COORDINATES.latitude,
+        targetLongitude: MOCK_TARGET_COORDINATES.longitude,
         timestamp: '00:00:00.750',
         treatmentId: 3,
     }),
     createMockVideoResult({
         altitude: 79,
-        id: 7,
+        id: 21,
         index: 1,
         isFreezing: true,
-        latitude: 48.8574,
-        longitude: 2.355,
-        objects: [{ confidence: 0.67, type: 'camion' }],
+        latitude: 48.8562,
+        longitude: 2.359,
+        objects: [{ confidence: 67, type: 'camion' }],
         speed: 12,
-        targetLatitude: 48.858,
-        targetLongitude: 2.3565,
+        targetLatitude: MOCK_TARGET_COORDINATES.latitude,
+        targetLongitude: MOCK_TARGET_COORDINATES.longitude,
         timestamp: '00:00:02.250',
         treatmentId: 3,
     }),
     createMockVideoResult({
         altitude: 74,
-        id: 8,
+        id: 22,
         index: 2,
-        latitude: 48.8588,
-        longitude: 2.359,
-        objects: [{ confidence: 0.89, type: 'voiture' }],
+        latitude: 48.8563,
+        longitude: 2.3601,
+        objects: [{ confidence: 89, type: 'voiture' }],
         speed: 24,
-        targetLatitude: 48.8594,
-        targetLongitude: 2.3602,
+        targetLatitude: MOCK_TARGET_COORDINATES.latitude,
+        targetLongitude: MOCK_TARGET_COORDINATES.longitude,
         timestamp: '00:00:05.500',
         treatmentId: 3,
     }),
     createMockVideoResult({
-        altitude: 70,
-        id: 9,
-        index: 3,
-        latitude: 48.8601,
-        longitude: 2.3624,
-        speed: 31,
-        targetLatitude: 48.8608,
-        targetLongitude: 2.364,
-        timestamp: '00:00:08.750',
-        treatmentId: 3,
-    }),
-    createMockVideoResult({
         altitude: 35,
-        id: 10,
+        id: 23,
         index: 0,
-        latitude: 43.2947,
-        longitude: 5.3728,
-        objects: [{ confidence: 0.94, type: 'bateau' }],
+        latitude: 48.8567,
+        longitude: 2.3611,
+        objects: [{ confidence: 94, type: 'bateau' }],
         speed: 42,
-        targetLatitude: 43.293,
-        targetLongitude: 5.375,
+        targetLatitude: MOCK_TARGET_COORDINATES.latitude,
+        targetLongitude: MOCK_TARGET_COORDINATES.longitude,
         timestamp: '00:00:01.500',
         treatmentId: 4,
     }),
     createMockVideoResult({
         altitude: 28,
-        id: 11,
+        id: 24,
         index: 1,
         isFreezing: true,
-        latitude: 43.292,
-        longitude: 5.378,
-        objects: [{ confidence: 0.58, type: 'oiseau' }],
+        latitude: 48.8574,
+        longitude: 2.3619,
+        objects: [{ confidence: 58, type: 'oiseau' }],
         speed: 7,
-        targetLatitude: 43.2905,
-        targetLongitude: 5.381,
+        targetLatitude: MOCK_TARGET_COORDINATES.latitude,
+        targetLongitude: MOCK_TARGET_COORDINATES.longitude,
         timestamp: '00:00:04.500',
         treatmentId: 4,
     }),
-    createMockVideoResult({
-        altitude: 41,
-        id: 12,
-        index: 2,
-        latitude: 43.288,
-        longitude: 5.384,
-        objects: [
-            { confidence: 0.86, type: 'bateau' },
-            { confidence: 0.73, type: 'bouee' },
-        ],
-        speed: 55,
-        targetLatitude: 43.286,
-        targetLongitude: 5.387,
-        timestamp: '00:00:07.500',
-        treatmentId: 4,
-    }),
-    createMockVideoResult({
-        altitude: 46,
-        id: 13,
-        index: 3,
-        latitude: 43.284,
-        longitude: 5.39,
-        speed: 63,
-        targetLatitude: 43.282,
-        targetLongitude: 5.393,
-        timestamp: '00:00:09.500',
-        treatmentId: 4,
-    }),
 ];
-
 export const mocksFilesTree = [
     {
         extension: 'jpg',

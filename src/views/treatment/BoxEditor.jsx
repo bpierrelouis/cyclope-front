@@ -2,49 +2,26 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useShallow } from 'zustand/react/shallow';
 
+import { BOX_HANDLES, MIN_BOX_SIZE } from '../../constants';
 import { useDetectionCatalogStore } from '../../stores';
 import {
+    clamp,
     cn,
     getDetectionBackgroundStyle,
     getDetectionColor,
+    getObjectBox,
+    getPointerPosition,
+    rectFrom,
+    sameName,
+    toBoundingBox,
+    toNormalizedBox,
+    updateObjectBox,
 } from '../../utils';
-
-const MIN_SIZE = 0.01;
-
-const HANDLES = [
-    { className: '-top-1.5 -left-1.5 cursor-nwse-resize', horizontal: 'left', vertical: 'top' },
-    { className: '-top-1.5 -right-1.5 cursor-nesw-resize', horizontal: 'right', vertical: 'top' },
-    { className: '-bottom-1.5 -left-1.5 cursor-nesw-resize', horizontal: 'left', vertical: 'bottom' },
-    { className: '-bottom-1.5 -right-1.5 cursor-nwse-resize', horizontal: 'right', vertical: 'bottom' },
-];
-
-const sameName = (left, right) =>
-    String(left ?? '').localeCompare(String(right ?? ''), undefined, { sensitivity: 'accent' }) === 0;
-
-const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
-
-const toNormalizedBox = (box, natural) => {
-    if ([box.x, box.y, box.width, box.height].every((value) => value <= 1)) return box;
-    if (!natural) return null;
-    return {
-        height: box.height / natural.height,
-        width: box.width / natural.width,
-        x: box.x / natural.width,
-        y: box.y / natural.height,
-    };
-};
-
-const rectFrom = (anchor, point) => ({
-    height: Math.abs(point.y - anchor.y),
-    width: Math.abs(point.x - anchor.x),
-    x: Math.min(anchor.x, point.x),
-    y: Math.min(anchor.y, point.y),
-});
 
 /**
  * Éditeur de rectangles de détection par-dessus la frame : tracé de nouveaux
  * rectangles à la souris, déplacement, redimensionnement, choix du type et
- * suppression. Les boîtes émises via onChange sont normalisées (0-1).
+ * suppression. Les boîtes émises via onChange utilisent le format bbox du back.
  */
 export function BoxEditor(props) {
     const {
@@ -67,17 +44,10 @@ export function BoxEditor(props) {
 
     const colorOf = (type) => getDetectionColor(type, detections, categories);
 
-    const toPoint = (event) => {
-        const rect = overlayRef.current.getBoundingClientRect();
-        return {
-            x: clamp((event.clientX - rect.left) / rect.width),
-            y: clamp((event.clientY - rect.top) / rect.height),
-        };
-    };
+    const toPoint = (event) => getPointerPosition(event, overlayRef.current);
 
-    const setBox = (index, box) => onChange(objects.map(
-        (object, position) => position === index ? { ...object, box } : object,
-    ));
+    const setBox = (index, box) =>
+        onChange(updateObjectBox(objects, index, box, natural));
 
     const startDrag = (event, drag) => {
         dragRef.current = drag;
@@ -89,7 +59,13 @@ export function BoxEditor(props) {
     const onDrawStart = (event) => {
         if (event.target !== event.currentTarget || event.button !== 0) return;
         const anchor = toPoint(event);
-        onChange([...objects, { box: { ...anchor, height: 0, width: 0 }, confidence: 1, type: null }]);
+        onChange([...objects, {
+            bbox: toBoundingBox({ ...anchor, height: 0, width: 0 }, natural),
+            boxIndex: objects.length,
+            classId: null,
+            confidence: 100,
+            type: null,
+        }]);
         setSelectedIndex(objects.length);
         startDrag(event, {
             anchor, index: objects.length, isNew: true, mode: 'rect',
@@ -99,7 +75,7 @@ export function BoxEditor(props) {
     const onBoxDown = (index) => (event) => {
         if (event.button !== 0) return;
         event.stopPropagation();
-        const origin = toNormalizedBox(objects[index].box, natural);
+        const origin = toNormalizedBox(getObjectBox(objects[index]), natural);
         if (!origin) return;
         setSelectedIndex(index);
         startDrag(event, {
@@ -112,7 +88,7 @@ export function BoxEditor(props) {
     const onHandleDown = (index, handle) => (event) => {
         if (event.button !== 0) return;
         event.stopPropagation();
-        const box = toNormalizedBox(objects[index].box, natural);
+        const box = toNormalizedBox(getObjectBox(objects[index]), natural);
         if (!box) return;
         startDrag(event, {
             anchor: {
@@ -147,8 +123,8 @@ export function BoxEditor(props) {
         if (!drag?.isNew) return;
 
         // Tracé trop petit : simple clic, le rectangle n'est pas conservé.
-        const box = objects[drag.index]?.box;
-        if (!box || box.width < MIN_SIZE || box.height < MIN_SIZE) {
+        const box = toNormalizedBox(getObjectBox(objects[drag.index] ?? {}), natural);
+        if (!box || box.width < MIN_BOX_SIZE || box.height < MIN_BOX_SIZE) {
             onChange(objects.filter((_, index) => index !== drag.index));
             setSelectedIndex(null);
         }
@@ -175,7 +151,7 @@ export function BoxEditor(props) {
 
 
     const selected = selectedIndex === null ? null : objects[selectedIndex];
-    const selectedBox = selected?.box ? toNormalizedBox(selected.box, natural) : null;
+    const selectedBox = selected ? toNormalizedBox(getObjectBox(selected), natural) : null;
 
     const menuLeft = selectedBox ? selectedBox.x : null;
     const menuTop = selectedBox ? selectedBox.y + selectedBox.height : null;
@@ -212,8 +188,9 @@ export function BoxEditor(props) {
                 onPointerUp={onPointerUp}
             >
                 {objects.map((object, index) => {
-                    if (!object.box) return null;
-                    const box = toNormalizedBox(object.box, natural);
+                    const rawBox = getObjectBox(object);
+                    if (!rawBox) return null;
+                    const box = toNormalizedBox(rawBox, natural);
                     if (!box) return null;
                     const color = colorOf(object.type);
 
@@ -236,7 +213,7 @@ export function BoxEditor(props) {
                             >
                                 {object.type ?? '?'}
                             </span>
-                            {index === selectedIndex && HANDLES.map((handle) => (
+                            {index === selectedIndex && BOX_HANDLES.map((handle) => (
                                 <span
                                     key={handle.className}
                                     className={cn('absolute bg-base-100 border-2 rounded-full w-3 h-3', handle.className)}

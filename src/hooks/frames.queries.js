@@ -9,7 +9,7 @@ import { filesQueries } from './files.queries';
 
 /**
  * Extrait de la vidéo courante la frame du résultat et y dessine
- * les rectangles de détection envoyés par le back (objects[].box),
+ * les rectangles de détection envoyés par le back (objects[].bbox),
  * colorés selon le catalogue de détections.
  * Avec `options.raw`, la frame est extraite sans rectangles (mode édition).
  * Retourne une query dont data est une blob URL affichable dans un <img>.
@@ -25,10 +25,16 @@ const useResultFrame = (result, options = {}) => {
     })));
 
     const toDraw = useMemo(() => (raw ? [] : result.objects ?? [])
-        .filter((object) => object.box)
+        .filter((object) => object.bbox ?? object.box)
         .map((object) => {
+            const bbox = object.bbox;
             return {
-                box: object.box,
+                box: bbox ? {
+                    height: bbox.height ?? bbox.y2 - bbox.y1,
+                    width: bbox.width ?? bbox.x2 - bbox.x1,
+                    x: bbox.x1,
+                    y: bbox.y1,
+                } : object.box,
                 color: getDetectionColor(object.type, detections, categories),
                 label: object.type,
             };

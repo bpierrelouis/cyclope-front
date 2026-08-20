@@ -34,41 +34,52 @@ export class Result {
     }
 
     get altitudeLabel() {
-        const altitude = this.data.altitude;
+        const altitude = this.data.aircraft?.altitude;
         if (!altitude) return null;
-        return `${altitude.value} ${altitude.unit}`;
+        return [altitude.valeur, altitude.unite].filter((value) => value != null).join(' ');
+    }
+
+    get altitudeValue() {
+        return this.data.aircraft?.altitude?.valeur ?? null;
     }
 
     get seconds() {
-        return parseTimecode(this.data.timestamp);
+        return Number.isFinite(this.data.timestampSeconds)
+            ? this.data.timestampSeconds
+            : parseTimecode(this.data.timestamp);
     }
 
     get speedLabel() {
-        const speed = this.data.speed;
+        const speed = this.data.aircraft?.vitesse;
         if (!speed) return null;
-        return `${speed.value} ${speed.unit}`;
+        return [speed.valeur, speed.unite].filter((value) => value != null).join(' ');
     }
 
+    get speedValue() {
+        return this.data.aircraft?.vitesse?.valeur ?? null;
+    }
 
     get objects() {
         return this.data.objects ?? [];
     }
 
     get coordinates() {
-        const { latitude, longitude } = this.data.acft ?? {};
+        const latitude = this.data.aircraft?.coord?.latitude?.valeur;
+        const longitude = this.data.aircraft?.coord?.longitude?.valeur;
         return Number.isFinite(latitude) && Number.isFinite(longitude)
             ? { latitude, longitude }
             : null;
     }
 
     get target() {
-        const { latitude, longitude } = this.data.tgt ?? {};
+        const latitude = this.data.target?.coord?.latitude?.valeur;
+        const longitude = this.data.target?.coord?.longitude?.valeur;
         return Number.isFinite(latitude) && Number.isFinite(longitude)
             ? { latitude, longitude }
             : null;
     }
 
     get isFreezing() {
-        return this.data.isFreezing ?? false;
+        return this.data.metaData?.isFreezing ?? false;
     }
 }

@@ -71,9 +71,14 @@ const measurementColumn = ({
     valueFormatter: ({ data: result }) => result[`${key}Label`] ?? '—',
     ...editableColumn(
         parseNumber(validate),
-        (result, value) => ({ [key]: { ...result.data[key], value } }),
+        (result, value) => ({
+            aircraft: {
+                ...result.data.aircraft,
+                [key]: { ...result.data.aircraft?.[key], valeur: value },
+            },
+        }),
         errorMessage,
-        ({ data: result }) => Boolean(result.data[key]),
+        ({ data: result }) => Boolean(result.data.aircraft?.[key]),
     ),
 });
 
@@ -146,7 +151,18 @@ export const getColumnDefs = (
         headerName: 'Latitude',
         ...editableColumn(
             parseNumber(isValidLatitude),
-            (result, value) => ({ acft: { ...result.data.acft, latitude: value } }),
+            (result, value) => ({
+                aircraft: {
+                    ...result.data.aircraft,
+                    coord: {
+                        ...result.data.aircraft?.coord,
+                        latitude: {
+                            ...result.data.aircraft?.coord?.latitude,
+                            valeur: value,
+                        },
+                    },
+                },
+            }),
             'La latitude doit être comprise entre -90 et 90',
         ),
     },
@@ -156,19 +172,30 @@ export const getColumnDefs = (
         headerName: 'Longitude',
         ...editableColumn(
             parseNumber(isValidLongitude),
-            (result, value) => ({ acft: { ...result.data.acft, longitude: value } }),
+            (result, value) => ({
+                aircraft: {
+                    ...result.data.aircraft,
+                    coord: {
+                        ...result.data.aircraft?.coord,
+                        longitude: {
+                            ...result.data.aircraft?.coord?.longitude,
+                            valeur: value,
+                        },
+                    },
+                },
+            }),
             'La longitude doit être comprise entre -180 et 180',
         ),
     },
     measurementColumn({
         errorMessage: 'Valeur invalide',
-        field: 'data.altitude.value',
+        field: 'altitudeValue',
         headerName: 'Altitude',
         key: 'altitude',
     }),
     measurementColumn({
         errorMessage: 'La vitesse doit être positive',
-        field: 'data.speed.value',
+        field: 'speedValue',
         headerName: 'Vitesse',
         key: 'speed',
         validate: (value) => value >= 0,

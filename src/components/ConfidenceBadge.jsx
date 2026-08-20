@@ -7,7 +7,7 @@ export function ConfidenceBadge(props) {
         getDetectionColor(type, state.detections, state.categories));
 
     const label = Number.isFinite(confidence)
-        ? `${type} ${(confidence * 100).toFixed(0)}%`
+        ? `${type} ${confidence.toFixed(0)}%`
         : type;
     const style = {
         backgroundColor: `color-mix(in srgb, ${color} 14%, transparent)`,

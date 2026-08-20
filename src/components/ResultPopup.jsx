@@ -49,8 +49,8 @@ export function ResultPopup(props) {
 
     const rows = [
         { label: 'Frame', value: result.index },
-        { label: 'Latitude', value: result.coordinates.latitude },
-        { label: 'Longitude', value: result.coordinates.longitude },
+        { label: 'Latitude', value: result.coordinates?.latitude ?? '—' },
+        { label: 'Longitude', value: result.coordinates?.longitude ?? '—' },
         { label: 'Altitude', value: result.altitudeLabel },
         { label: 'Vitesse', value: result.speedLabel },
     ];
