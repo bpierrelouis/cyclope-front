@@ -3,11 +3,11 @@ import { Protocol } from 'pmtiles';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Map, NavigationControl } from 'react-map-gl/maplibre';
 
-import { ResultPopup } from '../../../components';
+import { ResultPopup, SelectCarto } from '../../../components';
 import { Plan as Constants } from '../../../constants';
-import { filesQueries, useOpenState, useResults } from '../../../hooks';
-import { useThemeStore } from '../../../stores';
-import { buildMapStyle, hasValidCoordinates } from '../../../utils';
+import { useMapStyle, useOpenState, useResults } from '../../../hooks';
+import { useDefaultCartoStore } from '../../../stores';
+import { hasValidCoordinates } from '../../../utils';
 import { DroneMarker } from './DroneMarker';
 import { LocateButton } from './LocateButton';
 import { Path } from './Path';
@@ -15,9 +15,9 @@ import { TargetMarker } from './TargetMarker';
 
 export function Plan() {
     const results = useResults();
-    const { data: carto } = filesQueries.useCarto();
+    const [cartoSelected, setCartoSelected] = useState(useDefaultCartoStore.getState().defaultCarto);
+
     const mapRef = useRef(null);
-    const isDark = useThemeStore((state) => state.isDark);
     const [selectedResultId, setSelectedResultId] = useState(null);
     const selectedResult = useMemo(
         () => results.find((result) => result.id === selectedResultId) ?? null,
@@ -38,10 +38,7 @@ export function Plan() {
         };
     }, []);
 
-    const mapStyle = useMemo(() => {
-        if (!carto) return;
-        return buildMapStyle(carto, isDark);
-    }, [carto, isDark]);
+    const mapStyle = useMapStyle(cartoSelected);
 
     const pathBounds = useMemo(() => {
         const coordinates = results
@@ -84,6 +81,11 @@ export function Plan() {
                 <DroneMarker />
                 <TargetMarker />
             </Map>
+            <SelectCarto
+                className='absolute inset-2'
+                onChange={setCartoSelected}
+                value={cartoSelected}
+            />
             {selectedResult && (
                 <ResultPopup
                     result={selectedResult}

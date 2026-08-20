@@ -9,6 +9,16 @@ const results = [...mockResults];
 
 const MOCK_CARTO_PATH = 'carto/world_10.pmtiles';
 const MOCK_CARTO_URL = 'https://data.source.coop/protomaps/openstreetmap/v4.pmtiles';
+const MOCK_GEOJSON_PATH = 'carto/fichier11.geojson';
+const MOCK_GEOJSON_URL = `data:application/geo+json,${encodeURIComponent(JSON.stringify({
+    geometry: {
+        coordinates: [2.35, 48.86],
+        type: 'Point',
+    },
+    properties: {},
+    type: 'Feature',
+}))}`;
+const TRANSPARENT_PNG_BASE64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
 
 // --- Helpers arbre de fichiers ---
 
@@ -22,20 +32,31 @@ let nextMediaId = Math.max(0, ...medias.map((media) => media.id)) + 1;
 // Retire le préfixe "files/" et sépare les dossiers du nom de fichier.
 const parseFilePath = (url) => {
     const segments = url.replace(/^files\//, '').split('/').filter(Boolean);
+    const folder = ['carto', 'media'].includes(segments[0]) ? segments.shift() : undefined;
     const fileName = segments.pop();
-    return { fileName, folders: segments };
+    return { fileName, folder, folders: segments };
 };
 
 // Descend dans l'arbre en créant les dossiers manquants, renvoie le tableau d'enfants cible.
-const resolveFolderChildren = (folders) => {
+const resolveFolderChildren = (folders, rootFolder) => {
     let children = mocksFilesTree;
+    let isRoot = true;
     for (const name of folders) {
-        let folder = children.find((node) => node.children && node.name === name);
+        let folder = children.find((node) =>
+            node.children
+            && node.name === name
+            && (!isRoot || node.folder === rootFolder),
+        );
         if (!folder) {
-            folder = { children: [], name };
+            folder = {
+                children: [],
+                ...(isRoot && rootFolder ? { folder: rootFolder } : {}),
+                name,
+            };
             children.push(folder);
         }
         children = folder.children;
+        isRoot = false;
     }
     return children;
 };
@@ -234,9 +255,10 @@ export const handlers = [
         const url = new URL(request.url);
         const searchParams = url.searchParams;
         const target = searchParams.get('url');
-        const downloadUrl = target === MOCK_CARTO_PATH
-            ? MOCK_CARTO_URL
-            : target;
+        const downloadUrl = {
+            [MOCK_CARTO_PATH]: MOCK_CARTO_URL,
+            [MOCK_GEOJSON_PATH]: MOCK_GEOJSON_URL,
+        }[target] ?? target;
         return HttpResponse.json({
             download_url: downloadUrl,
             url: target,
@@ -270,16 +292,27 @@ export const handlers = [
     // Faux S3 : accepte le PUT sans rien stocker.
     http.put('/api/s3-upload', () => new HttpResponse(null, { status: 200 })),
 
+    http.get('/api/files/redirect', () => {
+        const bytes = Uint8Array.from(
+            atob(TRANSPARENT_PNG_BASE64),
+            (character) => character.charCodeAt(0),
+        );
+        return new HttpResponse(bytes, {
+            headers: { 'Content-Type': 'image/png' },
+        });
+    }),
+
     // Création d'un fichier : insertion dans l'arbre au bon endroit,
     http.post('/api/files', async ({ request }) => {
         const body = await request.json();
-        const { folders, fileName } = parseFilePath(body.url ?? body.name);
-        const children = resolveFolderChildren(folders);
+        const { fileName, folder, folders } = parseFilePath(body.url ?? body.name);
+        const children = resolveFolderChildren(folders, folder);
 
         const file = {
             checksum: body.checksum,
             duration: body.duration,
             extension: body.extension,
+            folder: folders.length === 0 ? folder : undefined,
             id: nextFileId++,
             name: body.name ?? fileName,
             size: body.size,

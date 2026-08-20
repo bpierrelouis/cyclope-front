@@ -1,3 +1,4 @@
+export * from './defaultCartoStore';
 export * from './defaultConfigStore';
 export * from './detectionCatalogStore';
 export * from './missionCollapseStore';

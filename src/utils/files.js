@@ -1,7 +1,12 @@
 import { createSHA256 } from 'hash-wasm';
 
-export const joinPath = (parentPath, name) =>
-    parentPath ? `${parentPath}/${name}` : name;
+import { ACCEPTED_VIDEO_EXTENSIONS } from '../constants';
+
+export const joinPath = (...parts) => parts
+    .filter((part) => part != null && part !== '')
+    .map((part) => String(part).replace(/^\/+|\/+$/g, ''))
+    .filter(Boolean)
+    .join('/');
 
 const HASH_CHUNK_SIZE = 64 * 1024 * 1024;
 
@@ -11,6 +16,29 @@ export const computeChecksum = async (file) => {
         const chunk = await file.slice(offset, offset + HASH_CHUNK_SIZE).arrayBuffer();
         hasher.update(new Uint8Array(chunk));
     }
+    return hasher.digest('hex');
+};
+
+export const computeXyzChecksum = async (results) => {
+
+    const entries = results
+        .filter(result => result.status === 'fulfilled')
+        .map(result => ({
+            checksum: result.value.checksum,
+            path: result.value.url,
+        }))
+        .sort((a, b) => a.path.localeCompare(b.path));
+
+    const hasher = await createSHA256();
+
+    for (const entry of entries) {
+        const data = `${entry.path}\0${entry.checksum}\n`;
+
+        hasher.update(
+            new TextEncoder().encode(data),
+        );
+    }
+
     return hasher.digest('hex');
 };
 
@@ -27,18 +55,39 @@ export const flatTree = (tree) => tree.reduce((acc, node) => {
     return [...acc, node];
 }, []);
 
-export const ACCEPTED_VIDEO_EXTENSIONS = ['mp4', 'ts', 'flv', 'mkv'];
-export const ACCEPTED_IMAGE_EXTENSIONS = ['jpg', 'png', 'tiff', 'bmp'];
-export const ACCEPTED_FILES_EXTENSIONS = [
-    ...ACCEPTED_VIDEO_EXTENSIONS,
-    ...ACCEPTED_IMAGE_EXTENSIONS,
-];
-
 export const isVideoExtension = (extension) =>
     ACCEPTED_VIDEO_EXTENSIONS.includes(extension?.toLowerCase());
 
-export const isAcceptedFileExtension = (extension) =>
-    ACCEPTED_FILES_EXTENSIONS.includes(extension?.toLowerCase());
+export const isAcceptedFileExtension = (acceptedExtensions, extension) =>
+    acceptedExtensions.includes(extension?.toLowerCase());
+
+export const getRelativeFilePath = (file) =>
+    file.relativePath || file.webkitRelativePath || file.name;
+
+const getRelativeFilePathParts = (file) =>
+    getRelativeFilePath(file).split('/').filter(Boolean);
+
+export const isFilesInXyzFolder = (files) => {
+
+    if (!files?.length) return false;
+
+    const rootFolder = getRelativeFilePathParts(files[0])[0];
+
+    return files.every(file => {
+        const parts = getRelativeFilePathParts(file);
+
+        if (parts.length !== 4) return false;
+
+        const [root, z, x, y] = parts;
+
+        return (
+            root === rootFolder &&
+            /^\d+$/.test(z) &&
+            /^\d+$/.test(x) &&
+            /^\d+\.png$/i.test(y)
+        );
+    });
+};
 
 export const getExtension = (fileName) => {
     const parts = fileName.split('.');
@@ -48,6 +97,12 @@ export const getExtension = (fileName) => {
 export const suppressExtension = (fileName) => {
     const parts = fileName.split('.');
     return parts.length > 1 ? parts.slice(0, -1).join('.') : fileName;
+};
+
+export const getRootFolderName = (files) => {
+    if (!files?.length) return null;
+
+    return getRelativeFilePathParts(files[0])[0] ?? null;
 };
 
 export const getVideoDuration = (file) =>
@@ -66,13 +121,21 @@ export const getVideoDuration = (file) =>
     });
 
 // Lit un dossier
-const readEntry = (entry) =>
+const readEntry = (entry, parentPath = '') =>
     new Promise((resolve) => {
         if (entry.isFile) {
-            entry.file((file) => resolve([file]));
+            entry.file((file) => {
+                const relativePath = joinPath(parentPath, entry.name);
+                Object.defineProperty(file, 'relativePath', {
+                    configurable: true,
+                    value: relativePath,
+                });
+                resolve([file]);
+            });
         } else if (entry.isDirectory) {
             const reader = entry.createReader();
             const files = [];
+            const directoryPath = joinPath(parentPath, entry.name);
             const readBatch = () => {
                 reader.readEntries(async (entries) => {
                     if (!entries.length) {
@@ -80,7 +143,7 @@ const readEntry = (entry) =>
                         return;
                     }
                     for (const child of entries) {
-                        files.push(...(await readEntry(child)));
+                        files.push(...(await readEntry(child, directoryPath)));
                     }
                     readBatch();
                 });

@@ -4,7 +4,7 @@ import { DeletePopup } from '../../components';
 import { mediasQueries, missionsQueries } from '../../hooks';
 
 export function DeleteMissionPopup(props) {
-    const { mission, openState } = props;
+    const { mission, onClose } = props;
 
     const { data: medias } = mediasQueries.useGetAllByMissionId(mission.id);
     const deleteMutation = missionsQueries.useDelete();
@@ -28,8 +28,8 @@ export function DeleteMissionPopup(props) {
     return (
         <DeletePopup
             title={mission.name}
+            onClose={onClose}
             onDelete={handleDelete}
-            openState={openState}
         >
             Voulez-vous vraiment supprimer cette mission ?<br />{content}
         </DeletePopup>

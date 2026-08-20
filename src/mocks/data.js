@@ -417,6 +417,7 @@ export const mockResults = [
 export const mocksFilesTree = [
     {
         extension: 'jpg',
+        folder: 'media',
         id: 1,
         name: 'fichier1.jpg',
         size: 6000,
@@ -424,6 +425,7 @@ export const mocksFilesTree = [
     },
     {
         extension: 'jpg',
+        folder: 'media',
         id: 2,
         name: 'fichier2.jpg',
         size: 6000,
@@ -431,6 +433,7 @@ export const mocksFilesTree = [
     },
     {
         extension: 'jpg',
+        folder: 'media',
         id: 3,
         name: 'fichier3.jpg',
         size: 6000,
@@ -454,7 +457,45 @@ export const mocksFilesTree = [
                 url: '/dev-media/html/mov_bbb.mp4',
             },
         ],
+        folder: 'media',
         name: 'sous-dossier1',
+    },
+    {
+        extension: 'pmtiles',
+        folder: 'carto',
+        id: 10,
+        name: 'fichier10.pmtiles',
+        size: 6000,
+        url: 'carto/world_10.pmtiles',
+    },
+    {
+        extension: 'geojson',
+        folder: 'carto',
+        id: 11,
+        name: 'fichier11.geojson',
+        size: 6000,
+        url: 'carto/fichier11.geojson',
+    },
+    {
+        children: [
+            {
+                extension: 'png',
+                id: 12,
+                name: 'fichier4.png',
+                size: 6000,
+                url: 'https://picsum.photos/300/200',
+            },
+        ],
+        folder: 'carto',
+        name: 'sous-dossier2',
+    },
+    {
+        extension: 'xyz',
+        folder: 'carto',
+        id: 13,
+        name: 'dossierXYZ',
+        size: 6000,
+        url: 'carto/dossierXYZ',
     },
 ];
 

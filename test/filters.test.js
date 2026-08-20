@@ -6,7 +6,7 @@ import {
     getFieldValue,
     normalizeNumericFilterValue,
     resultPassesTableFilters,
-} from '../src/utils/filters';
+} from '../src/utils/filters.js';
 
 const result = {
     coordinates: { latitude: 48.5, longitude: 2.2 },

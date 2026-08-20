@@ -1,4 +1,4 @@
-import { TABLE_FILTER_TYPES } from '../constants/tableFilters';
+import { TABLE_FILTER_TYPES } from '../constants';
 
 export const filterMissionsByStatus = (missions, status) => {
     if (!status) return missions;
