@@ -1,6 +1,7 @@
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 
 import { useDetectionCatalogStore } from '../../../stores';
+import { getDetectionBackgroundStyle, getDetectionColor } from '../../../utils';
 
 const EMPTY_OBJECTS = [];
 const normalizeType = (type) => String(type ?? '').trim();
@@ -23,11 +24,17 @@ export function DetectionCellEditor(props) {
         return leftCategory.localeCompare(rightCategory) || left.name.localeCompare(right.name);
     }), [categoryById, detections]);
 
+    const removedByTypeRef = useRef(new Map());
+
     const toggle = (name) => {
-        const selected = currentValue.find((object) => sameType(object.type, name));
-        onValueChange(selected
-            ? currentValue.filter((object) => !sameType(object.type, name))
-            : [...currentValue, { confidence: 1, type: name }]);
+        const selected = currentValue.filter((object) => sameType(object.type, name));
+        if (selected.length > 0) {
+            removedByTypeRef.current.set(name, selected);
+            onValueChange(currentValue.filter((object) => !sameType(object.type, name)));
+            return;
+        }
+        const restored = removedByTypeRef.current.get(name) ?? [{ confidence: 1, type: name }];
+        onValueChange([...currentValue, ...restored]);
     };
 
     return (
@@ -54,7 +61,9 @@ export function DetectionCellEditor(props) {
                             />
                             <span
                                 className='rounded-full w-2.5 h-2.5 shrink-0'
-                                style={{ backgroundColor: category?.color ?? 'var(--color-base-300)' }}
+                                style={getDetectionBackgroundStyle(
+                                    getDetectionColor(detection.name, detections, categories),
+                                )}
                             />
                             <span className='flex-1 text-sm'>{detection.name}</span>
                             <span className='opacity-50 text-xs'>{category?.name ?? 'Non classée'}</span>

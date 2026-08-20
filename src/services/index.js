@@ -1,5 +1,6 @@
 export * from './eventsManager';
 export * from './files.service';
+export * from './frames.service';
 export * from './health.service';
 export * from './medias.service';
 export * from './missions.service';

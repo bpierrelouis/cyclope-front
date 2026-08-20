@@ -1,4 +1,5 @@
 export * from './files.queries';
+export * from './frames.queries';
 export * from './health.queries';
 export * from './medias.queries';
 export * from './missions.queries';

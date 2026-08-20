@@ -10,5 +10,6 @@ export * from './ProcessConfidenceField';
 export * from './ProcessLevelField';
 export * from './ProcessObjectDetectionField';
 export * from './ProcessStepField';
+export * from './ResultPopup';
 export * from './SquareButton';
 export * from './Toast';

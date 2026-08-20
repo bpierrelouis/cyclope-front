@@ -211,7 +211,6 @@ const createMockVideoResult = ({
         timestamp,
     },
     treatment_id: treatmentId,
-    url: `https://picsum.photos/seed/result-${id}/300/200`,
 });
 
 export const mockResults = [
@@ -274,10 +273,22 @@ export const mockResults = [
             is_freezing: false,
             objects: [
                 {
+                    box: {
+                        height: 0.25,
+                        width: 0.3,
+                        x: 0.1,
+                        y: 0.15,
+                    },
                     confidence: 0.2,
                     type: 'helicoptere',
                 },
                 {
+                    box: {
+                        height: 0.18,
+                        width: 0.12,
+                        x: 0.55,
+                        y: 0.6,
+                    },
                     confidence: 0.4,
                     type: 'skis',
                 },
@@ -293,7 +304,6 @@ export const mockResults = [
             timestamp: '00:00:00.000',
         },
         treatment_id: 2,
-        url: 'https://picsum.photos/300/200',
     },
     {
         id: 3,
@@ -314,10 +324,22 @@ export const mockResults = [
             is_freezing: true,
             objects: [
                 {
+                    box: {
+                        height: 0.2,
+                        width: 0.25,
+                        x: 0.35,
+                        y: 0.05,
+                    },
                     confidence: 0.55,
                     type: 'avion',
                 },
                 {
+                    box: {
+                        height: 0.15,
+                        width: 0.1,
+                        x: 0.7,
+                        y: 0.55,
+                    },
                     confidence: 0.1,
                     type: 'skis',
                 },
@@ -333,7 +355,6 @@ export const mockResults = [
             timestamp: '00:00:03.000',
         },
         treatment_id: 2,
-        url: 'https://picsum.photos/300/200',
     },
     {
         id: 4,
@@ -364,7 +385,6 @@ export const mockResults = [
             timestamp: '00:00:06.000',
         },
         treatment_id: 2,
-        url: 'https://picsum.photos/300/200',
     },
     {
         id: 5,
@@ -395,7 +415,6 @@ export const mockResults = [
             timestamp: '00:00:09.000',
         },
         treatment_id: 2,
-        url: 'https://picsum.photos/300/200',
     },
     createMockVideoResult({
         altitude: 82,
