@@ -1,8 +1,10 @@
-import { FolderIcon, ListPlusIcon } from 'lucide-react';
-import { useRef } from 'react';
+import { FolderIcon, ListPlusIcon, XIcon } from 'lucide-react';
+import { useRef, useState } from 'react';
 
 import { useFileDrop } from '../../hooks';
 import { cn, flatTree } from '../../utils';
+import { DeleteFolderPopup } from './DeleteFolderPopup';
+import { FileTreeActionButton } from './FileTreeActionButton';
 import { FileTreeNode } from './FileTreeNode';
 
 export function Folder(props) {
@@ -18,6 +20,7 @@ export function Folder(props) {
     const { name, children } = folder;
 
     const detailsRef = useRef(null);
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
 
     const { isDragOver, dropProps } = useFileDrop({
         onDropError,
@@ -44,6 +47,12 @@ export function Folder(props) {
         isDragOver && 'bg-primary/15 outline outline-primary',
     );
 
+    const handleDeleteClick = (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+        setIsPopupOpen(true);
+    };
+
     return (
         <li className='group/folder'>
             <details ref={detailsRef}>
@@ -56,14 +65,22 @@ export function Folder(props) {
 
                     <div className='flex items-center gap-1'>
                         {onFilesSelect && (
-                            <button
-                                className='transition btn btn-ghost btn-xs btn-circle'
-                                title='Ajouter tous les fichiers du dossier à la zone dattente'
+                            <FileTreeActionButton
+                                aria-label={`Ajouter les fichiers de ${name}`}
+                                title="Ajouter tous les fichiers du dossier à la zone d'attente"
                                 onClick={handleSelectAllFiles}
                             >
                                 <ListPlusIcon className='size-4' />
-                            </button>
+                            </FileTreeActionButton>
                         )}
+                        <FileTreeActionButton
+                            aria-label={`Supprimer ${name}`}
+                            className='hover:bg-error/15 text-error/70 hover:text-error'
+                            title='Supprimer le dossier et tout son contenu'
+                            onClick={handleDeleteClick}
+                        >
+                            <XIcon className='size-4' />
+                        </FileTreeActionButton>
                     </div>
 
                 </summary>
@@ -78,6 +95,10 @@ export function Folder(props) {
                     ))}
                 </ul>
             </details>
+            {isPopupOpen && (
+                <DeleteFolderPopup folder={folder}
+                    onClose={() => setIsPopupOpen(false)}/>
+            )}
         </li>
     );
 }

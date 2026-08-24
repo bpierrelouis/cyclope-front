@@ -1,4 +1,4 @@
-import { ResultPopup } from '../../../components';
+import { ResultPopup } from '../ResultPopup';
 import { ResultsGrid } from './ResultsGrid';
 import { TableToolbar } from './TableToolbar';
 import { useTableController } from './useTableController';

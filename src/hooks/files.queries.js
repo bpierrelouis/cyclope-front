@@ -42,7 +42,9 @@ const useUploadFiles = ({ acceptedExtensions, allowXyzFolder = false, rootFolder
             folder: joinPath(rootFolder, folder),
         }),
         mutationKey: filesMutationKeys.upload(rootFolder),
-        onSettled: () => queryClient.invalidateQueries({ queryKey: filesQueryKeys.tree }),
+        onSettled: () => queryClient.invalidateQueries({
+            queryKey: [...filesQueryKeys.tree, rootFolder],
+        }),
     });
 };
 
@@ -64,16 +66,23 @@ const useDelete = () => {
 
     return useMutation({
         mutationFn: service.remove,
-        onSuccess: (_data, id) => {
-            queryClient.removeQueries({ queryKey: filesQueryKeys.detail(id) });
-            queryClient.invalidateQueries({ queryKey: filesQueryKeys.all });
-        },
+        onSettled: () => queryClient.invalidateQueries({ queryKey: filesQueryKeys.all }),
+    });
+};
+
+const useDeleteMany = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: service.removeMany,
+        onSettled: () => queryClient.invalidateQueries({ queryKey: filesQueryKeys.all }),
     });
 };
 
 export const filesQueries = {
     ...queries,
     useDelete,
+    useDeleteMany,
     useGetContent,
     useGetTreeCarto,
     useGetTreeMedia,

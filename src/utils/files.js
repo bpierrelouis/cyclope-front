@@ -55,6 +55,20 @@ export const flatTree = (tree) => tree.reduce((acc, node) => {
     return [...acc, node];
 }, []);
 
+export const getFolderDeletionConfirmationMessage = (fileCount) => {
+    const message = 'Voulez-vous vraiment supprimer ce dossier';
+
+    if (fileCount === 0) return `${message} ?`;
+    if (fileCount === 1) return `${message} et le fichier qu'il contient ?`;
+    return `${message} et les ${fileCount} fichiers qu'il contient ?`;
+};
+
+export const getFolderDeletionFailureMessage = (folderName, failedFileCount) => {
+    if (failedFileCount == null) return `Le dossier ${folderName} n'a pas pu être supprimé.`;
+    if (failedFileCount === 1) return `Un fichier du dossier ${folderName} n'a pas pu être supprimé.`;
+    return `${failedFileCount} fichiers du dossier ${folderName} n'ont pas pu être supprimés.`;
+};
+
 export const isVideoExtension = (extension) =>
     ACCEPTED_VIDEO_EXTENSIONS.includes(extension?.toLowerCase());
 

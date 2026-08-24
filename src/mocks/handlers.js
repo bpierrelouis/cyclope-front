@@ -68,7 +68,11 @@ const removeFileFromTree = (nodes, id) => {
         nodes.splice(index, 1);
         return true;
     }
-    return nodes.some((node) => node.children && removeFileFromTree(node.children, id));
+    return nodes.some((node) => {
+        if (!node.children || !removeFileFromTree(node.children, id)) return false;
+        if (node.children.length === 0) nodes.splice(nodes.indexOf(node), 1);
+        return true;
+    });
 };
 
 const findFileInTree = (id) =>

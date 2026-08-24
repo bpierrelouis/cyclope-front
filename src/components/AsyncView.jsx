@@ -11,7 +11,7 @@ export function AsyncView({ children }) {
 function ViewLoading() {
     return (
         <div
-            className='flex flex-1 justify-center items-center bg-base-300 min-h-0'
+            className='place-items-center grid bg-base-300 size-full'
             role='status'
         >
             <span className='loading loading-spinner loading-lg' />

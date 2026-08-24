@@ -184,10 +184,22 @@ const saveFiles = async ({
     return succeeded.map((result) => result.value);
 };
 
+const removeMany = async (files) => {
+    const results = await Promise.allSettled(
+        files.map((file) => service.remove(file.id)),
+    );
+
+    const deleted = files.filter((file, index) => results[index].status === 'fulfilled');
+    const failed = files.filter((file, index) => results[index].status === 'rejected');
+
+    return { deleted, failed };
+};
+
 export const filesService = {
     ...service,
     getContent,
     getRedirectUrl,
     getTree,
+    removeMany,
     saveFiles,
 };

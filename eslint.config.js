@@ -98,4 +98,21 @@ export default defineConfig([
             'yoda': 'error',
         },
     },
+    {
+        files: ['src/**/*.{js,jsx}'],
+        rules: {
+            'no-restricted-imports': ['error', {
+                patterns: [
+                    {
+                        message: 'Do not include .js or .jsx extensions in import paths.',
+                        regex: String.raw`\.jsx?$`,
+                    },
+                    {
+                        message: 'Import the folder directly instead of its index file.',
+                        regex: String.raw`/index(?:\.jsx?)?$`,
+                    },
+                ],
+            }],
+        },
+    },
 ]);
