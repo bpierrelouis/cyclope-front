@@ -1,12 +1,12 @@
 import { useState } from 'react';
 
-import { NOTIFICATION_LABELS } from '../constants';
-import { useSelectionContext } from '../contexts';
-import { filesQueries, framesQueries, resultsQueries } from '../hooks';
-import { openErrorToast, openSuccessToast } from '../utils';
-import { BoxEditor } from '../views/treatment/BoxEditor.jsx';
-import { ConfidenceBadges } from '../views/treatment/ConfidenceBadges.jsx';
-import { Modal } from './Modal';
+import { Modal } from '../../components';
+import { NOTIFICATION_LABELS } from '../../constants';
+import { useSelectionContext } from '../../contexts';
+import { filesQueries, framesQueries, resultsQueries } from '../../hooks';
+import { openErrorToast, openSuccessToast } from '../../utils';
+import { BoxEditor } from './BoxEditor';
+import { ConfidenceBadges } from './ConfidenceBadges';
 
 export function ResultPopup(props) {
     const { result: initial, dismiss } = props;

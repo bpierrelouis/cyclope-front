@@ -32,7 +32,7 @@ export function WaitingZone(props) {
     }, [setMissionId]);
 
     return (
-        <section className='flex flex-col bg-base-100 border border-base-300 shadow-sm card max-h-[calc(100vh-8rem)] size-full overflow-hidden'>
+        <section className='flex flex-col bg-base-100 border border-base-300 shadow-sm card w-full h-full min-h-0 overflow-hidden'>
             <h2 className='px-4 pt-4 card-title'>Zone d'attente</h2>
 
             <div className='flex flex-col gap-2 px-4 shrink-0'>

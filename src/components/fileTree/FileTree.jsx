@@ -19,13 +19,13 @@ export function FileTree(props) {
     return (
         <div
             className={cn(
-                'bg-base-100 border border-base-300 shadow-sm card max-h-[calc(100vh-8rem)] overflow-hidden',
+                'bg-base-100 border border-base-300 shadow-sm card w-full h-full min-h-0 overflow-hidden',
                 isDragOver && 'outline outline-primary',
             )}
             {...dropProps}
         >
             <h2 className='px-4 pt-4 card-title'>{title}</h2>
-            <ul className='flex-nowrap flex-1 size-full overflow-y-auto menu'>
+            <ul className='flex-nowrap flex-1 w-full min-h-0 overflow-y-auto menu'>
                 {nodes.map((node) => (
                     <FileTreeNode
                         key={node.id ?? node.name}

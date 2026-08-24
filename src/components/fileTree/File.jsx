@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { cn, isVideoExtension } from '../../utils';
 import { MediaIcon } from '../MediaIcon';
 import { DeleteFilePopup } from './DeleteFilePopup';
+import { FileTreeActionButton } from './FileTreeActionButton';
 
 export function File(props) {
     const {
@@ -47,13 +48,13 @@ export function File(props) {
             )}
             {onDelete && (
                 <>
-                    <button
+                    <FileTreeActionButton
                         aria-label={`Supprimer ${name}`}
-                        className='top-1/2 right-2 absolute hover:bg-error/15 opacity-0 focus-visible:opacity-100 group-hover/file:opacity-100 p-1 rounded text-error transition -translate-y-1/2'
+                        className='top-1/2 right-2 absolute hover:bg-error/15 text-error/70 hover:text-error -translate-y-1/2'
                         onClick={handleDeleteClick}
                     >
                         <XIcon className='size-4' />
-                    </button>
+                    </FileTreeActionButton>
                     {isPopupOpen && (
                         <DeleteFilePopup
                             file={file}
