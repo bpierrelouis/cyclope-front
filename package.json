@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "check": "npm run lint && npm test && npm run build",
-    "test": "node --test",
+    "test": "node --import ./node-test-loader.js --test",
     "preview": "vite preview"
   },
   "dependencies": {

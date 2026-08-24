@@ -1,4 +1,72 @@
-import { parseTimecode } from '../utils';
+import { parseTimecode } from '../utils/treatment';
+
+const DEFAULT_CONFIDENCE = 100;
+
+const isDefined = (value) => value !== null && value !== undefined;
+
+const toMeasurement = (candidate) => {
+    if (!candidate || typeof candidate !== 'object') return null;
+
+    const { value } = candidate;
+    if (!isDefined(value)) return null;
+
+    return {
+        confidence: candidate.confidence ?? null,
+        unit: candidate.unit ?? null,
+        value,
+    };
+};
+
+const getMeasurementEntries = (rawMeasurement) => {
+    const candidates = Array.isArray(rawMeasurement)
+        ? rawMeasurement
+        : [rawMeasurement];
+
+    return candidates
+        .map((candidate, index) => ({ index, measurement: toMeasurement(candidate) }))
+        .filter(({ measurement }) => measurement !== null);
+};
+
+const confidenceScore = ({ confidence }) =>
+    Number.isFinite(confidence) ? confidence : -Infinity;
+
+const selectMeasurementEntry = (rawMeasurement) =>
+    getMeasurementEntries(rawMeasurement).reduce(
+        (selected, candidate) => !selected
+            || confidenceScore(candidate.measurement) > confidenceScore(selected.measurement)
+            ? candidate
+            : selected,
+        null,
+    );
+
+const formatMeasurement = (measurement) => {
+    if (!measurement) return null;
+    return [measurement.value, measurement.unit]
+        .filter(isDefined)
+        .join(' ');
+};
+
+const updateMeasurementValue = (rawMeasurement, value) => {
+    const candidates = Array.isArray(rawMeasurement) ? rawMeasurement : [];
+    const selected = selectMeasurementEntry(candidates);
+
+    if (!selected) {
+        return [{ confidence: DEFAULT_CONFIDENCE, value }];
+    }
+
+    return candidates.map((candidate, index) => index === selected.index
+        ? { ...candidate, value }
+        : candidate);
+};
+
+const getCoordinateValue = (container, axis) => {
+    return toMeasurement(container?.coordinate?.[axis])?.value ?? null;
+};
+
+const isCoordinateValueValid = (axis, value) => Number.isFinite(value)
+    && (axis === 'latitude'
+        ? value >= -90 && value <= 90
+        : value >= -180 && value <= 180);
 
 export class Result {
     constructor(data) {
@@ -18,11 +86,11 @@ export class Result {
     }
 
     get url() {
-        return this.meta.url;
+        return this.meta.url ?? this.data.s3ImagePath;
     }
 
     get index() {
-        return this.meta.index;
+        return this.meta.index ?? this.data.frameIndex;
     }
 
     get data() {
@@ -34,13 +102,19 @@ export class Result {
     }
 
     get altitudeLabel() {
-        const altitude = this.data.aircraft?.altitude;
-        if (!altitude) return null;
-        return [altitude.valeur, altitude.unite].filter((value) => value != null).join(' ');
+        return formatMeasurement(this.getAircraftMeasurement('altitude'));
     }
 
     get altitudeValue() {
-        return this.data.aircraft?.altitude?.valeur ?? null;
+        return this.getAircraftMeasurement('altitude')?.value ?? null;
+    }
+
+    get latitudeValue() {
+        return this.getAircraftCoordinateValue('latitude');
+    }
+
+    get longitudeValue() {
+        return this.getAircraftCoordinateValue('longitude');
     }
 
     get seconds() {
@@ -50,13 +124,11 @@ export class Result {
     }
 
     get speedLabel() {
-        const speed = this.data.aircraft?.vitesse;
-        if (!speed) return null;
-        return [speed.valeur, speed.unite].filter((value) => value != null).join(' ');
+        return formatMeasurement(this.getAircraftMeasurement('speed'));
     }
 
     get speedValue() {
-        return this.data.aircraft?.vitesse?.valeur ?? null;
+        return this.getAircraftMeasurement('speed')?.value ?? null;
     }
 
     get objects() {
@@ -64,22 +136,71 @@ export class Result {
     }
 
     get coordinates() {
-        const latitude = this.data.aircraft?.coord?.latitude?.valeur;
-        const longitude = this.data.aircraft?.coord?.longitude?.valeur;
-        return Number.isFinite(latitude) && Number.isFinite(longitude)
+        const latitude = this.latitudeValue;
+        const longitude = this.longitudeValue;
+        return latitude !== null && longitude !== null
             ? { latitude, longitude }
             : null;
     }
 
     get target() {
-        const latitude = this.data.target?.coord?.latitude?.valeur;
-        const longitude = this.data.target?.coord?.longitude?.valeur;
-        return Number.isFinite(latitude) && Number.isFinite(longitude)
+        const latitude = this.getCoordinateValue('target', 'latitude');
+        const longitude = this.getCoordinateValue('target', 'longitude');
+        return latitude !== null && longitude !== null
             ? { latitude, longitude }
             : null;
     }
 
     get isFreezing() {
         return this.data.metaData?.isFreezing ?? false;
+    }
+
+    getAircraftCoordinateValue(axis) {
+        return this.getCoordinateValue('aircraft', axis);
+    }
+
+    getAircraftMeasurement(key) {
+        return selectMeasurementEntry(this.data.aircraft?.[key])?.measurement ?? null;
+    }
+
+    getCoordinateValue(containerKey, axis) {
+        const value = getCoordinateValue(this.data[containerKey], axis);
+        return isCoordinateValueValid(axis, value) ? value : null;
+    }
+
+    hasAircraftMeasurement(key) {
+        return this.getAircraftMeasurement(key) !== null;
+    }
+
+    createAircraftCoordinatePatch(axis, value) {
+        const aircraft = this.data.aircraft ?? {};
+        const coordinate = aircraft.coordinate ?? {};
+        const current = coordinate[axis] ?? {};
+
+        return {
+            aircraft: {
+                ...aircraft,
+                coordinate: {
+                    ...coordinate,
+                    [axis]: {
+                        ...current,
+                        confidence: Number.isFinite(current.confidence)
+                            ? current.confidence
+                            : DEFAULT_CONFIDENCE,
+                        value,
+                    },
+                },
+            },
+        };
+    }
+
+    createAircraftMeasurementPatch(key, value) {
+        const aircraft = this.data.aircraft ?? {};
+        return {
+            aircraft: {
+                ...aircraft,
+                [key]: updateMeasurementValue(aircraft[key], value),
+            },
+        };
     }
 }

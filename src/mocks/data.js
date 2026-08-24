@@ -192,20 +192,20 @@ const createMockVideoResult = ({
     index,
     response_json: {
         aircraft: {
-            altitude: {
-                confiance: 100,
-                unite: 'm',
-                valeur: altitude,
+            altitude: [{
+                confidence: 100,
+                unit: 'm',
+                value: altitude,
+            }],
+            coordinate: {
+                latitude: { confidence: 100, value: latitude },
+                longitude: { confidence: 100, value: longitude },
             },
-            coord: {
-                latitude: { confiance: 100, valeur: latitude },
-                longitude: { confiance: 100, valeur: longitude },
-            },
-            vitesse: {
-                confiance: 100,
-                unite: 'km/h',
-                valeur: speed,
-            },
+            speed: [{
+                confidence: 100,
+                unit: 'km/h',
+                value: speed,
+            }],
         },
         frame_index: index,
         meta_data: {
@@ -214,9 +214,9 @@ const createMockVideoResult = ({
         },
         objects,
         target: {
-            coord: {
-                latitude: { confiance: 100, valeur: targetLatitude },
-                longitude: { confiance: 100, valeur: targetLongitude },
+            coordinate: {
+                latitude: { confidence: 100, value: targetLatitude },
+                longitude: { confidence: 100, value: targetLongitude },
             },
         },
         timestamp,
@@ -304,27 +304,27 @@ const mockTrajectoryResults = MOCK_RESPONSE_VARIANTS.map((responseJson, position
             ...responseJson,
             aircraft: {
                 ...responseJson.aircraft,
-                altitude: {
-                    confiance: 100,
-                    unite: 'm',
-                    valeur: coordinates.altitude,
+                altitude: [{
+                    confidence: 100,
+                    unit: 'm',
+                    value: coordinates.altitude,
+                }],
+                coordinate: {
+                    latitude: { confidence: 100, value: coordinates.latitude },
+                    longitude: { confidence: 100, value: coordinates.longitude },
                 },
-                coord: {
-                    latitude: { confiance: 100, valeur: coordinates.latitude },
-                    longitude: { confiance: 100, valeur: coordinates.longitude },
-                },
-                vitesse: {
-                    confiance: 100,
-                    unite: 'km/h',
-                    valeur: coordinates.speed,
-                },
+                speed: [{
+                    confidence: 100,
+                    unit: 'km/h',
+                    value: coordinates.speed,
+                }],
             },
             objects: responseJson.objects,
             target: {
                 ...responseJson.target,
-                coord: {
-                    latitude: { confiance: 100, valeur: MOCK_TARGET_COORDINATES.latitude },
-                    longitude: { confiance: 100, valeur: MOCK_TARGET_COORDINATES.longitude },
+                coordinate: {
+                    latitude: { confidence: 100, value: MOCK_TARGET_COORDINATES.latitude },
+                    longitude: { confidence: 100, value: MOCK_TARGET_COORDINATES.longitude },
                 },
             },
             timestamp: toMockTimestamp(seconds),
