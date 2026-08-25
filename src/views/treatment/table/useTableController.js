@@ -12,12 +12,18 @@ import {
 import { playerService, tableService } from '../../../services';
 import { useTableStore } from '../../../stores';
 import {
+    applyColumnVisibility,
+    downloadBlob,
+    getChangedRowNodes,
+    getExportParams,
+    getJsonExportBlob,
+    getJsonExportFileName,
     getTimelineResultsById,
     openErrorToast,
     openSuccessToast,
+    prepareResultPatch,
 } from '../../../utils';
 import { getColumnDefs } from './columnDefs';
-import { applyColumnVisibility, getChangedRowNodes, getExportParams, prepareResultPatch } from './table.utils';
 
 export const useTableController = () => {
     const {
@@ -109,6 +115,15 @@ export const useTableController = () => {
         if (api) api.exportDataAsCsv(getExportParams(api, sourceName));
     }, [isMission, media?.name, mission?.name]);
 
+    const exportJson = useCallback(() => {
+        const sourceName = isMission ? mission?.name : media?.name;
+        downloadBlob(
+            getJsonExportBlob(results),
+            getJsonExportFileName(sourceName),
+        );
+    }, [isMission, media?.name, mission?.name, results]);
+
+
     useEffect(() => {
         const api = gridRef.current?.api;
         if (api) applyColumnVisibility(api, hiddenColumnIds);
@@ -144,6 +159,7 @@ export const useTableController = () => {
         detectionFilterActive: (filterModel.objects?.values?.length ?? 0) > 0,
         dismissSelected: () => setSelected(null),
         exportCsv,
+        exportJson,
         favoriteCount: favoriteResults.length,
         gridProps: {
             columnDefs,

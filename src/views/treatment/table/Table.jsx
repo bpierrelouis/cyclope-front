@@ -10,6 +10,7 @@ export function Table() {
         favoriteCount,
         unfavoriteAll,
         exportCsv,
+        exportJson,
         detectionFilterActive,
         gridProps,
     } = useTableController();
@@ -20,6 +21,7 @@ export function Table() {
                 favoriteCount={favoriteCount}
                 onClearFavorites={unfavoriteAll}
                 onExport={exportCsv}
+                onExportJson={exportJson}
             />
             <ResultsGrid detectionFilterActive={detectionFilterActive} {...gridProps} />
             {selected && <ResultPopup result={selected} dismiss={dismissSelected} />}
