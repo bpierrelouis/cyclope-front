@@ -71,14 +71,9 @@ const measurementColumn = ({
     valueFormatter: ({ data: result }) => result[`${key}Label`] ?? '—',
     ...editableColumn(
         parseNumber(validate),
-        (result, value) => ({
-            aircraft: {
-                ...result.data.aircraft,
-                [key]: { ...result.data.aircraft?.[key], valeur: value },
-            },
-        }),
+        (result, value) => result.createAircraftMeasurementPatch(key, value),
         errorMessage,
-        ({ data: result }) => Boolean(result.data.aircraft?.[key]),
+        ({ data: result }) => result.hasAircraftMeasurement(key),
     ),
 });
 
@@ -146,44 +141,22 @@ export const getColumnDefs = (
         valueGetter: ({ data }) => timelineResultsById.get(data.id)?.globalTime ?? null,
     },
     {
-        field: 'coordinates.latitude',
-        ...numberFilter('coordinates.latitude'),
+        field: 'latitudeValue',
+        ...numberFilter('latitudeValue'),
         headerName: 'Latitude',
         ...editableColumn(
             parseNumber(isValidLatitude),
-            (result, value) => ({
-                aircraft: {
-                    ...result.data.aircraft,
-                    coord: {
-                        ...result.data.aircraft?.coord,
-                        latitude: {
-                            ...result.data.aircraft?.coord?.latitude,
-                            valeur: value,
-                        },
-                    },
-                },
-            }),
+            (result, value) => result.createAircraftCoordinatePatch('latitude', value),
             'La latitude doit être comprise entre -90 et 90',
         ),
     },
     {
-        field: 'coordinates.longitude',
-        ...numberFilter('coordinates.longitude'),
+        field: 'longitudeValue',
+        ...numberFilter('longitudeValue'),
         headerName: 'Longitude',
         ...editableColumn(
             parseNumber(isValidLongitude),
-            (result, value) => ({
-                aircraft: {
-                    ...result.data.aircraft,
-                    coord: {
-                        ...result.data.aircraft?.coord,
-                        longitude: {
-                            ...result.data.aircraft?.coord?.longitude,
-                            valeur: value,
-                        },
-                    },
-                },
-            }),
+            (result, value) => result.createAircraftCoordinatePatch('longitude', value),
             'La longitude doit être comprise entre -180 et 180',
         ),
     },
