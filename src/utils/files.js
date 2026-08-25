@@ -192,9 +192,15 @@ export const parseDroppedItems = async (dataTransfer) => {
     return { folders, rootFiles };
 };
 
-export const downloadDataUrl = (dataUrl, filename)  => {
+export const downloadDataUrl = (url, filename) => {
     const link = document.createElement('a');
-    link.href = dataUrl;
+    link.href = url;
     link.download = filename;
     link.click();
+};
+
+export const downloadBlob = (blob, filename) => {
+    const url = URL.createObjectURL(blob);
+    downloadDataUrl(url, filename);
+    URL.revokeObjectURL(url);
 };

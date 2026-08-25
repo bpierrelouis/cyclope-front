@@ -2,8 +2,8 @@ import { AG_GRID_LOCALE_FR } from '@ag-grid-community/locale';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
+import { DEFAULT_COL_DEF } from '../../../constants';
 import { cn } from '../../../utils';
-import { DEFAULT_COL_DEF } from './table.utils';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 

@@ -1,25 +1,22 @@
-import { getTimestamp, suppressExtension } from '../../../utils';
-import { getColumnOptions } from './columnDefs';
+import { suppressExtension } from './files';
+import { getTimestamp } from './others';
 
 const EXPORT_FALLBACK_NAME = 'export';
-const HIDEABLE_COLUMN_IDS = getColumnOptions(true).map(({ id }) => id);
 
-export const DEFAULT_COL_DEF = {
-    flex: 1,
-    resizable: true,
-    sortable: true,
-    suppressHeaderMenuButton: true,
-    suppressMovable: true,
-};
+const getHideableColumnIds = (api) => api
+    .getColumns()
+    .filter((column) => !column.getColDef().context?.isControlColumn)
+    .map((column) => column.getColId());
 
 export const applyColumnVisibility = (api, hiddenColumnIds) => {
     const hiddenIds = new Set(hiddenColumnIds);
+    const hideableColumnIds = getHideableColumnIds(api);
     api.setColumnsVisible(
-        HIDEABLE_COLUMN_IDS.filter((colId) => !hiddenIds.has(colId)),
+        hideableColumnIds.filter((colId) => !hiddenIds.has(colId)),
         true,
     );
     api.setColumnsVisible(
-        HIDEABLE_COLUMN_IDS.filter((colId) => hiddenIds.has(colId)),
+        hideableColumnIds.filter((colId) => hiddenIds.has(colId)),
         false,
     );
 };
@@ -32,6 +29,13 @@ export const getExportParams = (api, mediaName) => ({
     fileName: `${suppressExtension(mediaName ?? EXPORT_FALLBACK_NAME)}_${getTimestamp()}.csv`,
     skipColumnHeaders: false,
 });
+
+export const getJsonExportBlob = (results) => new Blob([
+    JSON.stringify(results.map(({ meta }) => meta), null, 2),
+], { type: 'application/json;charset=utf-8' });
+
+export const getJsonExportFileName = (sourceName) =>
+    `results_${sourceName ?? EXPORT_FALLBACK_NAME}.json`;
 
 export const getChangedRowNodes = (api, ids) => ids
     .filter((id) => id != null)
