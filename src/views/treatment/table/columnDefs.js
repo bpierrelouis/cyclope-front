@@ -7,7 +7,6 @@ import {
     normalizeNumericFilterValue,
     toText,
 } from '../../../utils';
-import { DetectionCellEditor } from './DetectionCellEditor';
 import { DetectionFilter } from './DetectionFilter';
 import { DetectionCell } from './DetectionsCell';
 import { FavoriteCell } from './FavoriteCell';
@@ -54,13 +53,6 @@ const editableColumn = (
     },
     editable: isEditable,
 });
-
-const areSameDetections = (left = [], right = []) => {
-    const signature = (objects) => objects
-        .map(({ type, confidence }) => `${type}\u0000${confidence}`)
-        .sort();
-    return JSON.stringify(signature(left)) === JSON.stringify(signature(right));
-};
 
 const measurementColumn = ({
     field, key, headerName, validate, errorMessage,
@@ -175,19 +167,9 @@ export const getColumnDefs = (
     }),
     {
         autoHeight: true,
-        cellEditor: DetectionCellEditor,
-        cellEditorPopup: true,
-        cellEditorPopupPosition: 'under',
         cellRenderer: DetectionCell,
+        editable: false,
         field: 'objects',
-        headerName: 'Détection',
-        ...editableColumn(
-            (objects) => objects,
-            (_result, objects) => ({ objects }),
-            'Sélection invalide',
-            true,
-            areSameDetections,
-        ),
         filter: {
             component: DetectionFilter,
             doesFilterPass: ({ model, node }) => {
@@ -196,6 +178,7 @@ export const getColumnDefs = (
                 return selectedTypes.some((type) => resultTypes.includes(type));
             },
         },
+        headerName: 'Détection',
         suppressHeaderFilterButton: false,
         valueFormatter: ({ value }) => toText(value),
     },
