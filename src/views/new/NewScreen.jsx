@@ -79,11 +79,7 @@ export function NewScreen() {
 
     return (
         <main className='flex flex-col gap-4 p-4 min-h-0 size-full'>
-            <div className='flex justify-between items-center shrink-0'>
-                <p className='opacity-60 text-sm'>
-                    Déposez vos vidéos directement sur un dossier de
-                    l'explorateur.
-                </p>
+            <div className='flex justify-end items-center shrink-0'>
                 <button
                     type='button'
                     className='btn btn-primary'

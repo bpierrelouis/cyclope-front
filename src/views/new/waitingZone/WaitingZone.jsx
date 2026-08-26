@@ -1,6 +1,8 @@
+import { ListVideoIcon } from 'lucide-react';
 import { useEffect } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
+import { SectionCard } from '../../../components';
 import { missionsQueries } from '../../../hooks';
 import { useMissionCreationStore } from '../../../stores';
 import { formatFileSize } from '../../../utils';
@@ -32,10 +34,13 @@ export function WaitingZone(props) {
     }, [setMissionId]);
 
     return (
-        <section className='flex flex-col bg-base-100 border border-base-300 shadow-sm card w-full h-full min-h-0 overflow-hidden'>
-            <h2 className='px-4 pt-4 card-title'>Zone d'attente</h2>
+        <SectionCard
+            className='w-full h-full min-h-64 overflow-hidden'
+            icon={ListVideoIcon}
+            title="Zone d'attente"
+        >
 
-            <div className='flex flex-col gap-2 px-4 shrink-0'>
+            <div className='flex flex-col gap-2 shrink-0'>
                 <div className='tabs'>
                     <input
                         type='radio'
@@ -84,9 +89,9 @@ export function WaitingZone(props) {
 
             <div className='my-1 divider shrink-0' />
 
-            <div className='flex-1 px-4 pb-2 min-h-0 overflow-y-auto'>
+            <div className='flex-1 min-h-0 overflow-y-auto'>
                 <FileList files={files} />
             </div>
-        </section>
+        </SectionCard>
     );
 }

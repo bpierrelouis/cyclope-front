@@ -1,6 +1,10 @@
+import { FolderTreeIcon } from 'lucide-react';
 import { useShallow } from 'zustand/react/shallow';
 
-import { FileTree } from '../../components';
+import {
+    FileTree,
+    SectionCard,
+} from '../../components';
 import { filesQueries } from '../../hooks';
 import { useMissionCreationStore } from '../../stores';
 import { openErrorToast } from '../../utils';
@@ -65,18 +69,24 @@ export function MediaFileTree() {
     };
 
     return (
-        <FileTree
-            activeDropPath={uploadFolder}
+        <SectionCard
+            className='h-full min-h-64'
+            description="Déposez vos vidéos directement sur un dossier de l'explorateur."
+            icon={FolderTreeIcon}
             title='Explorateur de médias'
-            nodes={fileNodes}
-            onDelete={handleDelete}
-            onDropError={handleDropError}
-            onDropToFolder={uploadAndSelect}
-            onDropFolder={handleDropFolder}
-            onFileSelect={toggle}
-            onFilesSelect={selectMany}
-            onTargetPathChange={setUploadFolder}
-            selectedFileIds={fileIds}
-        />
+        >
+            <FileTree
+                activeDropPath={uploadFolder}
+                nodes={fileNodes}
+                onDelete={handleDelete}
+                onDropError={handleDropError}
+                onDropToFolder={uploadAndSelect}
+                onDropFolder={handleDropFolder}
+                onFileSelect={toggle}
+                onFilesSelect={selectMany}
+                onTargetPathChange={setUploadFolder}
+                selectedFileIds={fileIds}
+            />
+        </SectionCard>
     );
 }

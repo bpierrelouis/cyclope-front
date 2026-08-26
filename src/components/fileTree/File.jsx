@@ -1,10 +1,9 @@
-import { XIcon } from 'lucide-react';
 import { useState } from 'react';
 
 import { cn, isVideoExtension } from '../../utils';
+import { DeleteButton } from '../DeleteButton';
 import { MediaIcon } from '../MediaIcon';
 import { DeleteFilePopup } from './DeleteFilePopup';
-import { FileTreeActionButton } from './FileTreeActionButton';
 
 export function File(props) {
     const {
@@ -48,13 +47,12 @@ export function File(props) {
             )}
             {onDelete && (
                 <>
-                    <FileTreeActionButton
+                    <DeleteButton
                         aria-label={`Supprimer ${name}`}
-                        className='top-1/2 right-2 absolute hover:bg-error/15 text-error/70 hover:text-error -translate-y-1/2'
+                        className='top-1/2 right-2 absolute -translate-y-1/2'
+                        title={`Supprimer ${name}`}
                         onClick={handleDeleteClick}
-                    >
-                        <XIcon className='size-4' />
-                    </FileTreeActionButton>
+                    />
                     {isPopupOpen && (
                         <DeleteFilePopup
                             file={file}

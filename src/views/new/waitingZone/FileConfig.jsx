@@ -1,6 +1,6 @@
 import { useShallow } from 'zustand/react/shallow';
 
-import { ConfigurationCard, ProcessConfidenceField, ProcessLevelField, ProcessObjectDetectionField, ProcessStepField } from '../../../components';
+import { ProcessConfidenceField, ProcessLevelField, ProcessObjectDetectionField, ProcessStepField } from '../../../components';
 import { useMissionCreationStore } from '../../../stores';
 
 export function FileConfig(props) {
@@ -18,7 +18,7 @@ export function FileConfig(props) {
     if (!config) return;
 
     return (
-        <ConfigurationCard className='bg-base-200 shadow-none'>
+        <div className='flex flex-col gap-2 bg-base-200 border border-base-300 p-6 rounded-box min-h-0'>
             {!!file.duration && (<ProcessStepField
                 config={config}
                 setPartialConfig={setPartialConfig}
@@ -39,6 +39,6 @@ export function FileConfig(props) {
                 config={config}
                 setPartialConfig={setPartialConfig}
             />
-        </ConfigurationCard>
+        </div>
     );
 }

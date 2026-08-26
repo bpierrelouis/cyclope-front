@@ -2,14 +2,13 @@ import { SlidersHorizontalIcon } from 'lucide-react';
 import { useShallow } from 'zustand/react/shallow';
 
 import {
-    ConfigurationCard,
     ProcessConfidenceField,
     ProcessLevelField,
     ProcessObjectDetectionField,
     ProcessStepField,
+    SectionCard,
 } from '../../components';
 import { useDefaultConfigStore } from '../../stores';
-import { SettingsCardHeader } from './SettingsCardHeader';
 
 export function DefaultTreatmentSettings() {
     const { setPartialState, ...config } = useDefaultConfigStore(useShallow((state) => ({
@@ -21,13 +20,11 @@ export function DefaultTreatmentSettings() {
     })));
 
     return (
-        <ConfigurationCard>
-            <SettingsCardHeader
-                icon={SlidersHorizontalIcon}
-                title='Paramètres de traitement par défaut'
-            >
-                Ces paramètres seront appliqués automatiquement aux nouveaux médias.
-            </SettingsCardHeader>
+        <SectionCard
+            description='Ces paramètres seront appliqués automatiquement aux nouveaux médias.'
+            icon={SlidersHorizontalIcon}
+            title='Paramètres de traitement par défaut'
+        >
 
             <ProcessStepField
                 config={config}
@@ -50,6 +47,6 @@ export function DefaultTreatmentSettings() {
                 config={config}
                 setPartialConfig={setPartialState}
             />
-        </ConfigurationCard>
+        </SectionCard>
     );
 }

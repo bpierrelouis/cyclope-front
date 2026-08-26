@@ -1,6 +1,9 @@
+import { FolderTreeIcon } from 'lucide-react';
+
 import { filesQueries } from '../hooks';
 import { openErrorToast } from '../utils';
 import { FileTree } from './fileTree';
+import { SectionCard } from './SectionCard';
 
 export function ProcessImportCarto() {
     const { data: fileNodes = [] } = filesQueries.useGetTreeCarto();
@@ -24,13 +27,19 @@ export function ProcessImportCarto() {
     };
 
     return (
-        <FileTree
+        <SectionCard
+            className='min-h-64'
+            description="Déposez vos fonds de carte directement dans l'explorateur."
+            icon={FolderTreeIcon}
             title='Explorateur de fond de carte'
-            nodes={fileNodes}
-            onDelete={handleDelete}
-            onDropError={handleDropError}
-            onDropToFolder={uploadFilesCarto}
-            onDropFolder={uploadFilesCarto}
-        />
+        >
+            <FileTree
+                nodes={fileNodes}
+                onDelete={handleDelete}
+                onDropError={handleDropError}
+                onDropToFolder={uploadFilesCarto}
+                onDropFolder={uploadFilesCarto}
+            />
+        </SectionCard>
     );
 }
