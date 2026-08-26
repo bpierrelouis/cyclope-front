@@ -10,6 +10,7 @@ export function FrameCell(props) {
     const { data: frameSrc } = framesQueries.useResultFrame(result, {
         enabled: !result.url,
         media,
+        raw: true,
     });
     const imageSrc = result.url ? legacySrc : frameSrc;
 
