@@ -1,7 +1,7 @@
 export * from './AsyncView';
 export * from './CaptureDialog';
 export * from './ConfidenceBadge';
-export * from './ConfigurationCard';
+export * from './DeleteButton';
 export * from './DeletePopup';
 export * from './EditableText';
 export * from './Field';
@@ -14,6 +14,7 @@ export * from './ProcessImportCarto';
 export * from './ProcessLevelField';
 export * from './ProcessObjectDetectionField';
 export * from './ProcessStepField';
+export * from './SectionCard';
 export * from './SelectCarto';
 export * from './SquareButton';
 export * from './Toast';

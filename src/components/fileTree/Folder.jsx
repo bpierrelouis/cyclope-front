@@ -1,8 +1,9 @@
-import { FolderIcon, ListPlusIcon, XIcon } from 'lucide-react';
+import { FolderIcon, ListPlusIcon } from 'lucide-react';
 import { useRef, useState } from 'react';
 
 import { useFileDrop } from '../../hooks';
 import { cn, flatTree } from '../../utils';
+import { DeleteButton } from '../DeleteButton';
 import { DeleteFolderPopup } from './DeleteFolderPopup';
 import { FileTreeActionButton } from './FileTreeActionButton';
 import { FileTreeNode } from './FileTreeNode';
@@ -73,14 +74,11 @@ export function Folder(props) {
                                 <ListPlusIcon className='size-4' />
                             </FileTreeActionButton>
                         )}
-                        <FileTreeActionButton
+                        <DeleteButton
                             aria-label={`Supprimer ${name}`}
-                            className='hover:bg-error/15 text-error/70 hover:text-error'
                             title='Supprimer le dossier et tout son contenu'
                             onClick={handleDeleteClick}
-                        >
-                            <XIcon className='size-4' />
-                        </FileTreeActionButton>
+                        />
                     </div>
 
                 </summary>
