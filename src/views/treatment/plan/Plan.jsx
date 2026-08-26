@@ -8,7 +8,7 @@ import { Plan as Constants } from '../../../constants';
 import { useMapStyle, useOpenState, useResults } from '../../../hooks';
 import { useDefaultCartoStore } from '../../../stores';
 import { hasValidCoordinates } from '../../../utils';
-import { ResultPopup } from '../ResultPopup';
+import { ResultPopup } from '../resultPopup';
 import { DroneMarker } from './DroneMarker';
 import { LocateButton } from './LocateButton';
 import { Path } from './Path';

@@ -1,22 +1,20 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
 import { useShallow } from 'zustand/react/shallow';
 
-import { BOX_HANDLES, MIN_BOX_SIZE } from '../../constants';
-import { useDetectionCatalogStore } from '../../stores';
+import { MIN_BOX_SIZE } from '../../../constants';
+import { useDetectionCatalogStore } from '../../../stores';
 import {
     clamp,
-    cn,
-    getDetectionBackgroundStyle,
     getDetectionColor,
     getObjectBox,
     getPointerPosition,
     rectFrom,
-    sameName,
     toBoundingBox,
     toNormalizedBox,
     updateObjectBox,
-} from '../../utils';
+} from '../../../utils';
+import { DetectionBox } from './DetectionBox';
+import { DetectionTypeMenu } from './DetectionTypeMenu';
 
 /**
  * Éditeur de rectangles de détection par-dessus la frame : tracé de nouveaux
@@ -25,7 +23,7 @@ import {
  */
 export function BoxEditor(props) {
     const {
-        src, objects, onChange, dialogElement,
+        src, objects, onChange, onCommit, dialogElement,
     } = props;
     const overlayRef = useRef(null);
     const dragRef = useRef(null);
@@ -34,13 +32,10 @@ export function BoxEditor(props) {
     const [isDragging, setIsDragging] = useState(false);
     const [menuPosition, setMenuPosition] = useState(null);
 
-
     const { categories, detections } = useDetectionCatalogStore(useShallow((state) => ({
         categories: state.categories,
         detections: state.detections,
     })));
-
-
 
     const colorOf = (type) => getDetectionColor(type, detections, categories);
 
@@ -120,7 +115,10 @@ export function BoxEditor(props) {
         const drag = dragRef.current;
         dragRef.current = null;
         setIsDragging(false);
-        if (!drag?.isNew) return;
+        if (!drag?.isNew) {
+            if (drag && objects.every((object) => object.type)) onCommit?.(objects);
+            return;
+        }
 
         // Tracé trop petit : simple clic, le rectangle n'est pas conservé.
         const box = toNormalizedBox(getObjectBox(objects[drag.index] ?? {}), natural);
@@ -130,24 +128,32 @@ export function BoxEditor(props) {
         }
     };
 
-    const setSelectedType = (type) => onChange(objects.map(
-        (object, index) => index === selectedIndex ? { ...object, type } : object,
-    ));
+    const setSelectedType = (type) => {
+        const nextObjects = objects.map(
+            (object, index) => index === selectedIndex ? { ...object, type } : object,
+        );
+        onChange(nextObjects);
+        onCommit?.(nextObjects);
+        setSelectedIndex(null);
+    };
 
     useEffect(() => {
         if (selectedIndex === null) return;
 
         const onKeyDown = (event) => {
+            if (event.target instanceof HTMLInputElement) return;
             if (event.key === 'Delete' || event.key === 'Backspace') {
                 event.preventDefault();
-                onChange(objects.filter((_, index) => index !== selectedIndex));
+                const nextObjects = objects.filter((_, index) => index !== selectedIndex);
+                onChange(nextObjects);
+                onCommit?.(nextObjects);
                 setSelectedIndex(null);
             }
         };
 
         document.addEventListener('keydown', onKeyDown);
         return () => document.removeEventListener('keydown', onKeyDown);
-    }, [selectedIndex, objects, onChange]);
+    }, [selectedIndex, objects, onChange, onCommit]);
 
 
     const selected = selectedIndex === null ? null : objects[selectedIndex];
@@ -195,70 +201,25 @@ export function BoxEditor(props) {
                     const color = colorOf(object.type);
 
                     return (
-                        <div
+                        <DetectionBox
                             key={index}
-                            className={cn('absolute border-2 cursor-move', !object.type && 'border-dashed')}
-                            style={{
-                                borderColor: color,
-                                height: `${box.height * 100}%`,
-                                left: `${box.x * 100}%`,
-                                top: `${box.y * 100}%`,
-                                width: `${box.width * 100}%`,
-                            }}
-                            onPointerDown={onBoxDown(index)}
-                        >
-                            <span
-                                className='-top-5 -left-0.5 absolute px-1 rounded-sm text-white text-xs whitespace-nowrap'
-                                style={getDetectionBackgroundStyle(color)}
-                            >
-                                {object.type ?? '?'}
-                            </span>
-                            {index === selectedIndex && BOX_HANDLES.map((handle) => (
-                                <span
-                                    key={handle.className}
-                                    className={cn('absolute bg-base-100 border-2 rounded-full w-3 h-3', handle.className)}
-                                    style={{ borderColor: color }}
-                                    onPointerDown={onHandleDown(index, handle)}
-                                />
-                            ))}
-                        </div>
+                            box={box}
+                            color={color}
+                            isSelected={index === selectedIndex}
+                            object={object}
+                            onBoxDown={onBoxDown(index)}
+                            onHandleDown={(handle) => onHandleDown(index, handle)}
+                        />
                     );
                 })}
 
-                {menuPosition && !isDragging && dialogElement && createPortal (
-                    <div
-                        className='z-50 fixed bg-base-100 shadow-xl border border-base-300 rounded-box w-56 max-h-56 overflow-auto'
-                        style={{ left: menuPosition.left, top: menuPosition.top }}
-                        onPointerDown={(event) => event.stopPropagation()}
-                    >
-                        <div className='flex flex-col gap-1 p-2'>
-                            {detections.length === 0 && (
-                                <span className='p-2 opacity-60 text-xs'>Aucune détection : ajoutez-en d’abord une dans les paramètres.</span>
-                            )}
-                            {detections.map((detection) => {
-                                return (
-                                    <button
-                                        key={detection.name}
-                                        type='button'
-                                        className={cn(
-                                            'flex items-center gap-2 hover:bg-base-200 px-2 py-1.5 rounded-field text-left text-sm cursor-pointer',
-                                            sameName(detection.name, selected?.type) && 'bg-base-200 font-semibold',
-                                        )}
-                                        onClick={() => setSelectedType(detection.name)}
-                                    >
-                                        <span
-                                            className='rounded-full w-2.5 h-2.5 shrink-0'
-                                            style={getDetectionBackgroundStyle(
-                                                getDetectionColor(detection.name, detections, categories),
-                                            )}
-                                        />
-                                        <span className='flex-1 truncate'>{detection.name}</span>
-                                    </button>
-                                );
-                            })}
-                        </div>
-                    </div>,
-                    dialogElement,
+                {!isDragging && (
+                    <DetectionTypeMenu
+                        dialogElement={dialogElement}
+                        onSelect={setSelectedType}
+                        position={menuPosition}
+                        selectedType={selected?.type}
+                    />
                 )}
             </div>
         </div>
