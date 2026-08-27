@@ -215,6 +215,7 @@ export function BoxEditor(props) {
 
                 {!isDragging && (
                     <DetectionTypeMenu
+                        key={selectedIndex}
                         dialogElement={dialogElement}
                         onSelect={setSelectedType}
                         position={menuPosition}
