@@ -1,10 +1,10 @@
-import { DownloadIcon } from 'lucide-react';
+import { DownloadIcon, LoaderCircleIcon } from 'lucide-react';
 
 import { ConfidenceBadges } from '../ConfidenceBadges';
 
 export function ResultPopupSidebar(props) {
     const {
-        hasUntyped, isPending, result, viewSrc,
+        hasUntyped, isDownloading, isPending, onDownload, result,
     } = props;
     const rows = [
         { label: 'Frame', value: result.index },
@@ -38,17 +38,17 @@ export function ResultPopupSidebar(props) {
                 {isPending && (
                     <span className='opacity-60 text-xs'>Enregistrement en cours…</span>
                 )}
-                <a
+                <button
+                    type='button'
                     className='btn-outline btn btn-sm'
-                    href={viewSrc}
-                    download={`detection-frame-${result.index ?? result.id}.jpg`}
-                    aria-disabled={!viewSrc}
-                    onClick={(event) => {
-                        if (!viewSrc) event.preventDefault();
-                    }}
+                    disabled={isDownloading}
+                    onClick={onDownload}
                 >
-                    <DownloadIcon size={16} /> Télécharger l'image
-                </a>
+                    {isDownloading
+                        ? <LoaderCircleIcon className='animate-spin' size={16} />
+                        : <DownloadIcon size={16} />}
+                    Télécharger l'image
+                </button>
             </div>
         </div>
     );

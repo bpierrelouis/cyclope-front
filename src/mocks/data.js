@@ -1,3 +1,5 @@
+const MOCK_VIDEO_DURATION_SECONDS = 17;
+
 export const mockMissions = [
     {
         creation_date: '2026-04-15T10:00:00Z',
@@ -38,7 +40,7 @@ export const mockMedias = [
             id: 1,
             name: 'fichier1.jpg',
             size: 6000,
-            url: 'https://picsum.photos/300/200',
+            url: '/dev-media/image',
         },
     },
     {
@@ -49,12 +51,12 @@ export const mockMedias = [
         last_treatment_status: 'DONE',
         mission_id: 1,
         parent_file: {
-            duration: 10.026667,
+            duration: MOCK_VIDEO_DURATION_SECONDS,
             extension: 'mp4',
             id: 5,
             name: 'mov_bbb.mp4',
             size: 60521,
-            url: '/dev-media/html/mov_bbb.mp4',
+            url: '/dev-media/video',
         },
     },
     {
@@ -67,12 +69,12 @@ export const mockMedias = [
         mission_id: 1,
 
         parent_file: {
-            duration: 10.026667,
+            duration: MOCK_VIDEO_DURATION_SECONDS,
             extension: 'mp4',
             id: 5,
             name: 'mov_bbb.mp4',
             size: 60521,
-            url: '/dev-media/html/mov_bbb.mp4',
+            url: '/dev-media/video',
         },
     },
     {
@@ -85,12 +87,12 @@ export const mockMedias = [
         mission_id: 1,
 
         parent_file: {
-            duration: 10.026667,
+            duration: MOCK_VIDEO_DURATION_SECONDS,
             extension: 'mp4',
             id: 5,
             name: 'mov_bbb.mp4',
             size: 60521,
-            url: '/dev-media/html/mov_bbb.mp4',
+            url: '/dev-media/video',
         },
     },
     {
@@ -104,7 +106,7 @@ export const mockMedias = [
             id: 3,
             name: 'fichier3.jpg',
             size: 6000,
-            url: 'https://picsum.photos/300/200',
+            url: '/dev-media/image',
         },
     },
     {
@@ -118,7 +120,7 @@ export const mockMedias = [
             id: 4,
             name: 'fichier4.jpg',
             size: 6000,
-            url: 'https://picsum.photos/300/200',
+            url: '/dev-media/image',
         },
     },
 ];
@@ -225,30 +227,48 @@ const createMockVideoResult = ({
     treatment_id: treatmentId,
 });
 
-const MOCK_RESULT_INTERVAL_SECONDS = 1.5;
+const MOCK_RESULT_INTERVAL_SECONDS = 2.5;
+const MOCK_VIDEO_HEIGHT = 1080;
+const MOCK_VIDEO_WIDTH = 1920;
+const PREVIOUS_MOCK_VIDEO_HEIGHT = 176;
+const PREVIOUS_MOCK_VIDEO_WIDTH = 320;
+
+const scaleVideoX = (value) =>
+    Math.round(value * MOCK_VIDEO_WIDTH / PREVIOUS_MOCK_VIDEO_WIDTH);
+const scaleVideoY = (value) =>
+    Math.round(value * MOCK_VIDEO_HEIGHT / PREVIOUS_MOCK_VIDEO_HEIGHT);
+
 const createMockDetection = ({
     boxIndex = 0,
     classId,
     confidence,
+    scaleToVideo = true,
     type,
     x1,
     x2,
     y1,
     y2,
-}) => ({
-    bbox: {
-        height: y2 - y1,
-        width: x2 - x1,
-        x1,
-        x2,
-        y1,
-        y2,
-    },
-    box_index: boxIndex,
-    class_id: classId,
-    confidence,
-    type,
-});
+}) => {
+    const left = scaleToVideo ? scaleVideoX(x1) : x1;
+    const right = scaleToVideo ? scaleVideoX(x2) : x2;
+    const top = scaleToVideo ? scaleVideoY(y1) : y1;
+    const bottom = scaleToVideo ? scaleVideoY(y2) : y2;
+
+    return {
+        bbox: {
+            height: bottom - top,
+            width: right - left,
+            x1: left,
+            x2: right,
+            y1: top,
+            y2: bottom,
+        },
+        box_index: boxIndex,
+        class_id: classId,
+        confidence,
+        type,
+    };
+};
 
 const MOCK_AIRPLANE_DETECTIONS = [
     createMockDetection({
@@ -353,9 +373,20 @@ export const mockResults = [
     {
         id: 1,
         index: 0,
-        response_json: mockTrajectoryResults[0].response_json,
+        response_json: {
+            ...mockTrajectoryResults[0].response_json,
+            objects: [createMockDetection({
+                classId: 4,
+                confidence: 70.3,
+                scaleToVideo: false,
+                type: 'avion',
+                x1: 72,
+                x2: 238,
+                y1: 38,
+                y2: 122,
+            })],
+        },
         treatment_id: 1,
-        url: 'https://picsum.photos/300/200',
     },
     ...mockTrajectoryResults,
     createMockVideoResult({
@@ -485,7 +516,7 @@ export const mocksFilesTree = [
         id: 1,
         name: 'fichier1.jpg',
         size: 6000,
-        url: 'https://picsum.photos/300/200',
+        url: '/dev-media/image',
     },
     {
         extension: 'jpg',
@@ -493,7 +524,7 @@ export const mocksFilesTree = [
         id: 2,
         name: 'fichier2.jpg',
         size: 6000,
-        url: 'https://picsum.photos/300/200',
+        url: '/dev-media/image',
     },
     {
         extension: 'jpg',
@@ -501,7 +532,7 @@ export const mocksFilesTree = [
         id: 3,
         name: 'fichier3.jpg',
         size: 6000,
-        url: 'https://picsum.photos/300/200',
+        url: '/dev-media/image',
     },
     {
         children: [
@@ -510,15 +541,15 @@ export const mocksFilesTree = [
                 id: 4,
                 name: 'fichier4.jpg',
                 size: 6000,
-                url: 'https://picsum.photos/300/200',
+                url: '/dev-media/image',
             },
             {
-                duration: 10.026667,
+                duration: MOCK_VIDEO_DURATION_SECONDS,
                 extension: 'mp4',
                 id: 5,
                 name: 'mov_bbb.mp4',
                 size: 60521,
-                url: '/dev-media/html/mov_bbb.mp4',
+                url: '/dev-media/video',
             },
         ],
         folder: 'media',
@@ -547,7 +578,7 @@ export const mocksFilesTree = [
                 id: 12,
                 name: 'fichier4.png',
                 size: 6000,
-                url: 'https://picsum.photos/300/200',
+                url: '/dev-media/image',
             },
         ],
         folder: 'carto',

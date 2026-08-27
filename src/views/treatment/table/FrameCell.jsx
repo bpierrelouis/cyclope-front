@@ -1,4 +1,4 @@
-import { filesQueries, framesQueries } from '../../../hooks';
+import { framesQueries } from '../../../hooks';
 import { preventDefault } from '../../../utils';
 
 export function FrameCell(props) {
@@ -6,13 +6,7 @@ export function FrameCell(props) {
         data: result, onClick, timelineResultsById,
     } = props;
     const media = timelineResultsById.get(result.id)?.media;
-    const { data: legacySrc } = filesQueries.useGetContent(result.url);
-    const { data: frameSrc } = framesQueries.useResultFrame(result, {
-        enabled: !result.url,
-        media,
-        raw: true,
-    });
-    const imageSrc = result.url ? legacySrc : frameSrc;
+    const { data: imageSrc } = framesQueries.useThumbnail(result, media);
 
     const setSelected = () => onClick(result);
 

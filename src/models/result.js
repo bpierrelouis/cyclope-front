@@ -85,10 +85,6 @@ export class Result {
         return this.meta.treatmentId;
     }
 
-    get url() {
-        return this.meta.url ?? this.data.s3ImagePath;
-    }
-
     get index() {
         return this.meta.index ?? this.data.frameIndex;
     }
