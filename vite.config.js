@@ -22,11 +22,17 @@ export default defineConfig({
                 secure: false,
                 target: 'http://localhost:8001/',
             },
-            // Proxy dev : sert la vidéo de test w3schools en same-origin pour éviter le non secure pour la capture d'écran.
-            '/dev-media': {
+            '/dev-media/image': {
                 changeOrigin: true,
-                rewrite: (path) => path.replace(/^\/dev-media/, ''),
-                target: 'https://www.w3schools.com',
+                followRedirects: true,
+                rewrite: () => '/300/200',
+                target: 'https://picsum.photos',
+            },
+            '/dev-media/video': {
+                changeOrigin: true,
+                followRedirects: true,
+                rewrite: () => '/video-files/4507858/4507858-hd_1920_1080_30fps.mp4',
+                target: 'https://videos.pexels.com',
             },
         },
     },
