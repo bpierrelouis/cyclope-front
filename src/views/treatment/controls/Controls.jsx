@@ -33,6 +33,7 @@ export function Controls({ videoRef }) {
     const [capture, setCapture] = useState(null);
 
     const safeDuration = Math.max(duration, 0);
+    const showHours = safeDuration >= 3600;
     const detections = useMemo(
         () => getTimelineDetections(source),
         [source],
@@ -152,7 +153,7 @@ export function Controls({ videoRef }) {
                 )}
             </div>
 
-            <span className='min-w-10 font-semibold tabular-nums'>{formatTime(currentTime)}</span>
+            <span className='min-w-10 font-semibold tabular-nums'>{formatTime(currentTime, showHours)}</span>
 
             <ProgressBar
                 detections={detections}
@@ -161,7 +162,7 @@ export function Controls({ videoRef }) {
                 seek={seek}
             />
 
-            <span className='opacity-60 min-w-10 font-semibold tabular-nums text-right'>{formatTime(duration)}</span>
+            <span className='opacity-60 min-w-10 font-semibold tabular-nums text-right'>{formatTime(duration, showHours)}</span>
         </footer>
     );
 }
