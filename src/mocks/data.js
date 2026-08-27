@@ -355,7 +355,6 @@ export const mockResults = [
         index: 0,
         response_json: mockTrajectoryResults[0].response_json,
         treatment_id: 1,
-        url: 'https://picsum.photos/300/200',
     },
     ...mockTrajectoryResults,
     createMockVideoResult({

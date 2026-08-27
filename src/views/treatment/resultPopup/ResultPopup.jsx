@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Modal } from '../../../components';
 import { NOTIFICATION_LABELS } from '../../../constants';
 import { useSelectionContext } from '../../../contexts';
-import { filesQueries, framesQueries, resultsQueries } from '../../../hooks';
+import { framesQueries, resultsQueries } from '../../../hooks';
 import { openErrorToast } from '../../../utils';
 import { BoxEditor } from './BoxEditor';
 import { ResultPopupSidebar } from './ResultPopupSidebar';
@@ -19,18 +19,11 @@ export function ResultPopup(props) {
         (result.objects ?? []).map((object) => ({ ...object })),
     );
 
-    const { data: legacySrc } = filesQueries.useGetContent(result.url);
-    const { data: frameSrc } = framesQueries.useResultFrame(result, {
-        enabled: !result.url,
-        media,
-    });
+    const { data: viewSrc } = framesQueries.useResultFrame(result, { media });
     const { data: rawSrc } = framesQueries.useResultFrame(result, {
-        enabled: !result.url,
         media,
         raw: true,
     });
-    const viewSrc = result.url ? legacySrc : frameSrc;
-    const editSrc = result.url ? legacySrc : rawSrc;
 
     const { isPending, mutate: updateResult } = resultsQueries.useUpdate();
 
@@ -49,17 +42,17 @@ export function ResultPopup(props) {
                 <div className='flex gap-4 p-4 w-3/4 max-w-7xl modal-box'>
 
                     <div className='flex-1 min-w-0'>
-                        {editSrc
-                            ? (
-                                <BoxEditor
-                                    src={editSrc}
-                                    objects={draft}
-                                    onChange={setDraft}
-                                    onCommit={save}
-                                    dialogElement={dialogElement}
-                                />
-                            )
-                            : <div className='flex justify-center items-center bg-base-200 rounded-lg w-full aspect-video text-base-content/50'>Chargement…</div>}
+                        {rawSrc ? (
+                            <BoxEditor
+                                src={rawSrc}
+                                objects={draft}
+                                onChange={setDraft}
+                                onCommit={save}
+                                dialogElement={dialogElement}
+                            />
+                        ) : (
+                            <div className='flex justify-center items-center bg-base-200 rounded-lg w-full aspect-video text-base-content/50'>Chargement…</div>
+                        )}
                     </div>
 
                     <ResultPopupSidebar
