@@ -23,6 +23,28 @@ const waitFor = (element, eventName) => new Promise((resolve, reject) => {
     element.addEventListener('error', onError);
 });
 
+const waitForVideoFrame = (video) => new Promise((resolve) => {
+    if (typeof video.requestVideoFrameCallback !== 'function') {
+        requestAnimationFrame(() => requestAnimationFrame(resolve));
+        return;
+    }
+
+    let settled = false;
+    const finish = () => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timeout);
+        resolve();
+    };
+    const callbackId = video.requestVideoFrameCallback(() => {
+        finish();
+    });
+    const timeout = setTimeout(() => {
+        video.cancelVideoFrameCallback?.(callbackId);
+        finish();
+    }, 100);
+});
+
 const getDimensions = (element, isVideo) => isVideo
     ? { height: element.videoHeight, width: element.videoWidth }
     : { height: element.naturalHeight, width: element.naturalWidth };
@@ -119,7 +141,13 @@ const createFramesService = () => {
         detections, isVideo, maxWidth, time, url,
     }) => {
         const source = isVideo ? await loadVideo(url) : await loadImage(url);
-        if (isVideo) await seek(source, time);
+        if (isVideo) {
+            await seek(source, time);
+            // `canplay`/`seeked` can fire before some browsers have submitted the
+            // decoded frame for painting. Drawing at that point yields a black
+            // canvas, most often for the initial frame at t=0.
+            await waitForVideoFrame(source);
+        }
 
         const sourceSize = getDimensions(source, isVideo);
         const scale = getScale(sourceSize.width, maxWidth);
