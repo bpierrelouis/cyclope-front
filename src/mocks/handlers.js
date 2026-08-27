@@ -1,4 +1,6 @@
-import { http, HttpResponse, sse } from 'msw';
+import {
+    delay, http, HttpResponse, sse,
+} from 'msw';
 
 import { events, health, mockMedias, mockMissions, mockResults, mocksFilesTree, mockTreatments } from './data';
 
@@ -19,6 +21,8 @@ const MOCK_GEOJSON_URL = `data:application/geo+json,${encodeURIComponent(JSON.st
     type: 'Feature',
 }))}`;
 const TRANSPARENT_PNG_BASE64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
+const MOCK_UPLOAD_DELAY = 2000;
+let mockUploadQueue = Promise.resolve();
 
 // --- Helpers arbre de fichiers ---
 
@@ -293,8 +297,13 @@ export const handlers = [
         });
     }),
 
-    // Faux S3 : accepte le PUT sans rien stocker.
-    http.put('/api/s3-upload', () => new HttpResponse(null, { status: 200 })),
+    // Faux S3 : simule le temps d'upload puis accepte le PUT sans rien stocker.
+    http.put('/api/s3-upload', async () => {
+        const upload = mockUploadQueue.then(() => delay(MOCK_UPLOAD_DELAY));
+        mockUploadQueue = upload.catch(() => {});
+        await upload;
+        return new HttpResponse(null, { status: 200 });
+    }),
 
     http.get('/api/files/redirect', () => {
         const bytes = Uint8Array.from(

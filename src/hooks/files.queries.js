@@ -33,17 +33,22 @@ const useGetTreeMedia = () => useGetTree('media');
 
 const useUploadFiles = ({ acceptedExtensions, allowXyzFolder = false, rootFolder }) => {
     const queryClient = useQueryClient();
+    const treeQueryKey = [...filesQueryKeys.tree, rootFolder];
 
     return useMutation({
-        mutationFn: ({ files, folder }) => service.saveFiles({
+        mutationFn: ({ files, folder, onProgress }) => service.saveFiles({
             acceptedExtensions,
             allowXyzFolder,
             files,
             folder: joinPath(rootFolder, folder),
+            onProgress: (completed, total, result) => {
+                queryClient.invalidateQueries({ queryKey: treeQueryKey });
+                onProgress?.(completed, total, result);
+            },
         }),
         mutationKey: filesMutationKeys.upload(rootFolder),
         onSettled: () => queryClient.invalidateQueries({
-            queryKey: [...filesQueryKeys.tree, rootFolder],
+            queryKey: treeQueryKey,
         }),
     });
 };

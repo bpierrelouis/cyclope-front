@@ -1,5 +1,6 @@
 export * from './AsyncView';
 export * from './CaptureDialog';
+export * from './CartoFileTreeCard';
 export * from './ConfidenceBadge';
 export * from './DeleteButton';
 export * from './DeletePopup';
@@ -10,7 +11,6 @@ export * from './MediaIcon';
 export * from './Modal';
 export * from './ProcessConfidenceField';
 export * from './ProcessDefaultCarto';
-export * from './ProcessImportCarto';
 export * from './ProcessLevelField';
 export * from './ProcessObjectDetectionField';
 export * from './ProcessStepField';

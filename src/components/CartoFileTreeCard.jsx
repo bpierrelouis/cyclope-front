@@ -1,11 +1,12 @@
 import { FolderTreeIcon } from 'lucide-react';
 
-import { filesQueries } from '../hooks';
+import { filesQueries, useUploadProgress } from '../hooks';
 import { openErrorToast } from '../utils';
 import { FileTree } from './fileTree';
 import { SectionCard } from './SectionCard';
 
-export function ProcessImportCarto() {
+export function CartoFileTreeCard() {
+    const { trackUpload, uploadProgress } = useUploadProgress();
     const { data: fileNodes = [] } = filesQueries.useGetTreeCarto();
     const { mutateAsync: deleteFile } = filesQueries.useDelete();
     const { mutateAsync: uploadFilesCarto } = filesQueries.useUploadFilesCarto();
@@ -26,6 +27,8 @@ export function ProcessImportCarto() {
         }
     };
 
+    const handleUpload = (payload) => trackUpload(payload, uploadFilesCarto);
+
     return (
         <SectionCard
             className='min-h-64'
@@ -37,8 +40,9 @@ export function ProcessImportCarto() {
                 nodes={fileNodes}
                 onDelete={handleDelete}
                 onDropError={handleDropError}
-                onDropToFolder={uploadFilesCarto}
-                onDropFolder={uploadFilesCarto}
+                onDropToFolder={handleUpload}
+                onDropFolder={handleUpload}
+                uploadProgress={uploadProgress}
             />
         </SectionCard>
     );
