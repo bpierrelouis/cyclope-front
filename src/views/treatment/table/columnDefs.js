@@ -5,6 +5,7 @@ import {
     isValidLatitude,
     isValidLongitude,
     normalizeNumericFilterValue,
+    parseMeasurement,
     toText,
 } from '../../../utils';
 import { DetectionFilter } from './DetectionFilter';
@@ -57,15 +58,25 @@ const editableColumn = (
 const measurementColumn = ({
     field, key, headerName, validate, errorMessage,
 }) => ({
+    cellDataType: false,
+    comparator: (left, right) => {
+        const leftValue = parseMeasurement(left)?.value;
+        const rightValue = parseMeasurement(right)?.value;
+        if (leftValue == null) return rightValue == null ? 0 : -1;
+        if (rightValue == null) return 1;
+        return leftValue - rightValue;
+    },
     field,
     ...numberFilter(field),
     headerName,
-    valueFormatter: ({ data: result }) => result[`${key}Label`] ?? '—',
+    valueFormatter: ({ value }) => value ?? '—',
+    valueGetter: ({ data: result }) => result[`${key}Label`] ?? null,
     ...editableColumn(
-        parseNumber(validate),
-        (result, value) => result.createAircraftMeasurementPatch(key, value),
+        (raw) => parseMeasurement(raw, validate),
+        (result, measurement) => result.createAircraftMeasurementPatch(key, measurement),
         errorMessage,
-        ({ data: result }) => result.hasAircraftMeasurement(key),
+        true,
+        (left, right) => left.value === right.value && left.unit === right.unit,
     ),
 });
 
@@ -153,13 +164,13 @@ export const getColumnDefs = (
         ),
     },
     measurementColumn({
-        errorMessage: 'Valeur invalide',
+        errorMessage: 'Saisissez une valeur suivie de son unité (ex. 120 m)',
         field: 'altitudeValue',
         headerName: 'Altitude',
         key: 'altitude',
     }),
     measurementColumn({
-        errorMessage: 'La vitesse doit être positive',
+        errorMessage: 'Saisissez une vitesse positive suivie de son unité (ex. 95 km/h)',
         field: 'speedValue',
         headerName: 'Vitesse',
         key: 'speed',

@@ -1,6 +1,5 @@
+import { DEFAULT_CONFIDENCE } from '../constants';
 import { parseTimecode } from '../utils/treatment';
-
-const DEFAULT_CONFIDENCE = 100;
 
 const isDefined = (value) => value !== null && value !== undefined;
 
@@ -46,16 +45,20 @@ const formatMeasurement = (measurement) => {
         .join(' ');
 };
 
-const updateMeasurementValue = (rawMeasurement, value) => {
-    const candidates = Array.isArray(rawMeasurement) ? rawMeasurement : [];
+const updateMeasurement = (rawMeasurement, measurement) => {
+    const candidates = Array.isArray(rawMeasurement)
+        ? rawMeasurement
+        : rawMeasurement && typeof rawMeasurement === 'object'
+            ? [rawMeasurement]
+            : [];
     const selected = selectMeasurementEntry(candidates);
 
     if (!selected) {
-        return [{ confidence: DEFAULT_CONFIDENCE, value }];
+        return [{ confidence: DEFAULT_CONFIDENCE, ...measurement }];
     }
 
     return candidates.map((candidate, index) => index === selected.index
-        ? { ...candidate, value }
+        ? { ...candidate, ...measurement }
         : candidate);
 };
 
@@ -190,12 +193,12 @@ export class Result {
         };
     }
 
-    createAircraftMeasurementPatch(key, value) {
+    createAircraftMeasurementPatch(key, measurement) {
         const aircraft = this.data.aircraft ?? {};
         return {
             aircraft: {
                 ...aircraft,
-                [key]: updateMeasurementValue(aircraft[key], value),
+                [key]: updateMeasurement(aircraft[key], measurement),
             },
         };
     }

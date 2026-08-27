@@ -81,13 +81,50 @@ describe('Result', () => {
             frameIndex: 3,
         });
 
-        assert.deepEqual(result.createAircraftMeasurementPatch('speed', 95), {
+        assert.deepEqual(result.createAircraftMeasurementPatch('speed', {
+            unit: 'kn',
+            value: 95,
+        }), {
             aircraft: {
                 speed: [
                     { confidence: 70, unit: 'km/h', value: 80 },
-                    { confidence: 99, unit: 'km/h', value: 95 },
+                    { confidence: 99, unit: 'kn', value: 95 },
                 ],
                 voltage: [{ confidence: 95, unit: 'V', value: 14.5 }],
+            },
+        });
+    });
+
+    it('turns a single measurement object into a list when editing it', () => {
+        const result = createResult({
+            aircraft: {
+                altitude: { confidence: 96, unit: 'm', value: 120 },
+            },
+            frameIndex: 4,
+        });
+
+        assert.deepEqual(result.createAircraftMeasurementPatch('altitude', {
+            unit: 'ft',
+            value: 394,
+        }), {
+            aircraft: {
+                altitude: [{ confidence: 96, unit: 'ft', value: 394 }],
+            },
+        });
+    });
+
+    it('creates a measurement list when editing a null field', () => {
+        const result = createResult({
+            aircraft: { altitude: null },
+            frameIndex: 5,
+        });
+
+        assert.deepEqual(result.createAircraftMeasurementPatch('altitude', {
+            unit: 'm',
+            value: 150,
+        }), {
+            aircraft: {
+                altitude: [{ confidence: 100, unit: 'm', value: 150 }],
             },
         });
     });
