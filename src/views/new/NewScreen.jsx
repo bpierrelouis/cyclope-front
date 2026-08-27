@@ -7,7 +7,7 @@ import { ERoute } from '../../constants';
 import { filesQueries, missionsQueries } from '../../hooks';
 import { useMissionCreationStore } from '../../stores';
 import { flatTree, openErrorToast } from '../../utils';
-import { MediaFileTree } from './MediaFileTree';
+import { MediaFileTreeCard } from './MediaFileTreeCard';
 import { WaitingZone } from './waitingZone';
 
 export function NewScreen() {
@@ -94,7 +94,7 @@ export function NewScreen() {
             </div>
 
             <div className='flex-1 gap-4 grid grid-cols-1 md:grid-cols-2 min-h-0'>
-                <MediaFileTree />
+                <MediaFileTreeCard />
                 <WaitingZone files={files} />
             </div>
         </main>

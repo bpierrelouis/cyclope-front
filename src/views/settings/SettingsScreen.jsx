@@ -1,4 +1,4 @@
-import { ProcessImportCarto } from '../../components';
+import { CartoFileTreeCard } from '../../components';
 import { DefaultBaseMapCard } from './DefaultBaseMapCard';
 import { DefaultTreatmentSettings } from './DefaultTreatmentSettings';
 import { DetectionCategoriesCard } from './detectionCatalog/DetectionCategoriesCard';
@@ -12,7 +12,7 @@ export function SettingsScreen() {
                     <DefaultTreatmentSettings />
                     <DefaultBaseMapCard />
                 </div>
-                <ProcessImportCarto />
+                <CartoFileTreeCard />
             </div>
 
             <div className='gap-4 grid grid-cols-1 lg:grid-cols-2 items-stretch lg:min-h-0'>

@@ -84,9 +84,10 @@ const saveFile = async ({
     };
 };
 
-const settleWithConcurrency = async (items, worker, concurrency = 6) => {
+const settleWithConcurrency = async (items, worker, concurrency = 6, onProgress) => {
     const results = new Array(items.length);
     let nextIndex = 0;
+    let settledCount = 0;
 
     const run = async () => {
         while (nextIndex < items.length) {
@@ -95,6 +96,9 @@ const settleWithConcurrency = async (items, worker, concurrency = 6) => {
                 results[index] = { status: 'fulfilled', value: await worker(items[index]) };
             } catch (reason) {
                 results[index] = { reason, status: 'rejected' };
+            } finally {
+                settledCount += 1;
+                onProgress?.(settledCount, items.length, results[index]);
             }
         }
     };
@@ -104,19 +108,17 @@ const settleWithConcurrency = async (items, worker, concurrency = 6) => {
     return results;
 };
 
-const notifyRejectedUploads = (results) => {
-    results
-        .filter((result) => result.status === 'rejected')
-        .forEach((result) => {
-            openErrorToast(
-                result.reason instanceof Error
-                    ? result.reason.message
-                    : 'Une erreur est survenue.',
-            );
-        });
+const notifyRejectedUpload = (result) => {
+    if (result.status !== 'rejected') return;
+
+    openErrorToast(
+        result.reason instanceof Error
+            ? result.reason.message
+            : 'Une erreur est survenue.',
+    );
 };
 
-const saveXyzFolder = async ({ files, folder }) => {
+const saveXyzFolder = async ({ files, folder, onProgress }) => {
     const name = getRootFolderName(files);
     const results = await settleWithConcurrency(
         files,
@@ -126,13 +128,17 @@ const saveXyzFolder = async ({ files, folder }) => {
             file,
             folder,
         }),
+        6,
+        (completed, total, result) => {
+            notifyRejectedUpload(result);
+            onProgress?.(completed, total, result);
+        },
     );
 
     const xyzChecksum = await computeXyzChecksum(results);
 
     await checkFileExists(name, xyzChecksum);
 
-    notifyRejectedUploads(results);
     if (results.some((result) => result.status === 'rejected')) return [];
 
     const carto = await service.create({
@@ -148,7 +154,7 @@ const saveXyzFolder = async ({ files, folder }) => {
 };
 
 const saveFiles = async ({
-    acceptedExtensions, allowXyzFolder, files, folder,
+    acceptedExtensions, allowXyzFolder, files, folder, onProgress,
 }) => {
     const hasDirectory = files.some((file) => getRelativeFilePath(file).includes('/'));
     const isXyzFolder = allowXyzFolder && isFilesInXyzFolder(files);
@@ -158,7 +164,7 @@ const saveFiles = async ({
         return [];
     }
 
-    if (isXyzFolder) return saveXyzFolder({ files, folder });
+    if (isXyzFolder) return saveXyzFolder({ files, folder, onProgress });
 
     const results = await settleWithConcurrency(
         files,
@@ -168,18 +174,18 @@ const saveFiles = async ({
             file,
             folder,
         }).then(service.create),
+        6,
+        (completed, total, result) => {
+            if (result.status === 'fulfilled') {
+                openSuccessToast(`Fichier « ${result.value.name} » importé.`);
+            } else {
+                notifyRejectedUpload(result);
+            }
+            onProgress?.(completed, total, result);
+        },
     );
 
-    notifyRejectedUploads(results);
-
     const succeeded = results.filter((result) => result.status === 'fulfilled');
-    const uploadedCount = succeeded.length;
-
-    if (uploadedCount > 0) {
-        openSuccessToast(
-            `${uploadedCount} fichier${uploadedCount > 1 ? 's' : ''} uploadé${uploadedCount > 1 ? 's' : ''}.`,
-        );
-    }
 
     return succeeded.map((result) => result.value);
 };

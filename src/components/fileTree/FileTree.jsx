@@ -1,9 +1,10 @@
 import { useFileDrop } from '../../hooks';
 import { cn } from '../../utils';
 import { FileTreeNode } from './FileTreeNode';
+import { FileUploadProgress } from './FileUploadProgress';
 
 export function FileTree(props) {
-    const { nodes, ...treeOptions } = props;
+    const { nodes, uploadProgress, ...treeOptions } = props;
     const {
         onDropError, onDropFolder, onDropToFolder, onTargetPathChange,
     } = treeOptions;
@@ -24,6 +25,7 @@ export function FileTree(props) {
             )}
             {...dropProps}
         >
+            <FileUploadProgress progress={uploadProgress} />
             <ul className='flex-nowrap flex-1 w-full min-h-0 overflow-y-auto menu'>
                 {nodes.map((node) => (
                     <FileTreeNode

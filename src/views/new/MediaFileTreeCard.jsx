@@ -5,11 +5,12 @@ import {
     FileTree,
     SectionCard,
 } from '../../components';
-import { filesQueries } from '../../hooks';
+import { filesQueries, useUploadProgress } from '../../hooks';
 import { useMissionCreationStore } from '../../stores';
 import { openErrorToast } from '../../utils';
 
-export function MediaFileTree() {
+export function MediaFileTreeCard() {
+    const { trackUpload, uploadProgress } = useUploadProgress();
     const { data: fileNodes = [] } = filesQueries.useGetTreeMedia();
     const { mutateAsync: deleteFile } = filesQueries.useDelete();
     const { mutateAsync: uploadFilesMedias } = filesQueries.useUploadFilesMedias();
@@ -36,9 +37,12 @@ export function MediaFileTree() {
         })));
 
     const uploadAndSelect = async (payload) => {
-        const createdFiles = await uploadFilesMedias(payload);
-        selectMany(createdFiles);
-        return createdFiles;
+        return trackUpload({
+            ...payload,
+            onProgress: (result) => {
+                if (result.status === 'fulfilled') selectMany([result.value]);
+            },
+        }, uploadFilesMedias);
     };
 
     // Dossier déposé sur l'explorateur : upload des fichiers dans le S3 puis pré-remplissage de la zone de création
@@ -86,6 +90,7 @@ export function MediaFileTree() {
                 onFilesSelect={selectMany}
                 onTargetPathChange={setUploadFolder}
                 selectedFileIds={fileIds}
+                uploadProgress={uploadProgress}
             />
         </SectionCard>
     );
