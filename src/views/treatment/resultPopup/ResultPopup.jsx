@@ -4,7 +4,7 @@ import { Modal } from '../../../components';
 import { NOTIFICATION_LABELS } from '../../../constants';
 import { useSelectionContext } from '../../../contexts';
 import { framesQueries, resultsQueries } from '../../../hooks';
-import { openErrorToast } from '../../../utils';
+import { downloadDataUrl, openErrorToast } from '../../../utils';
 import { BoxEditor } from './BoxEditor';
 import { ResultPopupSidebar } from './ResultPopupSidebar';
 
@@ -18,12 +18,9 @@ export function ResultPopup(props) {
     const [draft, setDraft] = useState(() =>
         (result.objects ?? []).map((object) => ({ ...object })),
     );
+    const [isDownloading, setIsDownloading] = useState(false);
 
-    const { data: viewSrc } = framesQueries.useResultFrame(result, { media });
-    const { data: rawSrc } = framesQueries.useResultFrame(result, {
-        media,
-        raw: true,
-    });
+    const { data: rawSrc } = framesQueries.useFrame(result, media);
 
     const { isPending, mutate: updateResult } = resultsQueries.useUpdate();
 
@@ -35,6 +32,21 @@ export function ResultPopup(props) {
             onError: () => openErrorToast(NOTIFICATION_LABELS.RESULT_SAVE_ERROR),
         },
     );
+
+    const downloadDetectionFrame = async () => {
+        setIsDownloading(true);
+        try {
+            const src = await framesQueries.createDetectionFrame(result, media);
+            if (!src) return;
+
+            downloadDataUrl(
+                src,
+                `detection-frame-${result.index ?? result.id}.jpg`,
+            );
+        } finally {
+            setIsDownloading(false);
+        }
+    };
 
     return (
         <Modal onClose={dismiss}>
@@ -57,9 +69,10 @@ export function ResultPopup(props) {
 
                     <ResultPopupSidebar
                         hasUntyped={hasUntyped}
+                        isDownloading={isDownloading}
                         isPending={isPending}
+                        onDownload={downloadDetectionFrame}
                         result={result}
-                        viewSrc={viewSrc}
                     />
 
                 </div>

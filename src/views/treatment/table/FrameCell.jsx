@@ -6,10 +6,7 @@ export function FrameCell(props) {
         data: result, onClick, timelineResultsById,
     } = props;
     const media = timelineResultsById.get(result.id)?.media;
-    const { data: imageSrc } = framesQueries.useResultFrame(result, {
-        media,
-        raw: true,
-    });
+    const { data: imageSrc } = framesQueries.useThumbnail(result, media);
 
     const setSelected = () => onClick(result);
 

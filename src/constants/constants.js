@@ -14,6 +14,9 @@ export const iconSizes = Object.freeze({
     xs: 12,
 });
 
+export const FRAME_CAPTURE_TIMEOUT = 15000;
+export const THUMBNAIL_MAX_WIDTH = 320;
+
 export const HEALTH = Object.freeze({
     BACK_LABEL_BY_KEYPATH: [
         ['statusStorageS3', 'Stockage de fichier'],

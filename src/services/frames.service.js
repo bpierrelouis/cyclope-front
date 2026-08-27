@@ -1,87 +1,61 @@
-const CAPTURE_TIMEOUT = 15000;
-const MAX_WIDTH = 1280;
-let video = null;
-let videoUrl = null;
-let queue = Promise.resolve();
-const captures = new Map();
+import { FRAME_CAPTURE_TIMEOUT } from '../constants';
 
-const getVideo = (url) => {
-    if (video && videoUrl === url) return video;
-
-    video?.removeAttribute('src');
-    video = document.createElement('video');
-    video.crossOrigin = 'anonymous';
-    video.muted = true;
-    video.preload = 'auto';
-    video.src = url;
-    videoUrl = url;
-    return video;
-};
-
-const once = (target, eventName) => new Promise((resolve, reject) => {
-    let timer = null;
-
+const waitFor = (element, eventName) => new Promise((resolve, reject) => {
     const cleanup = () => {
-        clearTimeout(timer);
-        target.removeEventListener(eventName, onEvent);
-        target.removeEventListener('error', onError);
+        clearTimeout(timeout);
+        element.removeEventListener(eventName, onReady);
+        element.removeEventListener('error', onError);
     };
-
-    function onEvent() {
+    const onReady = () => {
         cleanup();
         resolve();
-    }
-
-    function onError() {
+    };
+    const onError = () => {
         cleanup();
-        reject(new Error(`Erreur vidéo en attendant '${eventName}'`));
-    }
-
-    timer = setTimeout(() => {
+        reject(new Error(`Impossible de charger le média (${eventName})`));
+    };
+    const timeout = setTimeout(() => {
         cleanup();
-        reject(new Error(`Timeout en attendant '${eventName}'`));
-    }, CAPTURE_TIMEOUT);
+        reject(new Error(`Chargement du média trop long (${eventName})`));
+    }, FRAME_CAPTURE_TIMEOUT);
 
-    target.addEventListener(eventName, onEvent);
-    target.addEventListener('error', onError);
+    element.addEventListener(eventName, onReady);
+    element.addEventListener('error', onError);
 });
 
-const enqueue = (task) => {
-    const run = queue.then(task, task);
-    queue = run.catch(() => {});
-    return run;
-};
+const getDimensions = (element, isVideo) => isVideo
+    ? { height: element.videoHeight, width: element.videoWidth }
+    : { height: element.naturalHeight, width: element.naturalWidth };
 
-/**
- * Dessine les rectangles de détection sur le canvas.
- * Chaque box est { x, y, width, height }, en coordonnées normalisées (0-1)
- * ou en pixels de la frame native (auto-détecté).
- */
+const getScale = (width, maxWidth) =>
+    maxWidth ? Math.min(1, maxWidth / width) : 1;
+
+const isNormalizedBox = (box) =>
+    [box.x, box.y, box.width, box.height].every((value) => value <= 1);
+
 const drawDetections = (context, detections, width, height, scale) => {
     for (const { box, color, label } of detections) {
         if (!box) continue;
 
-        const normalized = [box.x, box.y, box.width, box.height].every((value) => value <= 1);
+        const normalized = isNormalizedBox(box);
         const x = normalized ? box.x * width : box.x * scale;
         const y = normalized ? box.y * height : box.y * scale;
-        const w = normalized ? box.width * width : box.width * scale;
-        const h = normalized ? box.height * height : box.height * scale;
-
+        const boxWidth = normalized ? box.width * width : box.width * scale;
+        const boxHeight = normalized ? box.height * height : box.height * scale;
         const lineWidth = Math.max(2, Math.round(width / 400));
+
         context.lineWidth = lineWidth;
         context.strokeStyle = color;
-        context.strokeRect(x, y, w, h);
+        context.strokeRect(x, y, boxWidth, boxHeight);
 
         if (!label) continue;
 
         const fontSize = Math.max(12, Math.round(width / 60));
         const padding = Math.round(fontSize / 3);
-        context.font = `${fontSize}px sans-serif`;
-
         const labelHeight = fontSize + 2 * padding;
-        // Libellé au-dessus de la boîte, ou à l'intérieur si elle touche le bord haut.
         const labelTop = y - labelHeight < 0 ? y : y - labelHeight;
 
+        context.font = `${fontSize}px sans-serif`;
         const labelWidth = context.measureText(label).width + 2 * padding;
         context.fillStyle = color;
         context.fillRect(x - lineWidth / 2, labelTop, labelWidth, labelHeight);
@@ -91,59 +65,102 @@ const drawDetections = (context, detections, width, height, scale) => {
     }
 };
 
-const capture = async (url, seconds, detections) => {
-    const element = getVideo(url);
-    if (element.readyState < 2) await once(element, 'canplay');
-
-    const target = Math.max(0, Math.min(seconds, (element.duration || 0) - 0.001));
-    if (Math.abs(element.currentTime - target) > 0.01) {
-        element.currentTime = target;
-        await once(element, 'seeked');
-    }
-
-    const scale = Math.min(1, MAX_WIDTH / element.videoWidth);
-    const canvas = document.createElement('canvas');
-    canvas.width = Math.round(element.videoWidth * scale);
-    canvas.height = Math.round(element.videoHeight * scale);
-
-    const context = canvas.getContext('2d');
-    context.drawImage(element, 0, 0, canvas.width, canvas.height);
-    drawDetections(context, detections, canvas.width, canvas.height, scale);
-
-    const blob = await new Promise((resolve, reject) => canvas.toBlob(
-        (result) => (result ? resolve(result) : reject(new Error('Échec de la capture'))),
+const canvasToUrl = (canvas) => new Promise((resolve, reject) => {
+    canvas.toBlob(
+        (blob) => blob
+            ? resolve(URL.createObjectURL(blob))
+            : reject(new Error('Échec de la création de la frame')),
         'image/jpeg',
-        0.85,
-    ));
-    return URL.createObjectURL(blob);
+    );
+});
+
+const createFramesService = () => {
+    let activeVideo = null;
+    let activeVideoUrl = null;
+    let queue = Promise.resolve();
+    const cache = new Map();
+
+    const enqueue = (task) => {
+        const current = queue.then(task, task);
+        queue = current.catch(() => {});
+        return current;
+    };
+
+    const loadImage = async (url) => {
+        const image = document.createElement('img');
+        image.crossOrigin = 'anonymous';
+        image.src = url;
+        if (!image.complete) await waitFor(image, 'load');
+        return image;
+    };
+
+    const loadVideo = async (url) => {
+        if (!activeVideo || activeVideoUrl !== url) {
+            activeVideo?.removeAttribute('src');
+            activeVideo = document.createElement('video');
+            activeVideo.crossOrigin = 'anonymous';
+            activeVideo.muted = true;
+            activeVideo.preload = 'auto';
+            activeVideo.src = url;
+            activeVideoUrl = url;
+        }
+        if (activeVideo.readyState < 2) await waitFor(activeVideo, 'canplay');
+        return activeVideo;
+    };
+
+    const seek = async (video, time) => {
+        const target = Math.max(0, Math.min(time, (video.duration || 0) - 0.001));
+        if (Math.abs(video.currentTime - target) <= 0.01) return;
+        video.currentTime = target;
+        await waitFor(video, 'seeked');
+    };
+
+    const render = async ({
+        detections, isVideo, maxWidth, time, url,
+    }) => {
+        const source = isVideo ? await loadVideo(url) : await loadImage(url);
+        if (isVideo) await seek(source, time);
+
+        const sourceSize = getDimensions(source, isVideo);
+        const scale = getScale(sourceSize.width, maxWidth);
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(sourceSize.width * scale);
+        canvas.height = Math.round(sourceSize.height * scale);
+
+        const context = canvas.getContext('2d');
+        if (!context) throw new Error('Canvas 2D indisponible');
+        context.drawImage(source, 0, 0, canvas.width, canvas.height);
+        drawDetections(context, detections, canvas.width, canvas.height, scale);
+        return canvasToUrl(canvas);
+    };
+
+    const createFrame = ({
+        detections = [], isVideo = false, maxWidth = null, time = null, url,
+    }) => {
+        const variant = detections.length > 0 ? 'annotated' : 'raw';
+        const cacheKey = `${url}|${isVideo ? time : 'image'}|${maxWidth ?? 'native'}|${variant}`;
+        const signature = JSON.stringify(detections);
+        const cached = cache.get(cacheKey);
+        if (cached?.signature === signature) return cached.promise;
+
+        if (cached) {
+            cached.promise
+                .then((objectUrl) => URL.revokeObjectURL(objectUrl))
+                .catch(() => {});
+        }
+
+        const promise = enqueue(() => render({
+            detections, isVideo, maxWidth, time, url,
+        }));
+        const entry = { promise, signature };
+        cache.set(cacheKey, entry);
+        promise.catch(() => {
+            if (cache.get(cacheKey) === entry) cache.delete(cacheKey);
+        });
+        return promise;
+    };
+
+    return { createFrame };
 };
 
-/**
- * Extrait la frame de la vidéo à `seconds`, y dessine les détections,
- * et retourne une blob URL affichable dans un <img>.
- * Les demandes sont sérialisées et mises en cache par (vidéo, seconde, signature).
- */
-const captureFrame = ({
-    detections = [], seconds, signature = '', videoUrl: url,
-}) => {
-    // Variantes séparées : la frame brute (éditeur) et la frame annotée (vignettes,
-    // popup) coexistent pour la même seconde sans s'invalider mutuellement.
-    const key = `${url}|${seconds}|${detections.length > 0 ? 'annotated' : 'raw'}`;
-    const cached = captures.get(key);
-    if (cached && cached.signature === signature) return cached.promise;
-
-    // Les couleurs ont changé : l'ancienne variante ne sera plus affichée.
-    if (cached) cached.promise.then((blobUrl) => URL.revokeObjectURL(blobUrl)).catch(() => {});
-
-    const promise = enqueue(() => capture(url, seconds, detections));
-    const entry = { promise, signature };
-    promise.catch(() => {
-        if (captures.get(key) === entry) captures.delete(key);
-    });
-    captures.set(key, entry);
-    return promise;
-};
-
-export const framesService = {
-    captureFrame,
-};
+export const framesService = createFramesService();
