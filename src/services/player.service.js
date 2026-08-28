@@ -1,4 +1,4 @@
-import { usePlayerStore } from '../stores';
+import { playerStore } from '../stores';
 
 const MESSAGE_TYPES = {
     MASTER_READY: 'MASTER_READY',
@@ -39,7 +39,7 @@ class PlayerService {
     }
 
     handleMasterReady() {
-        const state = usePlayerStore.getState();
+        const state = playerStore.getState();
         if (state.isMaster) return;
 
         const openViews = {
@@ -51,7 +51,7 @@ class PlayerService {
     }
 
     handleRequestState(payload) {
-        const state = usePlayerStore.getState();
+        const state = playerStore.getState();
         if (!state.isMaster) return;
 
         this.setLocalState(payload);
@@ -88,7 +88,7 @@ class PlayerService {
     }
 
     setLocalState(payload) {
-        usePlayerStore.setState(payload);
+        playerStore.setState(payload);
     }
 }
 

@@ -1,7 +1,7 @@
-import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { createStore } from 'zustand/vanilla';
 
-export const useDefaultConfigStore = create(
+export const defaultConfigStore = createStore(
     persist(
         (set, get) => ({
             confidenceThreshold: 50,

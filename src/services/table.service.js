@@ -1,4 +1,4 @@
-import { usePlayerStore, useTableStore } from '../stores';
+import { playerStore, tableStore } from '../stores';
 
 const MESSAGE_TYPES = {
     FILTERS_UPDATE: 'FILTERS_UPDATE',
@@ -30,8 +30,8 @@ class TableService {
     }
 
     handleFiltersRequest() {
-        if (!usePlayerStore.getState().isMaster) return;
-        this.broadcastFilterModel(useTableStore.getState().filterModel);
+        if (!playerStore.getState().isMaster) return;
+        this.broadcastFilterModel(tableStore.getState().filterModel);
     }
 
     requestFilters() {
@@ -39,14 +39,14 @@ class TableService {
     }
 
     syncFilterModel(filterModel) {
-        if (isSameModel(useTableStore.getState().filterModel, filterModel)) return;
+        if (isSameModel(tableStore.getState().filterModel, filterModel)) return;
 
         this.setLocalFilterModel(filterModel);
         this.broadcastFilterModel(filterModel);
     }
 
     setLocalFilterModel(filterModel) {
-        useTableStore.getState().setFilterModel(filterModel);
+        tableStore.getState().setFilterModel(filterModel);
     }
 
     broadcastFilterModel(filterModel) {

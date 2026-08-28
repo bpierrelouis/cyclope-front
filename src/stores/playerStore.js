@@ -1,6 +1,6 @@
-import { create } from 'zustand';
+import { createStore } from 'zustand/vanilla';
 
-export const usePlayerStore = create(() => ({
+export const playerStore = createStore(() => ({
     currentTime: 0,
     duration: 0,
     isMaster: false,

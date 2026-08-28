@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { THUMBNAIL_MAX_WIDTH } from '../constants';
 import { filesService, framesService } from '../services';
-import { useDetectionCatalogStore } from '../stores';
+import { detectionCatalogStore } from '../stores';
 import { formatDetectionLabel, getDetectionColor } from '../utils';
 import { filesQueries } from './files.queries';
 
@@ -30,7 +30,7 @@ const createDetectionFrame = async (result, media) => {
     if (!media || (media.isVideo && result.seconds === null)) return null;
 
     const url = await filesService.getContent(media.url);
-    const { categories, detections } = useDetectionCatalogStore.getState();
+    const { categories, detections } = detectionCatalogStore.getState();
     const toDraw = (result.objects ?? [])
         .filter((object) => object.bbox ?? object.box)
         .map((object) => {

@@ -1,5 +1,5 @@
-import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { createStore } from 'zustand/vanilla';
 
 const KEY = 'table-preferences';
 
@@ -7,7 +7,7 @@ const KEY = 'table-preferences';
 const toggleIn = (list, value) =>
     (list.includes(value) ? list.filter((item) => item !== value) : [...list, value]);
 
-export const useTableStore = create(persist(
+export const tableStore = createStore(persist(
     (set, get) => ({
         filterModel: {},
         hiddenColumnIds: [],
@@ -27,5 +27,5 @@ export const useTableStore = create(persist(
 ));
 
 globalThis.addEventListener('storage', (e) => {
-    if (e.key === KEY) useTableStore.persist.rehydrate();
+    if (e.key === KEY) tableStore.persist.rehydrate();
 });

@@ -1,7 +1,7 @@
-import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { createStore } from 'zustand/vanilla';
 
-export const useDefaultCartoStore = create(
+export const defaultCartoStore = createStore(
     persist(
         (set) => ({
             defaultCarto: null,

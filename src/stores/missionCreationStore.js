@@ -1,6 +1,6 @@
-import { create } from 'zustand';
+import { createStore } from 'zustand/vanilla';
 
-import { useDefaultConfigStore } from './defaultConfigStore';
+import { defaultConfigStore } from './defaultConfigStore';
 
 const initialState = {
     configs: {},
@@ -10,7 +10,7 @@ const initialState = {
     uploadFolder: '',
 };
 
-export const useMissionCreationStore = create((set, get) => ({
+export const missionCreationStore = createStore((set, get) => ({
     ...initialState,
 
 
@@ -43,7 +43,7 @@ export const useMissionCreationStore = create((set, get) => ({
     selectMany: (files) => set((state) => {
         const fileIds = new Set(state.fileIds);
         const configs = { ...state.configs };
-        const { getDefault } = useDefaultConfigStore.getState();
+        const { getDefault } = defaultConfigStore.getState();
 
         for (const file of files) {
             // garde fou ignorant les noeuds sans id

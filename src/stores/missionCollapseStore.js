@@ -1,6 +1,6 @@
-import { create } from 'zustand';
+import { createStore } from 'zustand/vanilla';
 
-export const useMissionCollapseStore = create((set) => ({
+export const missionCollapseStore = createStore((set) => ({
     opened: null,
 
     toggle: (id) =>

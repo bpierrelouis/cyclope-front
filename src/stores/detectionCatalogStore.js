@@ -1,5 +1,5 @@
-import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { createStore } from 'zustand/vanilla';
 
 const KEY = 'detection-catalog';
 const DEFAULT_COLOR = '#3b82f6';
@@ -13,7 +13,7 @@ const createId = () => globalThis.crypto?.randomUUID?.()
 
 const isColor = (color) => /^#[0-9a-f]{6}$/i.test(color ?? '');
 
-export const useDetectionCatalogStore = create(persist(
+export const detectionCatalogStore = createStore(persist(
     (set, get) => ({
         addCategory: (name, color = DEFAULT_COLOR) => {
             const normalizedName = normalizeName(name);
@@ -114,5 +114,5 @@ export const useDetectionCatalogStore = create(persist(
 ));
 
 globalThis.addEventListener('storage', (event) => {
-    if (event.key === KEY) useDetectionCatalogStore.persist.rehydrate();
+    if (event.key === KEY) detectionCatalogStore.persist.rehydrate();
 });

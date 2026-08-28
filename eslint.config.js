@@ -31,6 +31,7 @@ export default defineConfig([
         rules: {
             'array-callback-return': 'error',
             'comma-dangle': ['error', 'always-multiline'],
+            'comma-spacing': ['error', { after: true, before: false }],
             'curly': ['error', 'multi-line', 'consistent'],
             'default-case-last': 'error',
             'dot-notation': 'error',

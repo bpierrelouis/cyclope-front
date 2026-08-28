@@ -6,7 +6,7 @@ import { Map, NavigationControl } from 'react-map-gl/maplibre';
 import { SelectCarto } from '../../components';
 import { Plan as Constants } from '../../constants';
 import { useMapStyle, useOpenState, useResults } from '../../hooks';
-import { useDefaultCartoStore } from '../../stores';
+import { defaultCartoStore } from '../../stores';
 import { hasValidCoordinates } from '../../utils';
 import { ResultPopup } from '../resultModal';
 import { DroneMarker } from './DroneMarker';
@@ -16,7 +16,7 @@ import { TargetMarker } from './TargetMarker';
 
 export function Plan() {
     const results = useResults();
-    const [cartoSelected, setCartoSelected] = useState(useDefaultCartoStore.getState().defaultCarto);
+    const [cartoSelected, setCartoSelected] = useState(defaultCartoStore.getState().defaultCarto);
 
     const mapRef = useRef(null);
     const [selectedResultId, setSelectedResultId] = useState(null);
