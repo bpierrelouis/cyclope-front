@@ -1,19 +1,31 @@
-import { STATUS, STATUS_LABELS } from '../../constants';
+import { EStatusLabel } from '../../constants';
+import { filterMissionsByStatus } from '../../utils';
+import { StatusTab } from './StatusTab';
 
 export function StatusTabs(props) {
-    const [status, setStatus] = props.statusState;
+    const { state, missions } = props;
+
+    const getStatusNumber = (status) =>
+        filterMissionsByStatus(missions, status)?.length;
+
+    const tabs = [
+        [null, 'Toutes', missions?.length],
+        ...Object.entries(EStatusLabel).map(([value, label]) => (
+            [value, label, getStatusNumber(value)]
+        )),
+    ];
 
     return (
         <div role='tablist' className='tabs-border tabs'>
-            {STATUS.map((s) => (
-                <button
-                    key={s}
-                    role='tab'
-                    onClick={() => setStatus(s)}
-                    className={`tab ${s === status ? 'tab-active text-primary border-primary' : ''}`}
-                >
-                    {STATUS_LABELS[s]}
-                </button>
+            {tabs.map(([value, label, count]) => (
+                <StatusTab
+                    key={value}
+                    status={value}
+                    label={label}
+                    setter={state[1]}
+                    isSelected={value === state[0]}
+                    count={count}
+                />
             ))}
         </div>
     );

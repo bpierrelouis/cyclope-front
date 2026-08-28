@@ -1,0 +1,30 @@
+import { ResultPopup } from '../resultModal';
+import { ResultsGrid } from './ResultsGrid';
+import { TableToolbar } from './TableToolbar';
+import { useTableController } from './useTableController';
+
+export function Table() {
+    const {
+        selected,
+        dismissSelected,
+        favoriteCount,
+        unfavoriteAll,
+        exportCsv,
+        exportJson,
+        detectionFilterActive,
+        gridProps,
+    } = useTableController();
+
+    return (
+        <div className='relative flex flex-col flex-1 h-full'>
+            <TableToolbar
+                favoriteCount={favoriteCount}
+                onClearFavorites={unfavoriteAll}
+                onExport={exportCsv}
+                onExportJson={exportJson}
+            />
+            <ResultsGrid detectionFilterActive={detectionFilterActive} {...gridProps} />
+            {selected && <ResultPopup result={selected} dismiss={dismissSelected} />}
+        </div>
+    );
+}

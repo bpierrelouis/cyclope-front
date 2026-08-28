@@ -1,9 +1,20 @@
-import { mediasResourceName, mediasService } from '../services';
+import { useQuery } from '@tanstack/react-query';
+
+import { mediasQueryKeys } from '../constants';
+import { mediasService } from '../services';
 import { createCrudQueries } from './crud.factory';
 
-const resource = mediasResourceName;
 const service = mediasService;
 
-const queries = createCrudQueries(resource, service);
+const queries = createCrudQueries(service, mediasQueryKeys);
 
-export const mediasQueries = queries;
+const useGetAllByMissionId = (missionId) => useQuery({
+    enabled: !!missionId,
+    queryFn: () => service.getAll(new URLSearchParams({ mission_id: missionId })),
+    queryKey: mediasQueryKeys.byMission(missionId),
+});
+
+export const mediasQueries = {
+    ...queries,
+    useGetAllByMissionId,
+};

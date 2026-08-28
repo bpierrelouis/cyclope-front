@@ -5,75 +5,482 @@
 }
 
 @plugin "daisyui/theme" {
-    name: "light";
-    default: true;
-    prefersdark: false;
-    color-scheme: "light";
-    --color-base-100: oklch(98% 0 0);
-    --color-base-200: oklch(96% 0.001 286.375);
-    --color-base-300: oklch(92% 0.004 286.32);
-    --color-base-content: oklch(27% 0.006 286.033);
-    --color-primary: oklch(44% 0.119 151.328);
-    --color-primary-content: oklch(96% 0.044 156.743);
-    --color-secondary: oklch(69.776% 0.135 168.327);
-    --color-secondary-content: oklch(13.955% 0.027 168.327);
-    --color-accent: oklch(44% 0.119 151.328);
-    --color-accent-content: oklch(96% 0.044 156.743);
-    --color-neutral: oklch(26% 0.065 152.934);
-    --color-neutral-content: oklch(92% 0.084 155.995);
-    --color-info: oklch(72.06% 0.191 231.6);
-    --color-info-content: oklch(0% 0 0);
-    --color-success: oklch(64.8% 0.15 160);
-    --color-success-content: oklch(0% 0 0);
-    --color-warning: oklch(84.71% 0.199 83.87);
-    --color-warning-content: oklch(0% 0 0);
-    --color-error: oklch(71.76% 0.221 22.18);
-    --color-error-content: oklch(0% 0 0);
-    --radius-selector: 1rem;
-    --radius-field: 0.5rem;
-    --radius-box: 1rem;
-    --size-selector: 0.25rem;
-    --size-field: 0.25rem;
+    name: "dark";
+    default: false;
+    color-scheme: "dark";
+
+    /* Palette */
+    --color-base-100: oklch(0.205 0.012 248);
+    --color-base-200: oklch(0.16 0.012 248);
+    --color-base-300: oklch(0.14 0.012 248);
+    --color-base-content: oklch(0.93 0.006 248);
+    --color-primary: oklch(0.81 0.11 195);
+    --color-primary-content: oklch(0.14 0.012 248);
+    --color-secondary: oklch(0.62 0.08 220);
+    --color-secondary-content: oklch(0.14 0.012 248);
+    --color-accent: oklch(0.81 0.11 195);
+    --color-accent-content: oklch(0.14 0.012 248);
+    --color-neutral: oklch(0.25 0.013 248);
+    --color-neutral-content: oklch(0.78 0.012 248);
+    --color-info: oklch(0.72 0.11 245);
+    --color-info-content: oklch(0.14 0.012 248);
+    --color-success: oklch(0.75 0.13 150);
+    --color-success-content: oklch(0.14 0.012 248);
+    --color-warning: oklch(0.83 0.14 85);
+    --color-warning-content: oklch(0.14 0.012 248);
+    --color-error: oklch(0.66 0.19 25);
+    --color-error-content: oklch(0.14 0.012 248);
+
+    /* Géométrie */
+    --radius-selector: 0.1875rem;
+    --radius-field: 0.1875rem;
+    --radius-box: 0.3125rem;
     --border: 1px;
     --depth: 0;
     --noise: 0;
 }
 
 @plugin "daisyui/theme" {
-    name: "dark";
-    default: false;
-    prefersdark: false;
-    color-scheme: "dark";
-    --color-base-100: oklch(20.84% 0.008 17.911);
-    --color-base-200: oklch(18.522% 0.007 17.911);
-    --color-base-300: oklch(16.203% 0.007 17.911);
-    --color-base-content: oklch(83.768% 0.001 17.911);
-    --color-primary: oklch(68.628% 0.185 148.958);
-    --color-primary-content: oklch(0% 0 0);
-    --color-secondary: oklch(69.776% 0.135 168.327);
-    --color-secondary-content: oklch(13.955% 0.027 168.327);
-    --color-accent: oklch(70.628% 0.119 185.713);
-    --color-accent-content: oklch(14.125% 0.023 185.713);
-    --color-neutral: oklch(30.698% 0.039 171.364);
-    --color-neutral-content: oklch(86.139% 0.007 171.364);
-    --color-info: oklch(72.06% 0.191 231.6);
-    --color-info-content: oklch(0% 0 0);
-    --color-success: oklch(64.8% 0.15 160);
-    --color-success-content: oklch(0% 0 0);
-    --color-warning: oklch(84.71% 0.199 83.87);
-    --color-warning-content: oklch(0% 0 0);
-    --color-error: oklch(71.76% 0.221 22.18);
-    --color-error-content: oklch(0% 0 0);
-    --radius-selector: 1rem;
-    --radius-field: 0.5rem;
-    --radius-box: 1rem;
-    --size-selector: 0.25rem;
-    --size-field: 0.25rem;
+    name: "light";
+    default: true;
+    color-scheme: "light";
+
+    /* Palette */
+    --color-base-100: oklch(0.98 0.004 248);
+    --color-base-200: oklch(0.95 0.006 248);
+    --color-base-300: oklch(0.91 0.008 248);
+    --color-base-content: oklch(0.30 0.020 248);
+    --color-primary: oklch(0.55 0.12 210);
+    --color-primary-content: oklch(0.99 0.004 210);
+    --color-secondary: oklch(0.52 0.08 230);
+    --color-secondary-content: oklch(0.99 0.004 230);
+    --color-accent: oklch(0.55 0.12 210);
+    --color-accent-content: oklch(0.99 0.004 210);
+    --color-neutral: oklch(0.92 0.008 248);
+    --color-neutral-content: oklch(0.30 0.020 248);
+    --color-info: oklch(0.52 0.13 245);
+    --color-info-content: oklch(0.99 0.004 245);
+    --color-success: oklch(0.52 0.14 150);
+    --color-success-content: oklch(0.99 0.004 150);
+    --color-warning: oklch(0.60 0.15 75);
+    --color-warning-content: oklch(0.15 0.020 75);
+    --color-error: oklch(0.55 0.20 25);
+    --color-error-content: oklch(0.99 0.004 25);
+
+    /* Géométrie */
+    --radius-selector: 0.1875rem;
+    --radius-field: 0.1875rem;
+    --radius-box: 0.3125rem;
     --border: 1px;
     --depth: 0;
     --noise: 0;
 }
 
-.tooltip {
-    @apply z-50;
+html {
+    font-size: 14px;
+}
+
+/* ============================================================
+   CARTE — marqueurs & popup MapLibre
+   ============================================================ */
+.marker-pin {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: ui-monospace, monospace;
+    font-weight: 700;
+    user-select: none;
+    cursor: pointer;
+    transition: transform 0.12s ease;
+    background: transparent;
+    appearance: none;
+    -webkit-appearance: none;
+    padding: 0;
+    border: 0;
+}
+
+.marker-pin:hover {
+    z-index: 1;
+}
+
+/* --- Points d'interet : losange cyan numerote (centre sur la coordonnee) --- */
+.marker-step {
+    width: 19px;
+    height: 19px;
+    transform: rotate(45deg);
+    border: 1.5px solid color-mix(in oklch, var(--color-primary) 65%, white);
+    background: var(--color-primary);
+    box-shadow: 0 0 8px color-mix(in oklch, var(--color-primary) 55%, transparent);
+    color: var(--color-primary-content);
+    font-size: 0.6rem;
+}
+
+/* halo en losange concentrique autour du point d'interet */
+.marker-step::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 27px;
+    height: 27px;
+    transform: translate(-50%, -50%);
+    border: 1px solid color-mix(in oklch, var(--color-primary) 55%, transparent);
+    box-shadow: 0 0 6px color-mix(in oklch, var(--color-primary) 35%, transparent);
+    pointer-events: none;
+}
+
+.marker-step .marker-label {
+    transform: rotate(-45deg);
+    line-height: 1;
+}
+
+.marker-step:hover {
+    transform: rotate(45deg) scale(1.12);
+}
+
+/* --- Point d'interet AVEC detection : losange orange (token warning) --- */
+.marker-detection {
+    border-color: color-mix(in oklch, var(--color-warning) 65%, white);
+    background: var(--color-warning);
+    box-shadow: 0 0 8px color-mix(in oklch, var(--color-warning) 55%, transparent);
+    color: var(--color-warning-content);
+}
+
+.marker-detection::before {
+    border-color: color-mix(in oklch, var(--color-warning) 55%, transparent);
+    box-shadow: 0 0 6px color-mix(in oklch, var(--color-warning) 35%, transparent);
+}
+
+/* --- Favori : la frame passe du losange a l'etoile (couleur inchangee :
+   teal = normal, orange = detection ; la forme encode le favori) --- */
+.marker-pin.is-favorite {
+    z-index: 2;
+}
+
+.marker-step.is-favorite {
+    width: 27px;
+    height: 27px;
+    transform: none;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    filter: drop-shadow(0 0 6px color-mix(in oklch, var(--color-primary) 55%, transparent));
+}
+
+.marker-step.is-favorite.marker-detection {
+    filter: drop-shadow(0 0 6px color-mix(in oklch, var(--color-warning) 55%, transparent));
+}
+
+/* pas de halo losange sur l'etoile, le drop-shadow fait le glow */
+.marker-step.is-favorite::before {
+    content: none;
+}
+
+.marker-step.is-favorite:hover {
+    transform: scale(1.12);
+}
+
+/* l'etoile occupe tout le bouton, memes recettes de bordure que les losanges */
+.marker-fav-shape {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    color: var(--color-primary);
+    stroke: color-mix(in oklch, var(--color-primary) 65%, white);
+    stroke-width: 1.2;
+}
+
+.marker-detection .marker-fav-shape {
+    color: var(--color-warning);
+    stroke: color-mix(in oklch, var(--color-warning) 65%, white);
+}
+
+/* numero de frame centre dans l'etoile, sans la contre-rotation du losange */
+.marker-step.is-favorite .marker-label {
+    position: relative;
+    z-index: 1;
+    transform: none;
+    font-size: 0.55rem;
+    color: var(--color-primary-content);
+}
+
+.marker-step.is-favorite.marker-detection .marker-label {
+    color: var(--color-warning-content);
+}
+
+/* depart/arrivee favoris : forme imposee (vert/rouge), badge etoile en rappel */
+.marker-fav {
+    position: absolute;
+    top: -9px;
+    right: -9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-primary);
+    filter: drop-shadow(0 0 3px color-mix(in oklch, var(--color-primary) 70%, transparent));
+    pointer-events: none;
+    z-index: 2;
+}
+
+.marker-fav .lucide {
+    width: 11px;
+    height: 11px;
+    stroke: var(--color-base-100);
+    stroke-width: 1.5;
+}
+
+/* --- Depart & Arrivee : anneau lumineux centre sur la coordonnee --- */
+.marker-start,
+.marker-end {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: transparent;
+}
+
+.marker-start:hover,
+.marker-end:hover {
+    transform: scale(1.12);
+}
+
+/* point central commun (depart / arrivee) */
+.marker-core {
+    position: relative;
+    z-index: 1;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+}
+
+/* --- Depart : cible verte (anneau + point central) --- */
+.marker-start {
+    border: 1.5px solid var(--color-success);
+    box-shadow: 0 0 9px color-mix(in oklch, var(--color-success) 65%, transparent);
+}
+
+.marker-start .marker-core {
+    background: var(--color-success);
+    box-shadow: 0 0 6px var(--color-success);
+}
+
+/* --- Arrivee : reticule rouge (anneau + croix de visee + point central) --- */
+.marker-end {
+    border: 1.5px solid var(--color-error);
+    box-shadow: 0 0 9px color-mix(in oklch, var(--color-error) 65%, transparent);
+}
+
+.marker-end .marker-core {
+    width: 5px;
+    height: 5px;
+    background: var(--color-error);
+    box-shadow: 0 0 6px var(--color-error);
+}
+
+.marker-end::before,
+.marker-end::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    background: var(--color-error);
+}
+
+.marker-end::before {
+    width: 2px;
+    height: 34px;
+    transform: translate(-50%, -50%);
+}
+
+.marker-end::after {
+    width: 34px;
+    height: 2px;
+    transform: translate(-50%, -50%);
+}
+
+.maplibregl-popup-content {
+    background: var(--color-base-100) !important;
+    border: 1px solid color-mix(in oklch, var(--color-primary) 30%, transparent) !important;
+    border-radius: var(--radius-field) !important;
+    color: var(--color-base-content) !important;
+    font-family: ui-monospace, monospace !important;
+    font-size: 0.75rem !important;
+    padding: 6px 10px !important;
+}
+
+/* --- Cible de vision du drone --- */
+.marker-target {
+    position: relative;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px dashed var(--color-warning);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: target-spin 12s linear infinite;
+}
+
+.marker-target::before,
+.marker-target::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    background: var(--color-warning);
+}
+
+.marker-target::before {
+    width: 1.5px;
+    height: 38px;
+    transform: translate(-50%, -50%);
+}
+
+.marker-target::after {
+    width: 38px;
+    height: 1.5px;
+    transform: translate(-50%, -50%);
+}
+
+.marker-target-core {
+    position: relative;
+    z-index: 1;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--color-warning);
+    box-shadow: 0 0 6px var(--color-warning);
+}
+
+@keyframes target-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* LocateButton */
+.maplibregl-ctrl-group {
+    background: var(--color-base-100);
+    border: 1px solid var(--color-base-300);
+    border-radius: 0.25rem;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+.maplibregl-ctrl-group button {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    color: var(--color-base-content);
+    border: 0;
+    border-bottom: 1px solid var(--color-base-300);
+    cursor: pointer;
+    transition: background 0.12s ease;
+}
+
+.maplibregl-ctrl-group button.maplibregl-ctrl-locate {
+    display: flex;
+    width: 30px;
+    height: 30px;
+    align-items: center;
+    justify-content: center;
+}
+
+.maplibregl-ctrl-group button + button {
+    border-top: 0;
+}
+
+.maplibregl-ctrl-group button:last-child {
+    border-bottom: 0;
+}
+
+.maplibregl-ctrl-group button:hover {
+    background: var(--color-base-200);
+}
+
+.maplibregl-ctrl-group button:focus {
+    outline: none;
+    box-shadow: inset 0 0 0 2px color-mix(in oklch, var(--color-primary) 50%, transparent);
+}
+
+/* le bouton "Recentrer" rend une icône lucide (stroke=currentColor) */
+.maplibregl-ctrl-locate .lucide {
+    display: block;
+    flex: none;
+    width: 16px;
+    height: 16px;
+}
+
+/* icônes intégrées (+/−/compas) = background-image sombre :
+   on les éclaircit uniquement en thème sombre (pas le bouton recentrage) */
+[data-theme='dark'] .maplibregl-ctrl-zoom-in .maplibregl-ctrl-icon,
+[data-theme='dark'] .maplibregl-ctrl-zoom-out .maplibregl-ctrl-icon,
+[data-theme='dark'] .maplibregl-ctrl-compass .maplibregl-ctrl-icon {
+    filter: invert(1);
+}
+
+/*Zone hachuré pour zone mortes*/
+.cyc-scrub-dead {
+    position: absolute;
+    top: 50%;
+    height: 8px;
+    transform: translateY(-50%);
+    border-radius: 3px;
+    background-color: var(--color-base-100);
+    background-image: repeating-linear-gradient(45deg,
+            var(--color-error) 0 3px, transparent 3px 6px);
+    box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--color-error) 70%, transparent);
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* ============================================================
+   TABLEAU — menus & grille de résultats
+   ============================================================ */
+
+.cyc-results-grid.has-detection-filter .ag-header-cell[col-id='objects'] .ag-icon-filter {
+    position: relative;
+    color: var(--color-primary);
+}
+
+.cyc-results-grid.has-detection-filter .ag-header-cell[col-id='objects'] .ag-icon-filter::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: var(--color-primary);
+    box-shadow: 0 0 0 1.5px var(--color-base-200);
+}
+
+/* Conteneur de la grille : ag-grid remplit la hauteur + thème daisyUI */
+.cyc-results-grid {
+    height: 100%;
+
+    --ag-background-color: var(--color-base-100);
+    --ag-foreground-color: var(--color-base-content);
+    --ag-header-background-color: var(--color-base-200);
+    --ag-border-color: var(--color-base-300);
+    --ag-row-hover-color: color-mix(in oklch, var(--color-primary) 8%, var(--color-base-100));
+    --ag-selected-row-background-color: color-mix(in oklch, var(--color-primary) 15%, var(--color-base-100));
+    --ag-accent-color: var(--color-primary);
+    --ag-font-size: 0.8rem;
+    --ag-header-font-family: ui-monospace, monospace;
+}
+
+.cyc-results-grid .ag-cell {
+    display: flex;
+    align-items: center;
+}
+
+.cyc-results-grid .ag-cell[col-id='isFavorite'] {
+    padding: 0;
 }

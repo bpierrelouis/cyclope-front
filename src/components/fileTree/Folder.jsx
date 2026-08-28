@@ -1,0 +1,102 @@
+import { FolderIcon, ListPlusIcon } from 'lucide-react';
+import { useRef, useState } from 'react';
+
+import { useFileDrop } from '../../hooks';
+import { cn, flatTree } from '../../utils';
+import { DeleteButton } from '../DeleteButton';
+import { DeleteFolderPopup } from './DeleteFolderPopup';
+import { FileTreeActionButton } from './FileTreeActionButton';
+import { FileTreeNode } from './FileTreeNode';
+
+export function Folder(props) {
+    const { folder, path, treeOptions } = props;
+    const {
+        activeDropPath,
+        onDropError,
+        onDropFolder,
+        onDropToFolder,
+        onFilesSelect,
+        onTargetPathChange,
+    } = treeOptions;
+    const { name, children } = folder;
+
+    const detailsRef = useRef(null);
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+
+    const { isDragOver, dropProps } = useFileDrop({
+        onDropError,
+        onDropFolder,
+        onDropStart: () => {
+            if (detailsRef.current) detailsRef.current.open = true;
+        },
+        onDropToFolder,
+        onTargetPathChange,
+        path,
+    });
+
+    const isSelected = activeDropPath === path;
+
+    const handleSelectAllFiles = (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+        const files = flatTree(children).filter((file) => file.id != null);
+        onFilesSelect(files);
+    };
+
+    const summaryClassName = cn(
+        isSelected && 'text-primary',
+        isDragOver && 'bg-primary/15 outline outline-primary',
+    );
+
+    const handleDeleteClick = (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+        setIsPopupOpen(true);
+    };
+
+    return (
+        <li className='group/folder'>
+            <details ref={detailsRef}>
+                <summary
+                    className={summaryClassName}
+                    {...dropProps}
+                >
+                    <FolderIcon className='size-4' />
+                    <span className='flex-1'>{name}</span>
+
+                    <div className='flex items-center gap-1'>
+                        {onFilesSelect && (
+                            <FileTreeActionButton
+                                aria-label={`Ajouter les fichiers de ${name}`}
+                                title="Ajouter tous les fichiers du dossier à la zone d'attente"
+                                onClick={handleSelectAllFiles}
+                            >
+                                <ListPlusIcon className='size-4' />
+                            </FileTreeActionButton>
+                        )}
+                        <DeleteButton
+                            aria-label={`Supprimer ${name}`}
+                            title='Supprimer le dossier et tout son contenu'
+                            onClick={handleDeleteClick}
+                        />
+                    </div>
+
+                </summary>
+                <ul>
+                    {children.map((node) => (
+                        <FileTreeNode
+                            key={node.id ?? node.name}
+                            node={node}
+                            parentPath={path}
+                            treeOptions={treeOptions}
+                        />
+                    ))}
+                </ul>
+            </details>
+            {isPopupOpen && (
+                <DeleteFolderPopup folder={folder}
+                    onClose={() => setIsPopupOpen(false)}/>
+            )}
+        </li>
+    );
+}

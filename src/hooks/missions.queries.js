@@ -1,19 +1,27 @@
-import { useQuery } from '@tanstack/react-query';
-import { missionsResourceName, missionsService } from '../services';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import { mediasQueryKeys, missionsQueryKeys } from '../constants';
+import { missionsService } from '../services';
 import { createCrudQueries } from './crud.factory';
 
-const resource = missionsResourceName;
 const service = missionsService;
 
-const queries = createCrudQueries(resource, service);
+const queries = createCrudQueries(service, missionsQueryKeys);
 
-const useGetAllMediasByMissionId = (id) => useQuery({
-    queryKey: [resource, id, 'medias'],
-    queryFn: () => service.getAllMediasByMissionId(id),
-    enabled: !!id,
-});
+const useAddMedias = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: ({ id, medias }) => service.addMedias(id, medias),
+        onSuccess: (_, { id }) => {
+            queryClient.invalidateQueries({ queryKey: missionsQueryKeys.lists });
+            queryClient.invalidateQueries({ queryKey: missionsQueryKeys.detail(id) });
+            queryClient.invalidateQueries({ queryKey: mediasQueryKeys.byMission(id) });
+        },
+    });
+};
 
 export const missionsQueries = {
     ...queries,
-    useGetAllMediasByMissionId,
+    useAddMedias,
 };

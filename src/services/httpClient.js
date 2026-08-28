@@ -1,12 +1,21 @@
+import { convertKeysFromCamelToSnakeCase, convertKeysFromSnakeToCamelCase } from '../utils';
+
 const DEFAULT_HEADERS = {
     'Content-Type': 'application/json',
 };
 
-export async function httpRequest(partialPath, options = {}) {
-    const config = {
+export const httpRequest = async (partialPath, options = {}) => {
+    let config = {
         headers: DEFAULT_HEADERS,
         ...options,
     };
+
+    if (config.body) {
+        config = {
+            ...config,
+            body: JSON.stringify(convertKeysFromCamelToSnakeCase(config.body)),
+        };
+    }
 
     const response = await fetch(`/api/${partialPath}`, config);
 
@@ -22,5 +31,7 @@ export async function httpRequest(partialPath, options = {}) {
         throw new Error(data?.message || 'API Error');
     }
 
+    data = convertKeysFromSnakeToCamelCase(data);
+
     return data;
-}
+};

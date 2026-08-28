@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+
 import { preventDefault } from '../utils';
 
 export function EditableText(props) {
@@ -31,11 +32,12 @@ export function EditableText(props) {
                             save();
                         }
                     }}
+                    className='input input-ghost input-sm'
                 />
             ) : (
                 <button
                     onClick={preventDefault(() => setEditing(true))}
-                    className='cursor-text'
+                    className='justify-start p-0 h-auto min-h-0 font-semibold btn btn-ghost'
                 >
                     {value}
                 </button>

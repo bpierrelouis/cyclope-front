@@ -1,19 +1,18 @@
-import { create } from 'zustand';
+import { createStore } from 'zustand/vanilla';
 
-export const usePlayerStore = create((set) => ({
-    playing: false,
+export const playerStore = createStore(() => ({
     currentTime: 0,
     duration: 0,
-    media: null,
     isMaster: false,
 
     isMediaOpen: false,
     isPlanOpen: false,
     isTableOpen: false,
 
-    setStatePartial: (data) =>
-        set((state) => ({
-            ...state,
-            ...data,
-        })),
+    mediaId: null,
+    missionId: null,
+    playing: false,
+    segmentOffset: 0,
+
+    treatmentId: null,
 }));

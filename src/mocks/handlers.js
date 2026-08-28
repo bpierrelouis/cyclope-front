@@ -1,19 +1,153 @@
-import { http, HttpResponse } from 'msw';
-import { mockMedias, mockMissions } from './data';
+import {
+    delay, http, HttpResponse, sse,
+} from 'msw';
 
-let missions = [...mockMissions];
-let medias = [...mockMedias];
+import { events, health, mockMedias, mockMissions, mockResults, mocksFilesTree, mockTreatments } from './data';
+
+const missions = [...mockMissions];
+const medias = [...mockMedias];
+const treatments = [...mockTreatments];
+const results = [...mockResults];
+
+const MOCK_CARTO_PATH = 'carto/world_10.pmtiles';
+const MOCK_CARTO_URL = 'https://data.source.coop/protomaps/openstreetmap/v4.pmtiles';
+const MOCK_GEOJSON_PATH = 'carto/fichier11.geojson';
+const MOCK_GEOJSON_URL = `data:application/geo+json,${encodeURIComponent(JSON.stringify({
+    geometry: {
+        coordinates: [2.35, 48.86],
+        type: 'Point',
+    },
+    properties: {},
+    type: 'Feature',
+}))}`;
+const TRANSPARENT_PNG_BASE64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
+const MOCK_UPLOAD_DELAY = 2000;
+let mockUploadQueue = Promise.resolve();
+
+// --- Helpers arbre de fichiers ---
+
+const flattenTree = (nodes) =>
+    nodes.flatMap((node) => (node.children ? flattenTree(node.children) : [node]));
+
+let nextFileId = Math.max(0, ...flattenTree(mocksFilesTree).map((file) => file.id)) + 1;
+let nextMissionId = Math.max(0, ...missions.map((mission) => Number(mission.id))) + 1;
+let nextMediaId = Math.max(0, ...medias.map((media) => media.id)) + 1;
+
+// Retire le préfixe "files/" et sépare les dossiers du nom de fichier.
+const parseFilePath = (url) => {
+    const segments = url.replace(/^files\//, '').split('/').filter(Boolean);
+    const folder = ['carto', 'media'].includes(segments[0]) ? segments.shift() : undefined;
+    const fileName = segments.pop();
+    return { fileName, folder, folders: segments };
+};
+
+// Descend dans l'arbre en créant les dossiers manquants, renvoie le tableau d'enfants cible.
+const resolveFolderChildren = (folders, rootFolder) => {
+    let children = mocksFilesTree;
+    let isRoot = true;
+    for (const name of folders) {
+        let folder = children.find((node) =>
+            node.children
+            && node.name === name
+            && (!isRoot || node.folder === rootFolder),
+        );
+        if (!folder) {
+            folder = {
+                children: [],
+                ...(isRoot && rootFolder ? { folder: rootFolder } : {}),
+                name,
+            };
+            children.push(folder);
+        }
+        children = folder.children;
+        isRoot = false;
+    }
+    return children;
+};
+
+// Supprime un fichier n'importe où dans l'arbre (recherche récursive).
+const removeFileFromTree = (nodes, id) => {
+    const index = nodes.findIndex((node) => !node.children && String(node.id) === String(id));
+    if (index !== -1) {
+        nodes.splice(index, 1);
+        return true;
+    }
+    return nodes.some((node) => {
+        if (!node.children || !removeFileFromTree(node.children, id)) return false;
+        if (node.children.length === 0) nodes.splice(nodes.indexOf(node), 1);
+        return true;
+    });
+};
+
+const findFileInTree = (id) =>
+    flattenTree(mocksFilesTree).find((file) => String(file.id) === String(id));
+
+const isPlainObject = (value) =>
+    value !== null && typeof value === 'object' && !Array.isArray(value);
+
+// Les objets imbriqués du patch fusionnent avec l'existant au lieu de le remplacer.
+const mergePatch = (current, changes) => {
+    const updated = { ...current, ...changes };
+    for (const [key, value] of Object.entries(changes)) {
+        if (isPlainObject(value) && isPlainObject(current[key])) {
+            updated[key] = { ...current[key], ...value };
+        }
+    }
+    return updated;
+};
+
+// Crée les médias d'une mission à partir des fichiers de l'arbre.
+const createMedias = (missionId, items = []) =>
+    items.map((item) => {
+        const fileId = Number(item.file_id);
+        const file = findFileInTree(fileId);
+        const media = {
+            display_name: item.display_name,
+            file_id: fileId,
+            id: nextMediaId++,
+            last_treatment_status: 'PENDING',
+            mission_id: Number(missionId),
+            parent_file: file ?? null,
+        };
+        medias.push(media);
+        return media;
+    });
 
 const getHandlers = (resource, data) => [
 
     // GET ALL
-    http.get('/api/' + resource, () => {
-        return HttpResponse.json(data);
+    http.get(`/api/${resource}`, async ({ request }) => {
+        const url = new URL(request.url);
+        const searchParams = url.searchParams;
+
+        const keys = [...new Set(searchParams.keys())];
+
+        if (!keys.length) {
+            return HttpResponse.json(data);
+        }
+
+        const items = data.filter((item) =>
+            keys.every((key) => {
+                const values = searchParams.getAll(key);
+
+                return values.some((value) => {
+                    const itemValue = item[key];
+
+                    if (Array.isArray(itemValue)) {
+                        return itemValue.some((iv) => String(iv) === value);
+                    }
+
+                    return String(itemValue) === value;
+                });
+            }),
+        );
+
+        return HttpResponse.json(items);
     }),
 
     // GET BY ID
     http.get(`/api/${resource}/:id`, ({ params }) => {
-        const target = data.find(item => item.id === params.id);
+        const target = data.find(item => String(item.id) === String(params.id));
 
         if (!target) {
             return HttpResponse.json(
@@ -27,16 +161,23 @@ const getHandlers = (resource, data) => [
 
     // UPDATE
     http.patch(`/api/${resource}/:id`, async ({ params, request }) => {
-        const changes = await request.clone().json();
-        const index = data.findIndex(({ id }) => id === params.id);
-        const updated = { ...data[index], ...changes };
-        data[index] = updated;
-        return HttpResponse.json(updated);
+        const changes = await request.json();
+        const index = data.findIndex(({ id }) => String(id) === String(params.id));
+
+        if (index === -1) {
+            return HttpResponse.json(
+                { message: `${resource} not found` },
+                { status: 404 },
+            );
+        }
+
+        data[index] = mergePatch(data[index], changes);
+        return HttpResponse.json(data[index]);
     }),
 
     // DELETE
     http.delete(`/api/${resource}/:id`, ({ params }) => {
-        const index = data.findIndex(item => item.id === params.id);
+        const index = data.findIndex(item => String(item.id) === String(params.id));
 
         if (index === -1) {
             return HttpResponse.json(
@@ -53,13 +194,216 @@ const getHandlers = (resource, data) => [
     }),
 ];
 
+const eventsSender = (client, interval, data) => {
+    let i = 0;
+
+    const func = setInterval(() => {
+        if (i >= data.length) {
+            clearInterval(func);
+            return;
+        }
+
+        client.send(data[i]);
+        i++;
+    }, interval);
+};
+
+const applyTreatmentStatus = ({ treatment_id: treatmentId, status }) => {
+    const treatment = treatments.find((item) => item.id === treatmentId);
+    if (!treatment || treatment.status === status) return;
+
+    const media = medias.find((item) => item.id === treatment.media_id);
+    const previousStatus = media?.last_treatment_status ?? treatment.status;
+
+    treatment.status = status;
+
+    if (!media) return;
+
+    media.last_treatment_status = status;
+    if (status === 'DONE') media.percentage = 100;
+
+    const mission = missions.find((item) => item.id === media.mission_id);
+    if (!mission) return;
+
+    mission.medias_status = {
+        ...mission.medias_status,
+        [previousStatus]: Math.max(0, (mission.medias_status?.[previousStatus] ?? 0) - 1),
+        [status]: (mission.medias_status?.[status] ?? 0) + 1,
+    };
+};
+
 export const handlers = [
+    http.get('/api/health', () => {
+        return HttpResponse.json(health);
+    }),
 
     ...getHandlers('missions', missions),
     ...getHandlers('medias', medias),
+    ...getHandlers('treatments', treatments),
+    ...getHandlers('results', results),
+    ...getHandlers('files/tree', mocksFilesTree),
 
-    // GET MEDIAS BY MISSION ID
-    http.get('/api/missions/:id/medias', () => {
-        return HttpResponse.json(medias);
+    http.get('/api/medias/:id/last_treatment', ({ params }) => {
+        const media = medias.find((item) => item.id === Number(params.id));
+        const treatment = treatments.find((item) =>
+            item.id === media?.last_treatment_id && item.media_id === media.id,
+        );
+
+        if (!treatment) {
+            return HttpResponse.json(
+                { message: 'treatment not found' },
+                { status: 404 },
+            );
+        }
+
+        return HttpResponse.json(treatment);
+    }),
+
+    http.get('/api/files/download', ({ request }) => {
+        const url = new URL(request.url);
+        const searchParams = url.searchParams;
+        const target = searchParams.get('url');
+        const downloadUrl = {
+            [MOCK_CARTO_PATH]: MOCK_CARTO_URL,
+            [MOCK_GEOJSON_PATH]: MOCK_GEOJSON_URL,
+        }[target] ?? target;
+        return HttpResponse.json({
+            download_url: downloadUrl,
+            url: target,
+        });
+    }),
+
+    // --- Partie "new" : upload, fichiers, missions ---
+
+    // Un fichier "existe" si son nom ou son contenu est déjà dans l'arbre.
+    http.get('/api/files/exists', ({ request }) => {
+        const searchParams = new URL(request.url).searchParams;
+        const checksum = searchParams.get('checksum');
+        const name = searchParams.get('name');
+        const exists = flattenTree(mocksFilesTree)
+            .some((file) =>
+                file.name === name
+                || (file.checksum != null && file.checksum === checksum),
+            );
+        return HttpResponse.json({ exists });
+    }),
+
+    // Lien d'upload présigné : renvoie une URL de PUT factice interceptée juste en dessous.
+    http.get('/api/files/upload', ({ request }) => {
+        const url = new URL(request.url).searchParams.get('url');
+        return HttpResponse.json({
+            upload_url: `/api/s3-upload?url=${encodeURIComponent(url)}`,
+            url,
+        });
+    }),
+
+    // Faux S3 : simule le temps d'upload puis accepte le PUT sans rien stocker.
+    http.put('/api/s3-upload', async () => {
+        const upload = mockUploadQueue.then(() => delay(MOCK_UPLOAD_DELAY));
+        mockUploadQueue = upload.catch(() => {});
+        await upload;
+        return new HttpResponse(null, { status: 200 });
+    }),
+
+    http.get('/api/files/redirect', () => {
+        const bytes = Uint8Array.from(
+            atob(TRANSPARENT_PNG_BASE64),
+            (character) => character.charCodeAt(0),
+        );
+        return new HttpResponse(bytes, {
+            headers: { 'Content-Type': 'image/png' },
+        });
+    }),
+
+    // Création d'un fichier : insertion dans l'arbre au bon endroit,
+    http.post('/api/files', async ({ request }) => {
+        const body = await request.json();
+        const { fileName, folder, folders } = parseFilePath(body.url ?? body.name);
+        const children = resolveFolderChildren(folders, folder);
+
+        const file = {
+            checksum: body.checksum,
+            duration: body.duration,
+            extension: body.extension,
+            folder: folders.length === 0 ? folder : undefined,
+            id: nextFileId++,
+            name: body.name ?? fileName,
+            size: body.size,
+            url: body.url,
+        };
+        children.push(file);
+
+        return HttpResponse.json(file, { status: 201 });
+    }),
+
+    // Suppression d'un fichier n'importe où dans l'arbre.
+    http.delete('/api/files/:id', ({ params }) => {
+        const removed = removeFileFromTree(mocksFilesTree, params.id);
+
+        if (!removed) {
+            return HttpResponse.json(
+                { message: 'file not found' },
+                { status: 404 },
+            );
+        }
+
+        return new HttpResponse(null, { status: 204 });
+    }),
+
+    // Création d'une mission avec ses médias.
+    http.post('/api/missions', async ({ request }) => {
+        const body = await request.json();
+        const id = nextMissionId++;
+        const createdMedias = createMedias(id, body.medias);
+
+        const mission = {
+            creation_date: new Date().toISOString(),
+            id,
+            medias_status: { PENDING: createdMedias.length },
+            name: body.name,
+        };
+        missions.push(mission);
+
+        return HttpResponse.json(mission, { status: 201 });
+    }),
+
+    // Ajout de médias à une mission existante.
+    http.post('/api/missions/:id/medias', async ({ params, request }) => {
+        const body = await request.json();
+        const mission = missions.find((item) => String(item.id) === String(params.id));
+
+        if (!mission) {
+            return HttpResponse.json(
+                { message: 'mission not found' },
+                { status: 404 },
+            );
+        }
+
+        const createdMedias = createMedias(mission.id, body.medias);
+        mission.medias_status = {
+            ...mission.medias_status,
+            PENDING: (mission.medias_status?.PENDING ?? 0) + createdMedias.length,
+        };
+
+        return HttpResponse.json(mission);
+    }),
+
+    sse('/api/event', async ({ client }) => {
+        const statusEvent = events.find((event) => event.event === 'treatment_status');
+        if (statusEvent) {
+            setTimeout(() => applyTreatmentStatus(statusEvent.data), events.length * 200);
+        }
+        eventsSender(client, 10, events);
+    }),
+
+    sse('/api/treatments/:id/results/stream', async ({ client, params }) => {
+        const items = results.filter(
+            (item) => String(item.treatment_id) === String(params.id),
+        );
+        const resultEvents = items.map((data) => ({
+            data,
+            event: 'treatment_result',
+        }));
+        eventsSender(client, 10, resultEvents);
     }),
 ];

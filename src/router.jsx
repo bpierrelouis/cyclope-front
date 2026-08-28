@@ -1,43 +1,75 @@
-import { createBrowserRouter, Navigate } from 'react-router';
-import { ROUTES } from './constants';
-import { Drawer, Media, MissionListScreen, NewScreen, Plan, SettingsScreen, Table, TreatmentScreen } from './views';
+import { Navigate, useRoutes } from 'react-router';
 
-export const BROWSER_ROUTER = createBrowserRouter([
+import { AsyncView, DetachedViewer } from './components';
+import { ERoute } from './constants';
+import { lazyNamedExport } from './utils';
+import { Drawer, LazyPlan, LazyTable, Media, MissionListScreen } from './views';
+
+const LazyNewScreen = lazyNamedExport(
+    () => import('./views/new/NewScreen'),
+    'NewScreen',
+);
+const LazySettingsScreen = lazyNamedExport(
+    () => import('./views/settings/SettingsScreen'),
+    'SettingsScreen',
+);
+const LazyTreatmentScreen = lazyNamedExport(
+    () => import('./views/treatment/TreatmentScreen'),
+    'TreatmentScreen',
+);
+
+const routes = [
     {
-        Component: Drawer,
         children: [
             {
-                path: ROUTES.settings,
-                Component: SettingsScreen,
+                element: <AsyncView><LazySettingsScreen /></AsyncView>,
+                path: ERoute.SETTINGS,
             },
             {
-                path: ROUTES.new,
-                Component: NewScreen,
+                element: <AsyncView><LazyNewScreen /></AsyncView>,
+                path: ERoute.NEW,
             },
             {
-                path: ROUTES.missionList,
                 Component: MissionListScreen,
+                path: ERoute.MISSION_LIST,
             },
             {
-                path: ROUTES.treatment,
-                Component: TreatmentScreen,
+                element: (
+                    <div className='flex h-screen'>
+                        <AsyncView><LazyTreatmentScreen /></AsyncView>
+                    </div>
+                ),
+                path: ERoute.TREATMENT,
             },
         ],
+        Component: Drawer,
     },
     {
-        path: ROUTES.media,
         Component: Media,
+        path: ERoute.MEDIA,
     },
     {
-        path: ROUTES.table,
-        Component: Table,
+        element: (
+            <DetachedViewer>
+                <AsyncView><LazyTable /></AsyncView>
+            </DetachedViewer>
+        ),
+        path: ERoute.TABLE,
     },
     {
-        path: ROUTES.plan,
-        Component: Plan,
+        element: (
+            <DetachedViewer>
+                <AsyncView><LazyPlan /></AsyncView>
+            </DetachedViewer>
+        ),
+        path: ERoute.PLAN,
     },
     {
+        element: (<Navigate to={ERoute.MISSION_LIST} replace />),
         path: '*',
-        element: (<Navigate to={ROUTES.missionList} replace />),
     },
-]);
+];
+
+export function AppRouter() {
+    return useRoutes(routes);
+}

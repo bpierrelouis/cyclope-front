@@ -1,15 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-export const createCrudQueries = (resource, service) => {
-    const useGetAll = () => useQuery({
-        queryKey: [resource],
-        queryFn: service.getAll,
+export const createCrudQueries = (service, queryKeys, options = {}) => {
+    const useGetAll = (urlSearchParams, queryOptions) => useQuery({
+        queryFn: () => service.getAll(urlSearchParams),
+        queryKey: queryKeys.list(urlSearchParams?.toString()),
+        ...queryOptions,
     });
 
     const useGetById = (id) => useQuery({
-        queryKey: [resource, id],
+        enabled: !!Number(id),
         queryFn: () => service.getById(id),
-        enabled: !!id,
+        queryKey: queryKeys.detail(id),
     });
 
     const useCreate = () => {
@@ -17,7 +18,7 @@ export const createCrudQueries = (resource, service) => {
 
         return useMutation({
             mutationFn: service.create,
-            onSuccess: () => qc.invalidateQueries({ queryKey: [resource] }),
+            onSuccess: () => qc.invalidateQueries({ queryKey: queryKeys.lists }),
         });
     };
 
@@ -26,10 +27,14 @@ export const createCrudQueries = (resource, service) => {
 
         return useMutation({
             mutationFn: ({ id, data }) =>
-                service.update({ id, data }),
-            onSuccess: (_, { id }) => {
-                qc.invalidateQueries({ queryKey: [resource] });
-                qc.invalidateQueries({ queryKey: [resource, id] });
+                service.update({ data, id }),
+            onError: options.update?.onError,
+            onMutate: options.update?.onMutate,
+            onSuccess: (updated, variables, context) => {
+                const { id } = variables;
+                qc.invalidateQueries({ queryKey: queryKeys.lists });
+                qc.invalidateQueries({ queryKey: queryKeys.detail(id) });
+                options.update?.onSuccess?.(updated, variables, context);
             },
         });
     };
@@ -39,9 +44,14 @@ export const createCrudQueries = (resource, service) => {
 
         return useMutation({
             mutationFn: service.remove,
-            onSuccess: () => qc.invalidateQueries({ queryKey: [resource] }),
+            onSuccess: (_data, id) => {
+                qc.removeQueries({ queryKey: queryKeys.detail(id) });
+                qc.invalidateQueries({ queryKey: queryKeys.lists });
+            },
         });
     };
 
-    return { useGetAll, useGetById, useCreate, useUpdate, useDelete };
+    return {
+        useCreate, useDelete, useGetAll, useGetById, useUpdate,
+    };
 };

@@ -1,103 +1,73 @@
-import { ExternalLinkIcon, FilmIcon, ImageIcon, MapIcon, TableIcon } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { SquareButton } from '../../components';
-import { ROUTES } from '../../constants';
-import { useGlobalSelection } from '../../hooks';
-import { playerService } from '../../services';
-import { usePlayerStore } from '../../stores';
-import { Controls } from './Controls';
-import { Media } from './Media';
-import { Plan } from './Plan';
-import { Table } from './Table';
+import { useRef, useState } from 'react';
+
+import { AsyncView } from '../../components';
+import { ERoute } from '../../constants';
+import { useSelectionContext } from '../../contexts';
+import { usePlayerSource } from '../../hooks';
+import { LazyPlan } from '../plan';
+import { Media } from '../player';
+import { LazyTable } from '../table';
+import { Controls } from './controls';
+import { TreatmentHeader } from './TreatmentHeader';
+import { ViewerMessage } from './ViewerMessage';
 
 export function TreatmentScreen() {
-    const { media } = useGlobalSelection();
-    const [selected, setSelected] = useState(ROUTES.media);
-    const { isMediaOpen, isTableOpen, isPlanOpen } = usePlayerStore();
+    const {
+        activeItem, error, isLoading, isMission, source,
+    } = useSelectionContext();
+    const media = activeItem?.media;
+    const videoRef = useRef(null);
+    const [selected, setSelected] = useState(ERoute.MEDIA);
 
-    useEffect(() => {
-        playerService.setLocalState({
-            isMaster: true,
-        });
-    }, []);
+    usePlayerSource();
 
-    useEffect(() => {
-        playerService.sync({
-            media,
-            playing: false,
-        });
-    }, [media]);
-
-    const disabledComponents = {
-        [ROUTES.media]: isMediaOpen || selected === ROUTES.media,
-        [ROUTES.table]: isTableOpen || selected === ROUTES.table,
-        [ROUTES.plan]: isPlanOpen || selected === ROUTES.plan,
-    };
-
-    /**
-     * Méthode permettant d'extraire la vue courante dans une nouvelle fenêtre.
-     * Change la vue courante vers une non visible.
-     */
-    const handleExtract = () => {
-        window.open(
-            selected,
-            undefined,
-            'width=900,height=700',
+    if (error) {
+        return (
+            <ViewerMessage
+                role='alert'
+                title='Impossible de charger la consultation'
+            >
+                {error.message}
+            </ViewerMessage>
         );
+    }
 
-        const entries = Object.entries(disabledComponents);
-        const entry = entries.find(([route, disabled]) => route !== selected && !disabled);
-        const next = entry[0];
-        setSelected(next);
-    };
+    if (isLoading) {
+        return (
+            <ViewerMessage title='Chargement de la consultation…' />
+        );
+    }
 
-    if (!media) return (null);
+    if (!media) {
+        return (
+            <ViewerMessage title={isMission
+                ? 'Cette mission ne contient aucune vidéo consultable.'
+                : 'Aucun média sélectionné.'} />
+        );
+    }
 
     return (
-        <div className='flex flex-col max-h-screen size-full'>
-            <div className='flex justify-between items-center mx-2'>
-                <div className='italic'>
-                    {media.name}
+        <div className='flex flex-col bg-base-200 w-full h-screen'>
+            <TreatmentHeader state={[selected, setSelected]} />
+
+            {source.errors.length > 0 && (
+                <div className='rounded-none alert alert-warning' role='status'>
+                    Certains résultats n’ont pas pu être chargés. Les segments disponibles restent consultables.
                 </div>
-                <div>
-                    {[
-                        ['Carte', ROUTES.plan, <MapIcon />],
-                        ['Tableau', ROUTES.table, <TableIcon />],
-                        [media.isVideo ? 'Vidéo' : 'Image', ROUTES.media, media.isVideo ? <FilmIcon /> : <ImageIcon />],
-                    ].map(([label, route, children]) => (
-                        <Button
-                            key={route}
-                            onClick={() => setSelected(route)}
-                            hidden={disabledComponents[route]}
-                            label={label}
-                        >
-                            {children}
-                        </Button>
-                    ))}
-                    <Button
-                        onClick={handleExtract}
-                        label='Extraire'
-                    >
-                        <ExternalLinkIcon />
-                    </Button>
-                </div>
-            </div>
-            <Media hidden={selected !== ROUTES.media} />
-            {selected === ROUTES.plan && <Plan />}
-            {selected === ROUTES.table && <Table />}
-            {media.isVideo && (
-                <Controls />
             )}
-        </div>
-    );
-}
 
-function Button(props) {
-    if (props.hidden) return (null);
-    return (
-        <SquareButton
-            {...props}
-            className='tooltip-bottom'
-        />
+            <main className='relative flex flex-col flex-1 bg-base-300 min-w-0 min-h-0 overflow-hidden'>
+                <Media hidden={selected !== ERoute.MEDIA} videoRef={videoRef} />
+                <AsyncView>
+                    {selected === ERoute.PLAN && <LazyPlan />}
+                    {selected === ERoute.TABLE && <LazyTable />}
+                </AsyncView>
+            </main>
+
+            {media.isVideo && (
+                <Controls videoRef={videoRef} />
+            )}
+
+        </div>
     );
 }

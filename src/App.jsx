@@ -1,13 +1,39 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { RouterProvider } from 'react-router';
-import { BROWSER_ROUTER } from './router';
+import { useEffect, useState } from 'react';
+import { Toaster } from 'react-hot-toast';
+import { BrowserRouter } from 'react-router';
+
+import { SelectionProvider } from './contexts';
+import { AppRouter } from './router';
+import { eventsManager, resultsSyncService } from './services';
 
 export default function App() {
-    const queryClient = new QueryClient();
+    const [queryClient] = useState(() => new QueryClient());
+
+    useEffect(() => {
+        const disconnectEvents = eventsManager.connect(queryClient);
+        const disconnectResultsSync = resultsSyncService.connect(queryClient);
+
+        return () => {
+            disconnectEvents();
+            disconnectResultsSync();
+        };
+    }, [queryClient]);
 
     return (
         <QueryClientProvider client={queryClient}>
-            <RouterProvider router={BROWSER_ROUTER} />
+            <BrowserRouter>
+                <SelectionProvider>
+                    <AppRouter />
+                </SelectionProvider>
+            </BrowserRouter>
+            <Toaster
+                position='top-right'
+                toastOptions={{
+                    duration: 5000,
+                    removeDelay: 0,
+                }}
+            />
         </QueryClientProvider>
     );
 }
