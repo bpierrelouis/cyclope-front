@@ -6,8 +6,8 @@ export const parseMeasurement = (raw, validate = () => true) => {
     if (!match) return null;
 
     const value = Number(match[1].replace(',', '.'));
-    const unit = match[2];
-    return Number.isFinite(value) && validate(value) && unit
+    const unit = match[2] ?? null;
+    return Number.isFinite(value) && validate(value)
         ? { unit, value }
         : null;
 };

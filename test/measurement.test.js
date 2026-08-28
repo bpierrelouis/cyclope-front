@@ -13,11 +13,15 @@ describe('measurement helpers', () => {
             unit: 'm',
             value: 120.25,
         });
+        assert.deepEqual(parseMeasurement('120'), {
+            unit: null,
+            value: 120,
+        });
     });
 
-    it('requires a unit and applies numeric validation', () => {
-        assert.equal(parseMeasurement('120'), null);
+    it('accepts an optional unit and applies numeric validation', () => {
         assert.equal(parseMeasurement('km/h'), null);
         assert.equal(parseMeasurement('-5 km/h', (value) => value >= 0), null);
+        assert.equal(parseMeasurement('-5', (value) => value >= 0), null);
     });
 });

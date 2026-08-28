@@ -164,13 +164,13 @@ export const getColumnDefs = (
         ),
     },
     measurementColumn({
-        errorMessage: 'Saisissez une valeur suivie de son unité (ex. 120 m)',
+        errorMessage: 'Saisissez une valeur, avec une unité facultative (ex. 120 ou 120 m)',
         field: 'altitudeValue',
         headerName: 'Altitude',
         key: 'altitude',
     }),
     measurementColumn({
-        errorMessage: 'Saisissez une vitesse positive suivie de son unité (ex. 95 km/h)',
+        errorMessage: 'Saisissez une vitesse positive, avec une unité facultative (ex. 95 ou 95 km/h)',
         field: 'speedValue',
         headerName: 'Vitesse',
         key: 'speed',
