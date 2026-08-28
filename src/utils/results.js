@@ -6,6 +6,13 @@ export const mergeResults = (...collections) => {
     return sortByKeyPath([...byId.values()], 'index');
 };
 
+export const formatDetectionLabel = ({ confidence, type }) => {
+    const label = type ?? '?';
+    return Number.isFinite(confidence) && confidence !== 100
+        ? `${label} (${Math.round(confidence)} %)`
+        : label;
+};
+
 export const buildLowConfidenceZones = (results, safeDuration) => {
     const sorted = [...(results ?? [])]
         .filter((r) => r.seconds !== null)

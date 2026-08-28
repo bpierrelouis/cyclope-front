@@ -4,10 +4,10 @@ import { AsyncView } from '../../components';
 import { ERoute } from '../../constants';
 import { useSelectionContext } from '../../contexts';
 import { usePlayerSource } from '../../hooks';
+import { LazyPlan } from '../plan';
+import { Media } from '../player';
+import { LazyTable } from '../table';
 import { Controls } from './controls';
-import { LazyPlan } from './LazyPlan';
-import { LazyTable } from './LazyTable';
-import { Media } from './Media';
 import { TreatmentHeader } from './TreatmentHeader';
 import { ViewerMessage } from './ViewerMessage';
 

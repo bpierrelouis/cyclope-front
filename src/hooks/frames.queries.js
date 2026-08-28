@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { THUMBNAIL_MAX_WIDTH } from '../constants';
 import { filesService, framesService } from '../services';
 import { useDetectionCatalogStore } from '../stores';
-import { getDetectionColor } from '../utils';
+import { formatDetectionLabel, getDetectionColor } from '../utils';
 import { filesQueries } from './files.queries';
 
 const useFrame = (result, media, maxWidth = null) => {
@@ -43,7 +43,7 @@ const createDetectionFrame = async (result, media) => {
                     y: bbox.y1,
                 } : object.box,
                 color: getDetectionColor(object.type, detections, categories),
-                label: object.type,
+                label: formatDetectionLabel(object),
             };
         });
     return framesService.createFrame({

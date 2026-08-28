@@ -1,14 +1,9 @@
 import { Navigate, useRoutes } from 'react-router';
 
-import { AsyncView } from './components';
+import { AsyncView, DetachedViewer } from './components';
 import { ERoute } from './constants';
 import { lazyNamedExport } from './utils';
-import { Drawer } from './views/layouts';
-import { MissionListScreen } from './views/missionList';
-import { DetachedViewer } from './views/treatment/DetachedViewer';
-import { LazyPlan } from './views/treatment/LazyPlan';
-import { LazyTable } from './views/treatment/LazyTable';
-import { Media } from './views/treatment/Media';
+import { Drawer, LazyPlan, LazyTable, Media, MissionListScreen } from './views';
 
 const LazyNewScreen = lazyNamedExport(
     () => import('./views/new/NewScreen'),
