@@ -3,6 +3,7 @@ export * from './constants';
 export * from './enums';
 export * from './files';
 export * from './labels';
+export * from './measurements';
 export * from './queryKeys';
 export * from './table';
 export * from './tableFilters';
